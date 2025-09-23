@@ -77,3 +77,19 @@ def list_firme(q: str, limit: int = 50):
 
 # Add other endpoints (activitati, agenda, import) below following the same pattern.
 # Ensure heavy startup work (data imports, seeding) is not executed on import time.
+# ---- temporary endpoint to resolve DB host from within Render container ----
+import socket
+from fastapi import HTTPException
+
+@app.get("/resolve-db")
+def resolve_db():
+    host = "db.mvlhhotwozhbnspgqjxz.supabase.co"
+    try:
+        infos = socket.getaddrinfo(host, None)
+        ipv4s = sorted({ai[4][0] for ai in infos if ai[0] == socket.AF_INET})
+        ipv6s = sorted({ai[4][0] for ai in infos if ai[0] == socket.AF_INET6})
+        return {"host": host, "ipv4": ipv4s, "ipv6": ipv6s}
+    except Exception as e:
+        # Return error text so we can see it in the response and logs
+        raise HTTPException(status_code=500, detail=str(e))
+# ---- end temporary endpoint ----
