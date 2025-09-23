@@ -63,22 +63,6 @@ def test_db():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/resolve-db")
-def resolve_db():
-    """
-    Debug endpoint that returns the IPv4/IPv6 addresses the container sees for the DB host.
-    Temporary: remove after debugging.
-    """
-    host = os.environ.get("DB_HOST_OVERRIDE") or "db.mvlhhotwozhbnspgqjxz.supabase.co"
-    try:
-        infos = socket.getaddrinfo(host, None)
-        ipv4s = sorted({ai[4][0] for ai in infos if ai[0] == socket.AF_INET})
-        ipv6s = sorted({ai[4][0] for ai in infos if ai[0] == socket.AF_INET6})
-        return {"host": host, "ipv4": ipv4s, "ipv6": ipv6s}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 @app.get("/firme")
 def list_firme(
     q: str = Query(..., description="CUI to look up"),
