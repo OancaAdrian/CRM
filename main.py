@@ -1,95 +1,130 @@
 import os
-import logging
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+import socket
+from typing import List, Dict, Any
+
+from fastapi import FastAPI, HTTPException, Query
+from pydantic import BaseModel
 from sqlalchemy import create_engine, text
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, SQLAlchemyError
 
-# Logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("uvicorn.error")
-
-# Read DATABASE_URL from env
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Configuration
+DATABASE_URL = os.environ.get("DATABASE_URL")
 if not DATABASE_URL:
-    logger.error("DATABASE_URL is not set")
-    raise RuntimeError("DATABASE_URL environment variable is required")
+    raise RuntimeError("DATABASE_URL environment variable is not set")
 
-# Create SQLAlchemy engine with sensible defaults for pooled connections
-# pool_pre_ping helps recover broken connections in cloud environments
+# Ensure SQLAlchemy uses the correct dialect prefix (postgresql)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# Engine with resilience settings
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,
-    pool_size=5,
-    max_overflow=10,
+    pool_size=2,
+    max_overflow=3,
+    connect_args={"connect_timeout": 10},
     future=True,
 )
 
 app = FastAPI(title="CRM API")
 
-# CORS - adjust origins to your frontend domains
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # change to specific origins in production
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
+class DBTest(BaseModel):
+    db: int
+
 
 @app.on_event("startup")
-def on_startup():
-    logger.info("Starting application")
-    # quick DB smoke-test during startup (non-fatal)
+def startup_check_db():
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
-        logger.info("DB reachable at startup")
-    except Exception as e:
-        logger.warning("DB startup check failed: %s", e)
+        app.logger = getattr(app, "logger", None)
+        # Log reachable state to Render logs
+        print("DB reachable at startup")
+    except OperationalError as e:
+        # Print a startup warning but allow app to boot (endpoints should handle DB errors)
+        print("DB startup check failed:", str(e))
 
-@app.get("/test-db")
+
+@app.get("/test-db", response_model=DBTest)
 def test_db():
+    """
+    Simple DB sanity endpoint: returns {"db":1} when a DB query succeeds.
+    """
     try:
         with engine.connect() as conn:
-            result = conn.execute(text("SELECT 1")).scalar_one()
-        return {"db": result}
-    except OperationalError as oe:
-        logger.exception("OperationalError in /test-db")
-        raise HTTPException(status_code=503, detail=str(oe))
-    except Exception as e:
-        logger.exception("Error in /test-db")
+            r = conn.execute(text("SELECT 1")).scalar_one_or_none()
+            if r is None:
+                raise HTTPException(status_code=503, detail="DB query returned no rows")
+            return {"db": 1}
+    except OperationalError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Example minimal /firme endpoint using query param 'q' and 'limit'
-@app.get("/firme")
-def list_firme(q: str, limit: int = 50):
-    if limit < 1 or limit > 200:
-        raise HTTPException(status_code=422, detail="limit must be between 1 and 200")
-    try:
-        with engine.connect() as conn:
-            # Replace the SQL below with your real query; this is a placeholder
-            stmt = text("SELECT id, name, cui FROM firms WHERE cui = :cui LIMIT :limit")
-            rows = conn.execute(stmt, {"cui": q, "limit": limit}).mappings().all()
-            return {"results": [dict(row) for row in rows]}
-    except Exception as e:
-        logger.exception("Error in /firme")
-        raise HTTPException(status_code=500, detail=str(e))
-
-# Add other endpoints (activitati, agenda, import) below following the same pattern.
-# Ensure heavy startup work (data imports, seeding) is not executed on import time.
-# ---- temporary endpoint to resolve DB host from within Render container ----
-import socket
-from fastapi import HTTPException
 
 @app.get("/resolve-db")
 def resolve_db():
-    host = "db.mvlhhotwozhbnspgqjxz.supabase.co"
+    """
+    Debug endpoint that returns the IPv4/IPv6 addresses the container sees for the DB host.
+    Temporary: remove after debugging.
+    """
+    host = os.environ.get("DB_HOST_OVERRIDE") or "db.mvlhhotwozhbnspgqjxz.supabase.co"
     try:
         infos = socket.getaddrinfo(host, None)
         ipv4s = sorted({ai[4][0] for ai in infos if ai[0] == socket.AF_INET})
         ipv6s = sorted({ai[4][0] for ai in infos if ai[0] == socket.AF_INET6})
         return {"host": host, "ipv4": ipv4s, "ipv6": ipv6s}
     except Exception as e:
-        # Return error text so we can see it in the response and logs
         raise HTTPException(status_code=500, detail=str(e))
-# ---- end temporary endpoint ----
+
+
+@app.get("/firme")
+def list_firme(
+    q: str = Query(..., description="CUI to look up"),
+    limit: int = Query(50, ge=1, le=500),
+) -> List[Dict[str, Any]]:
+    """
+    Lookup firms by CUI.
+    Maps database column `denumire` to `name` so frontends expecting `name` still work.
+    """
+    if not q:
+        raise HTTPException(status_code=400, detail="Missing query parameter `q`")
+
+    # Use explicit column names that match the actual DB schema (denumire, cui).
+    stmt = text(
+        """
+        SELECT denumire AS name, cui
+        FROM firms
+        WHERE cui = :cui
+        LIMIT :limit
+        """
+    )
+
+    try:
+        with engine.connect() as conn:
+            rows = conn.execute(stmt, {"cui": q, "limit": limit}).mappings().all()
+            # If frontend expects an `id` field, provide one derived from `cui` (temporary).
+            results = []
+            for r in rows:
+                rec = dict(r)
+                if "id" not in rec:
+                    rec["id"] = rec.get("cui")  # temporary stable identifier
+                results.append(rec)
+            return results
+    except OperationalError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except SQLAlchemyError as e:
+        # Surface SQL errors for debugging (replace with safer logging in prod)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Optional: health check
+@app.get("/health")
+def health():
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return {"status": "ok"}
+    except Exception:
+        raise HTTPException(status_code=503, detail="unhealthy")
