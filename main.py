@@ -96,4 +96,23 @@ def list_firme(
             rows = conn.execute(stmt, {"cui": q, "limit": limit}).mappings().all()
             results = []
             for r in rows:
-                rec
+                rec = dict(r)
+                # Provide an `id` field for frontends that expect it (temporary/stable = cui)
+                if "id" not in rec:
+                    rec["id"] = rec.get("cui")
+                results.append(rec)
+            return results
+    except OperationalError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/health")
+def health():
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return {"status": "ok"}
+    except Exception:
+        raise HTTPException(status_code=503, detail="unhealthy")
