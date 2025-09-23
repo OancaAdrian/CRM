@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CRM - Căutare firmă după CUI</title>
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#f6f8fa; color:#111; margin:0; padding:32px; }
+    .card { max-width:720px; margin:24px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 6px 18px rgba(15,23,42,0.06); }
+    h1 { margin:0 0 12px 0; font-size:20px; }
+    label { display:block; margin-bottom:8px; font-weight:600; }
+    input[type="text"] { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #d1d5db; font-size:16px; }
+    button { margin-top:12px; padding:10px 14px; background:#0366d6; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600; }
+    button:disabled { opacity:.6; cursor:default; }
+    pre { background:#0f172a; color:#e6eef8; padding:12px; border-radius:8px; overflow:auto; }
+    .result { margin-top:16px; }
+    .muted { color:#6b7280; font-size:14px; margin-top:8px; }
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <h1>Găsește firmă după CUI</h1>
+    <label for="cui">Introduceți CUI</label>
+    <input id="cui" type="text" placeholder="ex: 12818268" inputmode="numeric" />
+    <div>
+      <button id="search">Caută</button>
+    </div>
+    <div class="muted">Rezultatele apar mai jos. Dacă sunt mai multe, vor fi listate toate.</div>
+
+    <div id="error" class="result" style="color:#b91c1c"></div>
+    <div id="results" class="result" aria-live="polite"></div>
+  </main>
+
+  <script>
+    const btn = document.getElementById('search');
+    const input = document.getElementById('cui');
+    const results = document.getElementById('results');
+    const error = document.getElementById('error');
+
+    async function search() {
+      error.textContent = '';
+      results.innerHTML = '';
+      const q = input.value.trim();
+      if (!q) {
+        error.textContent = 'Introduceți un CUI valid.';
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Se caută...';
+
+      try {
+        const res = await fetch(`/firme?q=${encodeURIComponent(q)}&limit=10`, { headers: { accept: 'application/json' } });
+        if (!res.ok) {
+          const j = await res.json().catch(()=>null);
+          error.textContent = (j && j.detail) ? String(j.detail) : `Eroare server: ${res.status}`;
+          return;
+        }
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          results.innerHTML = '<div class="muted">Nu s-au găsit rezultate.</div>';
+          return;
+        }
+
+        // Render list
+        const list = document.createElement('div');
+        data.forEach(item => {
+          const box = document.createElement('div');
+          box.style.padding = '12px';
+          box.style.border = '1px solid #e6eef8';
+          box.style.borderRadius = '8px';
+          box.style.marginTop = '12px';
+          const title = document.createElement('div');
+          title.style.fontWeight = '700';
+          title.textContent = item.name ?? item.denumire ?? '(nume lipsă)';
+          const meta = document.createElement('div');
+          meta.style.color = '#6b7280';
+          meta.style.marginTop = '6px';
+          meta.textContent = `CUI: ${item.cui ?? item.id ?? '—'}`;
+
+          const pretty = document.createElement('pre');
+          pretty.style.marginTop = '8px';
+          pretty.textContent = JSON.stringify(item, null, 2);
+
+          box.appendChild(title);
+          box.appendChild(meta);
+          box.appendChild(pretty);
+          list.appendChild(box);
+        });
+        results.appendChild(list);
+      } catch (err) {
+        error.textContent = 'Eroare rețea: ' + (err && err.message ? err.message : String(err));
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Caută';
+      }
+    }
+
+    btn.addEventListener('click', search);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') search(); });
+
+    // Optional: auto-focus
+    input.focus();
+  </script>
+</body>
+</html>
