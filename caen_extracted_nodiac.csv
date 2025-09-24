@@ -1,0 +1,934 @@
+diviziune;grupa;clasa;denumire;denumire_plain;nivel
+01;;;Agricultură, vânătoare şi servicii anexe;Agricultura, vanatoare si servicii anexe;1
+01;011;;Cultivarea plantelor nepermanente;Cultivarea plantelor nepermanente;2
+01;011;0111;Cultivarea cerealelor (excluzând orezul), plantelor leguminoase şi a plantelor oleaginoase;Cultivarea cerealelor (excluzand orezul), plantelor leguminoase si a plantelor oleaginoase;3
+01;011;0112;Cultivarea orezului;Cultivarea orezului;3
+01;011;0113;Cultivarea legumelor şi a pepenilor, a rădăcinoaselor şi tuberculiferelor;Cultivarea legumelor si a pepenilor, a radacinoaselor si tuberculiferelor;3
+01;011;0114;Cultivarea trestiei de zahăr;Cultivarea trestiei de zahar;3
+01;011;0115;Cultivarea tutunului;Cultivarea tutunului;3
+01;011;0116;Cultivarea plantelor pentru fibre textile;Cultivarea plantelor pentru fibre textile;3
+01;011;0119;Cultivarea altor plante din culturi nepermanente;Cultivarea altor plante din culturi nepermanente;3
+01;012;;Cultivarea plantelor din culturi permanente;Cultivarea plantelor din culturi permanente;2
+01;012;0121;Cultivarea strugurilor;Cultivarea strugurilor;3
+01;012;0122;Cultivarea fructelor tropicale şi subtropicale;Cultivarea fructelor tropicale si subtropicale;3
+01;012;0123;Cultivarea fructelor citrice;Cultivarea fructelor citrice;3
+01;012;0124;Cultivarea fructelor seminţoase şi sâmburoase;Cultivarea fructelor semintoase si samburoase;3
+01;012;0125;Cultivarea altor pomi fructiferi, a arbuştilor fructiferi, căpşunilor şi a nuciferelor;Cultivarea altor pomi fructiferi, a arbustilor fructiferi, capsunilor si a nuciferelor;3
+01;012;0126;Cultivarea fructelor oleaginoase;Cultivarea fructelor oleaginoase;3
+01;012;0127;Cultivarea plantelor pentru prepararea băuturilor;Cultivarea plantelor pentru prepararea bauturilor;3
+01;012;0128;Cultivarea condimentelor, plantelor aromatice, medicinale şi a plantelor de uz farmaceutic;Cultivarea condimentelor, plantelor aromatice, medicinale si a plantelor de uz farmaceutic;3
+01;012;0129;Cultivarea altor plante permanente;Cultivarea altor plante permanente;3
+01;013;;Cultivarea plantelor pentru înmulţire;Cultivarea plantelor pentru inmultire;2
+01;013;0130;Cultivarea plantelor pentru înmulţire;Cultivarea plantelor pentru inmultire;3
+01;014;;Creşterea animalelor;Cresterea animalelor;2
+01;014;0141;Creşterea bovinelor de lapte;Cresterea bovinelor de lapte;3
+01;014;0142;Creşterea altor bovine;Cresterea altor bovine;3
+01;014;0143;Creşterea cailor şi a altor cabaline;Cresterea cailor si a altor cabaline;3
+01;014;0144;Creşterea cămilelor şi a camelidelor;Cresterea camilelor si a camelidelor;3
+01;014;0145;Creşterea ovinelor şi caprinelor;Cresterea ovinelor si caprinelor;3
+01;014;0146;Creşterea porcinelor;Cresterea porcinelor;3
+01;014;0147;Creşterea păsărilor;Cresterea pasarilor;3
+01;014;0148;Creşterea altor animale;Cresterea altor animale;3
+01;015;;Activităţi în ferme mixte (cultura vegetală combinată cu creşterea animalelor);Activitati in ferme mixte (cultura vegetala combinata cu cresterea animalelor);2
+01;015;0150;Activităţi în ferme mixte (cultura vegetală combinată cu creşterea animalelor);Activitati in ferme mixte (cultura vegetala combinata cu cresterea animalelor);3
+01;016;;Activităţi auxiliare agriculturii şi activităţi după recoltare;Activitati auxiliare agriculturii si activitati dupa recoltare;2
+01;016;0161;Activităţi auxiliare pentru producţia vegetală;Activitati auxiliare pentru productia vegetala;3
+01;016;0162;Activităţi auxiliare pentru creşterea animalelor;Activitati auxiliare pentru cresterea animalelor;3
+01;016;0163;Activităţi după recoltare și pregătirea semințelor 1 1;Activitati dupa recoltare si pregatirea semintelor 1 1;3
+01;017;;Vânătoare, capturarea cu capcane a vânatului şi activităţi de servicii anexe vânătorii;Vanatoare, capturarea cu capcane a vanatului si activitati de servicii anexe vanatorii;2
+01;017;0170;Vânătoare, capturarea cu capcane a vânatului şi activităţi de servicii anexe vânătorii 02 Silvicultură şi exploatare forestieră;Vanatoare, capturarea cu capcane a vanatului si activitati de servicii anexe vanatorii 02 Silvicultura si exploatare forestiera;3
+01;021;;Silvicultură şi alte activităţi forestiere;Silvicultura si alte activitati forestiere;2
+01;021;0210;Silvicultură şi alte activităţi forestiere;Silvicultura si alte activitati forestiere;3
+01;022;;Exploatarea forestieră;Exploatarea forestiera;2
+01;022;0220;Exploatarea forestieră;Exploatarea forestiera;3
+01;023;;Colectarea produselor forestiere nelemnoase din flora spontană;Colectarea produselor forestiere nelemnoase din flora spontana;2
+01;023;0230;Colectarea produselor forestiere nelemnoase din flora spontană;Colectarea produselor forestiere nelemnoase din flora spontana;3
+01;024;;Activităţi de servicii anexe silviculturii;Activitati de servicii anexe silviculturii;2
+01;024;0240;Activităţi de servicii anexe silviculturii 03 Pescuitul şi acvacultura;Activitati de servicii anexe silviculturii 03 Pescuitul si acvacultura;3
+01;031;;Pescuitul;Pescuitul;2
+01;031;0311;Pescuitul maritim;Pescuitul maritim;3
+01;031;0312;Pescuitul în ape dulci;Pescuitul in ape dulci;3
+01;032;;Acvacultura;Acvacultura;2
+01;032;0321;Acvacultura maritimă;Acvacultura maritima;3
+01;032;0322;Acvacultura în ape dulci;Acvacultura in ape dulci;3
+01;033;;Activităţi anexe pescuitului şi acvaculturii;Activitati anexe pescuitului si acvaculturii;2
+01;033;0330;Activităţi anexe pescuitului şi acvaculturii SECŢIUNEA B - INDUSTRIA EXTRACTIVĂ 05 Extracţia cărbunelui superior şi inferior;Activitati anexe pescuitului si acvaculturii SECTIUNEA B - INDUSTRIA EXTRACTIVA 05 Extractia carbunelui superior si inferior;3
+01;051;;Extracţia cărbunelui superior (PCS=>23865 kJ/kg);Extractia carbunelui superior (PCS=>23865 kJ/kg);2
+01;051;0510;Extracţia cărbunelui superior (PCS=>23865 kJ/kg);Extractia carbunelui superior (PCS=>23865 kJ/kg);3
+01;052;;Extracţia cărbunelui inferior (PCS<23865 kJ/kg);Extractia carbunelui inferior (PCS<23865 kJ/kg);2
+01;052;0520;Extracţia cărbunelui inferior (PCS<23865 kJ/kg) 06 Extracţia petrolului brut şi a gazelor naturale;Extractia carbunelui inferior (PCS<23865 kJ/kg) 06 Extractia petrolului brut si a gazelor naturale;3
+01;061;;Extracţia petrolului brut;Extractia petrolului brut;2
+01;061;0610;Extracţia petrolului brut;Extractia petrolului brut;3
+01;062;;Extracţia gazelor naturale;Extractia gazelor naturale;2
+01;062;0620;Extracţia gazelor naturale 07 Extracţia minereurilor metalifere;Extractia gazelor naturale 07 Extractia minereurilor metalifere;3
+01;071;;Extracţia minereurilor feroase;Extractia minereurilor feroase;2
+01;071;0710;Extracţia minereurilor feroase;Extractia minereurilor feroase;3
+01;072;;Extracţia minereurilor metalifere neferoase 2 2;Extractia minereurilor metalifere neferoase 2 2;2
+01;072;0721;Extracţia minereurilor de uraniu şi toriu;Extractia minereurilor de uraniu si toriu;3
+01;072;0729;Extracţia altor minereuri metalifere neferoase 08 Alte activităţi extractive;Extractia altor minereuri metalifere neferoase 08 Alte activitati extractive;3
+01;081;;Extracţia pietrei, nisipului şi argilei;Extractia pietrei, nisipului si argilei;2
+01;081;0811;Extracţia pietrei ornamentale şi a pietrei pentru construcţii, extracţia pietrei calcaroase, ghipsului, cretei şi a ardeziei;Extractia pietrei ornamentale si a pietrei pentru constructii, extractia pietrei calcaroase, ghipsului, cretei si a ardeziei;3
+01;081;0812;"Extracţia pietrişului şi nisipului; extracţia argilei şi caolinului";"Extractia pietrisului si nisipului; extractia argilei si caolinului";3
+01;089;;Alte activităţi extractive n.c.a.;Alte activitati extractive n.c.a.;2
+01;089;0891;Extracţia mineralelor pentru industria chimică şi a îngrăşămintelor naturale;Extractia mineralelor pentru industria chimica si a ingrasamintelor naturale;3
+01;089;0892;Extracţia turbei;Extractia turbei;3
+01;089;0893;Extracţia sării;Extractia sarii;3
+01;089;0899;Alte activităţi extractive n.c.a. 09 Activităţi de servicii anexe extracţiei;Alte activitati extractive n.c.a. 09 Activitati de servicii anexe extractiei;3
+01;091;;Activităţi de servicii anexe extracţiei petrolului brut şi gazelor naturale;Activitati de servicii anexe extractiei petrolului brut si gazelor naturale;2
+01;091;0910;Activităţi de servicii anexe extracţiei petrolului brut şi gazelor naturale;Activitati de servicii anexe extractiei petrolului brut si gazelor naturale;3
+01;099;;Activităţi de servicii anexe pentru extracţia mineralelor;Activitati de servicii anexe pentru extractia mineralelor;2
+01;099;0990;Activităţi de servicii anexe pentru extracţia mineralelor SECŢIUNEA C - INDUSTRIA PRELUCRĂTOARE 10 Industria alimentară 101 Producţia, prelucrarea şi conservarea cărnii şi a produselor din carne;Activitati de servicii anexe pentru extractia mineralelor SECTIUNEA C - INDUSTRIA PRELUCRATOARE 10 Industria alimentara 101 Productia, prelucrarea si conservarea carnii si a produselor din carne;3
+01;099;1011;Prelucrarea şi conservarea cărnii;Prelucrarea si conservarea carnii;3
+01;099;1012;Prelucrarea şi conservarea cărnii de pasăre;Prelucrarea si conservarea carnii de pasare;3
+01;099;1013;Fabricarea produselor din carne (inclusiv din carne de pasăre);Fabricarea produselor din carne (inclusiv din carne de pasare);3
+01;102;;Prelucrarea şi conservarea peştelui, crustaceelor şi moluştelor;Prelucrarea si conservarea pestelui, crustaceelor si molustelor;2
+01;102;1020;Prelucrarea şi conservarea peştelui, crustaceelor şi moluştelor;Prelucrarea si conservarea pestelui, crustaceelor si molustelor;3
+01;103;;Prelucrarea şi conservarea fructelor şi legumelor;Prelucrarea si conservarea fructelor si legumelor;2
+01;103;1031;Prelucrarea şi conservarea cartofilor;Prelucrarea si conservarea cartofilor;3
+01;103;1032;Fabricarea sucurilor de fructe şi legume;Fabricarea sucurilor de fructe si legume;3
+01;103;1039;Prelucrarea şi conservarea fructelor şi legumelor n.c.a.;Prelucrarea si conservarea fructelor si legumelor n.c.a.;3
+01;104;;Fabricarea uleiurilor şi a grăsimilor vegetale şi animale;Fabricarea uleiurilor si a grasimilor vegetale si animale;2
+01;104;1041;Fabricarea uleiurilor şi grăsimilor;Fabricarea uleiurilor si grasimilor;3
+01;104;1042;Fabricarea margarinei şi a altor produse comestibile similare;Fabricarea margarinei si a altor produse comestibile similare;3
+01;105;;Fabricarea produselor lactate;Fabricarea produselor lactate;2
+01;105;1051;Fabricarea produselor lactate şi a brânzeturilor;Fabricarea produselor lactate si a branzeturilor;3
+01;105;1052;Fabricarea îngheţatei 3 3;Fabricarea inghetatei 3 3;3
+01;106;;Fabricarea produselor de morărit, a amidonului şi produselor din amidon;Fabricarea produselor de morarit, a amidonului si produselor din amidon;2
+01;106;1061;Fabricarea produselor de morărit;Fabricarea produselor de morarit;3
+01;106;1062;Fabricarea amidonului şi a produselor din amidon;Fabricarea amidonului si a produselor din amidon;3
+01;107;;Fabricarea produselor de brutărie şi a produselor făinoase;Fabricarea produselor de brutarie si a produselor fainoase;2
+01;107;1071;"Fabricarea pâinii; fabricarea prăjiturilor şi a produselor proaspete de patiserie";"Fabricarea painii; fabricarea prajiturilor si a produselor proaspete de patiserie";3
+01;107;1072;"Fabricarea biscuiţilor şi pişcoturilor; fabricarea prăjiturilor şi a produselor conservate de patiserie";"Fabricarea biscuitilor si piscoturilor; fabricarea prajiturilor si a produselor conservate de patiserie";3
+01;107;1073;Fabricarea macaroanelor, tăiţeilor, cuş-cuş-ului şi a altor produse făinoase similar;Fabricarea macaroanelor, taiteilor, cus-cus-ului si a altor produse fainoase similar;3
+01;108;;Fabricarea altor produse alimentare;Fabricarea altor produse alimentare;2
+01;108;1081;Fabricarea zahărului;Fabricarea zaharului;3
+01;108;1082;Fabricarea produselor din cacao, a ciocolatei şi a produselor zaharoase;Fabricarea produselor din cacao, a ciocolatei si a produselor zaharoase;3
+01;108;1083;Prelucrarea ceaiului şi cafelei;Prelucrarea ceaiului si cafelei;3
+01;108;1084;Fabricarea condimentelor şi ingredientelor;Fabricarea condimentelor si ingredientelor;3
+01;108;1085;Fabricarea de mâncărururi preparate;Fabricarea de mancarururi preparate;3
+01;108;1086;Fabricarea preparatelor alimentare omogenizate şi alimentelor dietetice;Fabricarea preparatelor alimentare omogenizate si alimentelor dietetice;3
+01;108;1089;Fabricarea altor produse alimentare n.c.a.;Fabricarea altor produse alimentare n.c.a.;3
+01;109;;Fabricarea preparatelor pentru hrana animalelor;Fabricarea preparatelor pentru hrana animalelor;2
+01;109;1091;Fabricarea preparatelor pentru hrana animalelor de fermă;Fabricarea preparatelor pentru hrana animalelor de ferma;3
+01;109;1092;Fabricarea preparatelor pentru hrana animalelor de companie 11 Fabricarea băuturilor;Fabricarea preparatelor pentru hrana animalelor de companie 11 Fabricarea bauturilor;3
+01;110;;Fabricarea băuturilor;Fabricarea bauturilor;2
+01;110;1101;Distilarea, rafinarea şi mixarea băuturilor alcoolice;Distilarea, rafinarea si mixarea bauturilor alcoolice;3
+01;110;1102;Fabricarea vinurilor din struguri;Fabricarea vinurilor din struguri;3
+01;110;1103;Fabricarea cidrului şi a altor vinuri din fructe;Fabricarea cidrului si a altor vinuri din fructe;3
+01;110;1104;Fabricarea altor băuturi nedistilate, obţinute prin fermentare;Fabricarea altor bauturi nedistilate, obtinute prin fermentare;3
+01;110;1105;Fabricarea berii;Fabricarea berii;3
+01;110;1106;Fabricarea malţului;Fabricarea maltului;3
+01;110;1107;"Producţia de băuturi răcoritoare nealcoolice; producţia de ape minerale şi alte ape îmbuteliate 12 Fabricarea produselor din tutun";"Productia de bauturi racoritoare nealcoolice; productia de ape minerale si alte ape imbuteliate 12 Fabricarea produselor din tutun";3
+01;120;;Fabricarea produselor din tutun;Fabricarea produselor din tutun;2
+01;120;1200;Fabricarea produselor din tutun 13 Fabricarea produselor textile;Fabricarea produselor din tutun 13 Fabricarea produselor textile;3
+01;131;;Pregătirea fibrelor şi filarea fibrelor textile;Pregatirea fibrelor si filarea fibrelor textile;2
+01;131;1310;Pregătirea fibrelor şi filarea fibrelor textile;Pregatirea fibrelor si filarea fibrelor textile;3
+01;132;;Producţia de ţesături;Productia de tesaturi;2
+01;132;1320;Producţia de ţesături;Productia de tesaturi;3
+01;133;;Finisarea materialelor textile;Finisarea materialelor textile;2
+01;133;1330;Finisarea materialelor textile;Finisarea materialelor textile;3
+01;139;;Fabricarea altor articole textile;Fabricarea altor articole textile;2
+01;139;1391;Fabricarea de metraje prin tricotare sau croşetare 4 4;Fabricarea de metraje prin tricotare sau crosetare 4 4;3
+01;139;1392;Fabricarea de articole confecționate din textile (excluzând îmbrăcămintea și lenjeria de corp);Fabricarea de articole confectionate din textile (excluzand imbracamintea si lenjeria de corp);3
+01;139;1393;Fabricarea de covoare şi mochete;Fabricarea de covoare si mochete;3
+01;139;1394;Fabricarea de odgoane, frânghii, sfori şi plase;Fabricarea de odgoane, franghii, sfori si plase;3
+01;139;1395;Fabricarea de textile neţesute şi articole din acestea, cu excepţia confecţiilor de îmbrăcăminte;Fabricarea de textile netesute si articole din acestea, cu exceptia confectiilor de imbracaminte;3
+01;139;1396;Fabricarea de articole tehnice şi industriale din textile;Fabricarea de articole tehnice si industriale din textile;3
+01;139;1399;Fabricarea altor articole textile n.c.a. 14 Fabricarea articolelor de îmbrăcăminte;Fabricarea altor articole textile n.c.a. 14 Fabricarea articolelor de imbracaminte;3
+01;141;;Fabricarea articolelor de îmbrăcăminte prin tricotare sau croşetare;Fabricarea articolelor de imbracaminte prin tricotare sau crosetare;2
+01;141;1410;Fabricarea articolelor de îmbrăcăminte prin tricotare sau croşetare;Fabricarea articolelor de imbracaminte prin tricotare sau crosetare;3
+01;142;;Fabricarea altor articole de îmbrăcăminte și accesorii;Fabricarea altor articole de imbracaminte si accesorii;2
+01;142;1421;Fabricarea articolelor de îmbrăcăminte;Fabricarea articolelor de imbracaminte;3
+01;142;1422;Fabricarea de articole de lenjerie de corp;Fabricarea de articole de lenjerie de corp;3
+01;142;1423;Fabricarea de articole de îmbrăcăminte pentru lucru;Fabricarea de articole de imbracaminte pentru lucru;3
+01;142;1424;Fabricarea articolelor de îmbrăcăminte din piele și blană;Fabricarea articolelor de imbracaminte din piele si blana;3
+01;142;1429;"Fabricarea altor articole de îmbrăcăminte şi accesorii n.c.a. 15 Tăbăcirea şi finisarea pieilor; fabricarea articolelor de voiaj şi marochinărie, harnaşamentelor şi încălţămintei; prepararea şi vopsirea blănurilor";"Fabricarea altor articole de imbracaminte si accesorii n.c.a. 15 Tabacirea si finisarea pieilor; fabricarea articolelor de voiaj si marochinarie, harnasamentelor si incaltamintei; prepararea si vopsirea blanurilor";3
+01;151;;"Tăbăcirea şi finisarea pieilor; fabricarea articolelor de voiaj şi marochinărie şi a articolelor de harnaşament; prepararea şi vopsirea blănurilor";"Tabacirea si finisarea pieilor; fabricarea articolelor de voiaj si marochinarie si a articolelor de harnasament; prepararea si vopsirea blanurilor";2
+01;151;1511;"Tăbăcirea şi finisarea pieilor; prepararea şi vopsirea blănurilor";"Tabacirea si finisarea pieilor; prepararea si vopsirea blanurilor";3
+01;151;1512;Fabricarea articolelor de voiaj şi marochinărie şi a articolelor de harnaşament;Fabricarea articolelor de voiaj si marochinarie si a articolelor de harnasament;3
+01;152;;Fabricarea încălţămintei;Fabricarea incaltamintei;2
+01;152;1520;"Fabricarea încălţămintei 16 Prelucrarea lemnului, fabricarea produselor din lemn şi plută, cu excepţia mobilei; fabricarea articolelor din paie şi din alte materiale vegetale împletite";"Fabricarea incaltamintei 16 Prelucrarea lemnului, fabricarea produselor din lemn si pluta, cu exceptia mobilei; fabricarea articolelor din paie si din alte materiale vegetale impletite";3
+01;161;;Tăierea şi rindeluirea lemnului;Taierea si rindeluirea lemnului;2
+01;161;1611;Tăierea şi rindeluirea lemnului;Taierea si rindeluirea lemnului;3
+01;161;1612;Prelucrarea și finisarea lemnului;Prelucrarea si finisarea lemnului;3
+01;162;;Fabricarea produselor din lemn, plută, paie şi din alte materiale vegetale;Fabricarea produselor din lemn, pluta, paie si din alte materiale vegetale;2
+01;162;1621;Fabricarea de furnire şi a panourilor din lemn;Fabricarea de furnire si a panourilor din lemn;3
+01;162;1622;Fabricarea parchetului asamblat în panouri;Fabricarea parchetului asamblat in panouri;3
+01;162;1623;Fabricarea altor elemente de dulgherie şi tâmplărie, pentru construcţii;Fabricarea altor elemente de dulgherie si tamplarie, pentru constructii;3
+01;162;1624;Fabricarea ambalajelor din lemn;Fabricarea ambalajelor din lemn;3
+01;162;1625;Fabricarea de uși și ferestre din lemn;Fabricarea de usi si ferestre din lemn;3
+01;162;1626;Fabricarea de combustibili solizi din biomasă vegetală;Fabricarea de combustibili solizi din biomasa vegetala;3
+01;162;1627;Finisarea articolelor din lemn;Finisarea articolelor din lemn;3
+01;162;1628;"Fabricarea altor produse din lemn; fabricarea articolelor din plută, paie şi din alte materiale vegetale împletite 17 Fabricarea hârtiei şi a produselor din hârtie 5 5";"Fabricarea altor produse din lemn; fabricarea articolelor din pluta, paie si din alte materiale vegetale impletite 17 Fabricarea hartiei si a produselor din hartie 5 5";3
+01;171;;Fabricarea celulozei, hârtiei şi cartonului;Fabricarea celulozei, hartiei si cartonului;2
+01;171;1711;Fabricarea celulozei;Fabricarea celulozei;3
+01;171;1712;Fabricarea hârtiei şi cartonului;Fabricarea hartiei si cartonului;3
+01;172;;Fabricarea articolelor din hârtie şi carton 1721 Fabricarea hârtiei şi cartonului ondulat şi a ambalajelor din hârtie şi carton;Fabricarea articolelor din hartie si carton 1721 Fabricarea hartiei si cartonului ondulat si a ambalajelor din hartie si carton;2
+01;172;1722;Fabricarea produselor de uz gospodăresc şi sanitar, din hârtie sau carton;Fabricarea produselor de uz gospodaresc si sanitar, din hartie sau carton;3
+01;172;1723;Fabricarea articolelor de papetărie;Fabricarea articolelor de papetarie;3
+01;172;1724;Fabricarea tapetului;Fabricarea tapetului;3
+01;172;1725;Fabricarea altor articole din hârtie şi carton n.c.a. 18 Tipărire şi reproducerea pe suporţi a înregistrărilor;Fabricarea altor articole din hartie si carton n.c.a. 18 Tiparire si reproducerea pe suporti a inregistrarilor;3
+01;181;;Tipărire şi activităţi de servicii conexe tipăririi;Tiparire si activitati de servicii conexe tiparirii;2
+01;181;1811;Tipărirea ziarelor;Tiparirea ziarelor;3
+01;181;1812;Alte activităţi de tipărire n.c.a.;Alte activitati de tiparire n.c.a.;3
+01;181;1813;Servicii pregătitoare pentru pretipărire;Servicii pregatitoare pentru pretiparire;3
+01;181;1814;Legătorie şi servicii conexe;Legatorie si servicii conexe;3
+01;182;;Reproducerea înregistrărilor;Reproducerea inregistrarilor;2
+01;182;1820;Reproducerea înregistrărilor 19 Fabricarea produselor de cocserie şi a produselor obţinute din prelucrarea ţiţeiului;Reproducerea inregistrarilor 19 Fabricarea produselor de cocserie si a produselor obtinute din prelucrarea titeiului;3
+01;191;;Fabricarea produselor de cocserie;Fabricarea produselor de cocserie;2
+01;191;1910;Fabricarea produselor de cocserie;Fabricarea produselor de cocserie;3
+01;192;;Fabricarea produselor obţinute din prelucrarea ţiţeiului;Fabricarea produselor obtinute din prelucrarea titeiului;2
+01;192;1920;Fabricarea produselor obţinute din prelucrarea ţiţeiului 20 Fabricarea substanţelor şi a produselor chimice;Fabricarea produselor obtinute din prelucrarea titeiului 20 Fabricarea substantelor si a produselor chimice;3
+01;201;;"Fabricarea produselor chimice de bază, a îngrăşămintelor şi produselor azotoase; fabricarea materialelor plastice şi a cauciucului sintetic, în forme primare";"Fabricarea produselor chimice de baza, a ingrasamintelor si produselor azotoase; fabricarea materialelor plastice si a cauciucului sintetic, in forme primare";2
+01;201;2011;Fabricarea gazelor industriale;Fabricarea gazelor industriale;3
+01;201;2012;Fabricarea coloranţilor şi a pigmenţilor;Fabricarea colorantilor si a pigmentilor;3
+01;201;2013;Fabricarea altor produse chimice anorganice, de bază;Fabricarea altor produse chimice anorganice, de baza;3
+01;201;2014;Fabricarea altor produse chimice organice, de bază;Fabricarea altor produse chimice organice, de baza;3
+01;201;2015;Fabricarea îngrăşămintelor şi produselor azotoase;Fabricarea ingrasamintelor si produselor azotoase;3
+01;201;2016;Fabricarea materialelor plastice în forme primare;Fabricarea materialelor plastice in forme primare;3
+01;201;2017;Fabricarea cauciucului sintetic în forme primare;Fabricarea cauciucului sintetic in forme primare;3
+01;202;;Fabricarea pesticidelor şi a altor produse agrochimice;Fabricarea pesticidelor si a altor produse agrochimice;2
+01;202;2020;Fabricarea pesticidelor şi a altor produse agrochimice 203 Fabricarea vopselelor, lacurilor, cernelii tipografice şi masticurilor 2030 Fabricarea vopselelor, lacurilor, cernelii tipografice şi masticurilor;Fabricarea pesticidelor si a altor produse agrochimice 203 Fabricarea vopselelor, lacurilor, cernelii tipografice si masticurilor 2030 Fabricarea vopselelor, lacurilor, cernelii tipografice si masticurilor;3
+01;204;;Fabricarea săpunurilor, detergenţilor şi a produselor de întreţinere, cosmetice şi de parfumerie;Fabricarea sapunurilor, detergentilor si a produselor de intretinere, cosmetice si de parfumerie;2
+01;204;2041;Fabricarea săpunurilor, detergenţilor şi a produselor de întreţinere 6 6;Fabricarea sapunurilor, detergentilor si a produselor de intretinere 6 6;3
+01;204;2042;Fabricarea parfumurilor şi a produselor cosmetice (de toaletă);Fabricarea parfumurilor si a produselor cosmetice (de toaleta);3
+01;205;;Fabricarea altor produse chimice;Fabricarea altor produse chimice;2
+01;205;2051;Fabricarea biocombustibililor lichizi;Fabricarea biocombustibililor lichizi;3
+01;205;2059;Fabricarea altor produse chimice n.c.a.;Fabricarea altor produse chimice n.c.a.;3
+01;206;;Fabricarea fibrelor sintetice şi artificiale;Fabricarea fibrelor sintetice si artificiale;2
+01;206;2060;Fabricarea fibrelor sintetice şi artificiale 21 Fabricarea produselor farmaceutice de bază şi a preparatelor farmaceutice;Fabricarea fibrelor sintetice si artificiale 21 Fabricarea produselor farmaceutice de baza si a preparatelor farmaceutice;3
+01;211;;Fabricarea produselor farmaceutice de bază;Fabricarea produselor farmaceutice de baza;2
+01;211;2110;Fabricarea produselor farmaceutice de bază;Fabricarea produselor farmaceutice de baza;3
+01;212;;Fabricarea preparatelor farmaceutice;Fabricarea preparatelor farmaceutice;2
+01;212;2120;Fabricarea preparatelor farmaceutice 22 Fabricarea produselor din cauciuc şi mase plastice;Fabricarea preparatelor farmaceutice 22 Fabricarea produselor din cauciuc si mase plastice;3
+01;221;;Fabricarea articolelor din cauciuc;Fabricarea articolelor din cauciuc;2
+01;221;2211;"Fabricarea anvelopelor şi a camerelor de aer; reşaparea şi refacerea anvelopelor";"Fabricarea anvelopelor si a camerelor de aer; resaparea si refacerea anvelopelor";3
+01;221;2212;Fabricarea altor produse din cauciuc;Fabricarea altor produse din cauciuc;3
+01;222;;Fabricarea articolelor din material plastic;Fabricarea articolelor din material plastic;2
+01;222;2221;Fabricarea plăcilor, foliilor, tuburilor şi profilelor din material plastic;Fabricarea placilor, foliilor, tuburilor si profilelor din material plastic;3
+01;222;2222;Fabricarea articolelor de ambalaj din material plastic;Fabricarea articolelor de ambalaj din material plastic;3
+01;222;2223;Fabricarea de uși și ferestre din material plastic;Fabricarea de usi si ferestre din material plastic;3
+01;222;2224;Fabricarea articolelor din material plastic pentru construcţii;Fabricarea articolelor din material plastic pentru constructii;3
+01;222;2225;Prelucrarea și finisarea articolelor din material plastic;Prelucrarea si finisarea articolelor din material plastic;3
+01;222;2226;Fabricarea altor produse din material plastic 23 Fabricarea altor produse din minerale nemetalice;Fabricarea altor produse din material plastic 23 Fabricarea altor produse din minerale nemetalice;3
+01;231;;Fabricarea sticlei şi a articolelor din sticlă;Fabricarea sticlei si a articolelor din sticla;2
+01;231;2311;Fabricarea sticlei plate;Fabricarea sticlei plate;3
+01;231;2312;Prelucrarea şi fasonarea sticlei plate;Prelucrarea si fasonarea sticlei plate;3
+01;231;2313;Fabricarea articolelor din sticlă;Fabricarea articolelor din sticla;3
+01;231;2314;Fabricarea fibrelor din sticlă;Fabricarea fibrelor din sticla;3
+01;231;2315;Fabricarea de sticlărie tehnică;Fabricarea de sticlarie tehnica;3
+01;232;;Fabricarea de produse refractare;Fabricarea de produse refractare;2
+01;232;2320;Fabricarea de produse refractare;Fabricarea de produse refractare;3
+01;233;;Fabricarea materialelelor de construcţii din argilă;Fabricarea materialelelor de constructii din argila;2
+01;233;2331;Fabricarea plăcilor şi dalelor din ceramică;Fabricarea placilor si dalelor din ceramica;3
+01;233;2332;Fabricarea cărămizilor, ţiglelor şi altor produse pentru construcţii, din argilă arsă;Fabricarea caramizilor, tiglelor si altor produse pentru constructii, din argila arsa;3
+01;234;;Fabricarea altor articole din ceramică şi porţelan;Fabricarea altor articole din ceramica si portelan;2
+01;234;2341;Fabricarea articolelor ceramice pentru uz gospodăresc şi ornamental;Fabricarea articolelor ceramice pentru uz gospodaresc si ornamental;3
+01;234;2342;Fabricarea de obiecte sanitare din ceramică;Fabricarea de obiecte sanitare din ceramica;3
+01;234;2343;Fabricarea izolatorilor şi pieselor izolante din ceramică;Fabricarea izolatorilor si pieselor izolante din ceramica;3
+01;234;2344;Fabricarea altor produse tehnice din ceramică;Fabricarea altor produse tehnice din ceramica;3
+01;234;2345;Fabricarea altor produse ceramice n.c.a. 7 7;Fabricarea altor produse ceramice n.c.a. 7 7;3
+01;235;;Fabricarea cimentului, varului şi ipsosului;Fabricarea cimentului, varului si ipsosului;2
+01;235;2351;Fabricarea cimentului;Fabricarea cimentului;3
+01;235;2352;Fabricarea varului şi ipsosului;Fabricarea varului si ipsosului;3
+01;236;;Fabricarea articolelor din beton, ciment şi ipsos;Fabricarea articolelor din beton, ciment si ipsos;2
+01;236;2361;Fabricarea produselor din beton pentru construcţii;Fabricarea produselor din beton pentru constructii;3
+01;236;2362;Fabricarea produselor din ipsos pentru construcţii;Fabricarea produselor din ipsos pentru constructii;3
+01;236;2363;Fabricarea betonului;Fabricarea betonului;3
+01;236;2364;Fabricarea mortarului;Fabricarea mortarului;3
+01;236;2365;Fabricarea produselor din azbociment;Fabricarea produselor din azbociment;3
+01;236;2366;Fabricarea altor articole din beton, ciment şi ipsos;Fabricarea altor articole din beton, ciment si ipsos;3
+01;237;;Tăierea, fasonarea şi finisarea pietrei;Taierea, fasonarea si finisarea pietrei;2
+01;237;2370;Tăierea, fasonarea şi finisarea pietrei;Taierea, fasonarea si finisarea pietrei;3
+01;239;;Fabricarea produselor abrazive şi a altor produse din minerale nemetalice n.c.a.;Fabricarea produselor abrazive si a altor produse din minerale nemetalice n.c.a.;2
+01;239;2391;Fabricarea de produse abrazive;Fabricarea de produse abrazive;3
+01;239;2399;Fabricarea altor produse din minerale nemetalice, n.c.a. 24 Industria metalurgică;Fabricarea altor produse din minerale nemetalice, n.c.a. 24 Industria metalurgica;3
+01;241;;Producţia de metale feroase sub forme primare şi de feroaliaje;Productia de metale feroase sub forme primare si de feroaliaje;2
+01;241;2410;Producţia de metale feroase sub forme primare şi de feroaliaje;Productia de metale feroase sub forme primare si de feroaliaje;3
+01;242;;Producţia de tuburi, ţevi, profile tubulare şi accesorii pentru acestea, din oţel;Productia de tuburi, tevi, profile tubulare si accesorii pentru acestea, din otel;2
+01;242;2420;Producţia de tuburi, ţevi, profile tubulare şi accesorii pentru acestea, din oţel;Productia de tuburi, tevi, profile tubulare si accesorii pentru acestea, din otel;3
+01;243;;Fabricarea altor produse prin prelucrarea primară a oţelului;Fabricarea altor produse prin prelucrarea primara a otelului;2
+01;243;2431;Tragere la rece a barelor;Tragere la rece a barelor;3
+01;243;2432;Laminare la rece a benzilor înguste;Laminare la rece a benzilor inguste;3
+01;243;2433;Producţia de profile obţinute la rece;Productia de profile obtinute la rece;3
+01;243;2434;Trefilarea firelor la rece;Trefilarea firelor la rece;3
+01;244;;Producţia metalelor preţioase şi a altor metale neferoase;Productia metalelor pretioase si a altor metale neferoase;2
+01;244;2441;Producţia metalelor preţioase;Productia metalelor pretioase;3
+01;244;2442;Metalurgia aluminiului;Metalurgia aluminiului;3
+01;244;2443;Producţia plumbului, zincului şi cositorului;Productia plumbului, zincului si cositorului;3
+01;244;2444;Metalurgia cuprului;Metalurgia cuprului;3
+01;244;2445;Producţia altor metale neferoase;Productia altor metale neferoase;3
+01;244;2446;Prelucrarea combustibililor nucleari;Prelucrarea combustibililor nucleari;3
+01;245;;Turnarea metalelor;Turnarea metalelor;2
+01;245;2451;Turnarea fontei;Turnarea fontei;3
+01;245;2452;Turnarea oţelului;Turnarea otelului;3
+01;245;2453;Turnarea metalelor neferoase uşoare;Turnarea metalelor neferoase usoare;3
+01;245;2454;Turnarea altor metale neferoase 25 Industria construcţiilor metalice şi a produselor din metal, exclusiv maşini, utilaje şi instalaţii;Turnarea altor metale neferoase 25 Industria constructiilor metalice si a produselor din metal, exclusiv masini, utilaje si instalatii;3
+01;251;;Fabricarea de construcţii metalice;Fabricarea de constructii metalice;2
+01;251;2511;Fabricarea de construcţii metalice şi părţi componente ale structurilor metalice;Fabricarea de constructii metalice si parti componente ale structurilor metalice;3
+01;251;2512;Fabricarea de uşi şi ferestre din metal 8 8;Fabricarea de usi si ferestre din metal 8 8;3
+01;252;;"Producţia de rezervoare, cisterne şi containere metalice; producţia de radiatoare şi cazane pentru încălzire centrală";"Productia de rezervoare, cisterne si containere metalice; productia de radiatoare si cazane pentru incalzire centrala";2
+01;252;2521;"Producţia de radiatoare şi cazane pentru încălzire central; producția de generatoare de abur și boilere";"Productia de radiatoare si cazane pentru incalzire central; productia de generatoare de abur si boilere";3
+01;252;2522;Producţia de rezervoare, cisterne şi containere metalice;Productia de rezervoare, cisterne si containere metalice;3
+01;253;;Fabricarea armamentului şi muniţiei;Fabricarea armamentului si munitiei;2
+01;253;2530;Fabricarea armamentului şi muniţiei;Fabricarea armamentului si munitiei;3
+01;254;;"Fabricarea produselor metalice obţinute prin deformare plastică; metalurgia pulberilor";"Fabricarea produselor metalice obtinute prin deformare plastica; metalurgia pulberilor";2
+01;254;2540;"Fabricarea produselor metalice obţinute prin deformare plastică; metalurgia pulberilor";"Fabricarea produselor metalice obtinute prin deformare plastica; metalurgia pulberilor";3
+01;255;;"Tratarea şi acoperirea metalelor; operaţiuni de mecanică generală pe bază de plată sau contract";"Tratarea si acoperirea metalelor; operatiuni de mecanica generala pe baza de plata sau contract";2
+01;255;2551;Acoperirea metalelor;Acoperirea metalelor;3
+01;255;2552;Tratamente termice ale metalelor;Tratamente termice ale metalelor;3
+01;255;2553;Operaţiuni de mecanică generală;Operatiuni de mecanica generala;3
+01;256;;Producţia de unelte şi articole de fierărie;Productia de unelte si articole de fierarie;2
+01;256;2561;Fabricarea produselor de tăiat;Fabricarea produselor de taiat;3
+01;256;2562;Fabricarea articolelor de feronerie;Fabricarea articolelor de feronerie;3
+01;256;2563;Fabricarea uneltelor;Fabricarea uneltelor;3
+01;259;;Fabricarea altor produse prelucrate din metal;Fabricarea altor produse prelucrate din metal;2
+01;259;2591;Fabricarea de recipienţi, containere şi alte produse similare din oţel;Fabricarea de recipienti, containere si alte produse similare din otel;3
+01;259;2592;Fabricarea ambalajelor metalice uşoare;Fabricarea ambalajelor metalice usoare;3
+01;259;2593;"Fabricarea articolelor din fire metalice; fabricarea de lanţuri şi arcuri";"Fabricarea articolelor din fire metalice; fabricarea de lanturi si arcuri";3
+01;259;2594;"Fabricarea de şuruburi, buloane şi alte articole filetate; fabricarea de nituri şi şaibe";"Fabricarea de suruburi, buloane si alte articole filetate; fabricarea de nituri si saibe";3
+01;259;2599;Fabricarea altor articole din metal n.c.a. 26 Fabricarea calculatoarelor şi a produselor electronice şi optice;Fabricarea altor articole din metal n.c.a. 26 Fabricarea calculatoarelor si a produselor electronice si optice;3
+01;261;;Fabricarea componentelor electronice;Fabricarea componentelor electronice;2
+01;261;2611;Fabricarea componentelor electronice;Fabricarea componentelor electronice;3
+01;261;2612;Fabricarea subansamblurilor electronice (module);Fabricarea subansamblurilor electronice (module);3
+01;262;;Fabricarea calculatoarelor şi a echipamentelor periferice;Fabricarea calculatoarelor si a echipamentelor periferice;2
+01;262;2620;Fabricarea calculatoarelor şi a echipamentelor periferice;Fabricarea calculatoarelor si a echipamentelor periferice;3
+01;263;;Fabricarea echipamentelor de comunicaţii;Fabricarea echipamentelor de comunicatii;2
+01;263;2630;Fabricarea echipamentelor de comunicaţii;Fabricarea echipamentelor de comunicatii;3
+01;264;;Fabricarea produselor electronice de larg consum;Fabricarea produselor electronice de larg consum;2
+01;264;2640;Fabricarea produselor electronice de larg consum;Fabricarea produselor electronice de larg consum;3
+01;265;;"Fabricarea de echipamente de măsură, verificare, control şi navigaţie; producţia de ceasuri";"Fabricarea de echipamente de masura, verificare, control si navigatie; productia de ceasuri";2
+01;265;2651;Fabricarea de instrumente şi dispozitive pentru măsură, verificare, control, navigaţie;Fabricarea de instrumente si dispozitive pentru masura, verificare, control, navigatie;3
+01;265;2652;Producţia de ceasuri 9 9 266 Fabricarea de echipamente pentru radiologie, electrodiagnostic şi electroterapie 2660 Fabricarea de echipamente pentru radiologie, electrodiagnostic şi electroterapie;Productia de ceasuri 9 9 266 Fabricarea de echipamente pentru radiologie, electrodiagnostic si electroterapie 2660 Fabricarea de echipamente pentru radiologie, electrodiagnostic si electroterapie;3
+01;267;;"Fabricarea de instrumente optice, suporți magnetici și optici; fabricarea de echipamente fotografice";"Fabricarea de instrumente optice, suporti magnetici si optici; fabricarea de echipamente fotografice";2
+01;267;2670;"Fabricarea de instrumente optice, suporți magnetici și optici; fabricarea de echipamente fotografice 27 Fabricarea echipamentelor electrice";"Fabricarea de instrumente optice, suporti magnetici si optici; fabricarea de echipamente fotografice 27 Fabricarea echipamentelor electrice";3
+01;271;;Fabricarea motoarelor electrice, generatoarelor şi transformatoarelor electrice şi a aparatelor de distribuţie şi control a electricităţii;Fabricarea motoarelor electrice, generatoarelor si transformatoarelor electrice si a aparatelor de distributie si control a electricitatii;2
+01;271;2711;Fabricarea motoarelor, generatoarelor şi transformatoarelor electrice;Fabricarea motoarelor, generatoarelor si transformatoarelor electrice;3
+01;271;2712;Fabricarea aparatelor de distribuţie şi control a electricităţii;Fabricarea aparatelor de distributie si control a electricitatii;3
+01;272;;Fabricarea de acumulatori şi baterii;Fabricarea de acumulatori si baterii;2
+01;272;2720;Fabricarea de acumulatori şi baterii;Fabricarea de acumulatori si baterii;3
+01;273;;"Fabricarea de fire şi cabluri; fabricarea dispozitivelor de conexiune pentru acestea";"Fabricarea de fire si cabluri; fabricarea dispozitivelor de conexiune pentru acestea";2
+01;273;2731;Fabricarea de cabluri cu fibră optică;Fabricarea de cabluri cu fibra optica;3
+01;273;2732;Fabricarea altor fire şi cabluri electrice şi electronice;Fabricarea altor fire si cabluri electrice si electronice;3
+01;273;2733;Fabricarea dispozitivelor de conexiune pentru fire şi cabluri electrice şi electronice;Fabricarea dispozitivelor de conexiune pentru fire si cabluri electrice si electronice;3
+01;274;;Fabricarea de echipamente electrice de iluminat;Fabricarea de echipamente electrice de iluminat;2
+01;274;2740;Fabricarea de echipamente electrice de iluminat;Fabricarea de echipamente electrice de iluminat;3
+01;275;;Fabricarea de echipamente casnice;Fabricarea de echipamente casnice;2
+01;275;2751;Fabricarea de aparate electrocasnice;Fabricarea de aparate electrocasnice;3
+01;275;2752;Fabricarea de echipamente casnice neelectrice;Fabricarea de echipamente casnice neelectrice;3
+01;279;;Fabricarea altor echipamente electrice;Fabricarea altor echipamente electrice;2
+01;279;2790;Fabricarea altor echipamente electrice 28 Fabricarea de maşini, utilaje şi echipamente n.c.a.;Fabricarea altor echipamente electrice 28 Fabricarea de masini, utilaje si echipamente n.c.a.;3
+01;281;;Fabricarea de maşini şi utilaje de utilizare generală;Fabricarea de masini si utilaje de utilizare generala;2
+01;281;2811;Fabricarea de motoare şi turbine (cu excepţia celor pentru avioane, autovehicule şi motociclete.);Fabricarea de motoare si turbine (cu exceptia celor pentru avioane, autovehicule si motociclete.);3
+01;281;2812;Fabricarea de motoare hidraulice;Fabricarea de motoare hidraulice;3
+01;281;2813;Fabricarea de pompe şi compresoare;Fabricarea de pompe si compresoare;3
+01;281;2814;Fabricarea de articole de robinetărie;Fabricarea de articole de robinetarie;3
+01;281;2815;Fabricarea lagărelor, angrenajelor, cutiilor de viteză şi a elementelor mecanice de transmisie 10 10;Fabricarea lagarelor, angrenajelor, cutiilor de viteza si a elementelor mecanice de transmisie 10 10;3
+01;282;;Fabricarea altor maşini şi utilaje de utilizare generală;Fabricarea altor masini si utilaje de utilizare generala;2
+01;282;2821;Fabricarea cuptoarelor, furnalelor şi arzătoarelor;Fabricarea cuptoarelor, furnalelor si arzatoarelor;3
+01;282;2822;Fabricarea echipamentelor de ridicat şi manipulat;Fabricarea echipamentelor de ridicat si manipulat;3
+01;282;2823;Fabricarea maşinilor şi echipamentelor de birou (exceptând fabricarea calculatoarelor şi a echipamentelor periferice);Fabricarea masinilor si echipamentelor de birou (exceptand fabricarea calculatoarelor si a echipamentelor periferice);3
+01;282;2824;Fabricarea maşinilor-unelte portabile acţionate electric;Fabricarea masinilor-unelte portabile actionate electric;3
+01;282;2825;Fabricarea echipamentelor de ventilaţie şi frigorifice, exceptând echipamentele de uz casnic;Fabricarea echipamentelor de ventilatie si frigorifice, exceptand echipamentele de uz casnic;3
+01;282;2829;Fabricarea altor maşini şi utilaje de utilizare generală n.c.a.;Fabricarea altor masini si utilaje de utilizare generala n.c.a.;3
+01;283;;Fabricarea masinilor şi utilajelor pentru agricultură şi exploatări forestiere;Fabricarea masinilor si utilajelor pentru agricultura si exploatari forestiere;2
+01;283;2830;Fabricarea masinilor şi utilajelor pentru agricultură şi exploatări forestiere;Fabricarea masinilor si utilajelor pentru agricultura si exploatari forestiere;3
+01;284;;Fabricarea utilajelor pentru prelucrarea metalului şi a maşinilor-unelte;Fabricarea utilajelor pentru prelucrarea metalului si a masinilor-unelte;2
+01;284;2841;Fabricarea utilajelor şi a maşinilor-unelte pentru prelucrarea metalului;Fabricarea utilajelor si a masinilor-unelte pentru prelucrarea metalului;3
+01;284;2842;Fabricarea altor maşini-unelte n.c.a.;Fabricarea altor masini-unelte n.c.a.;3
+01;289;;Fabricarea altor maşini şi utilaje cu destinaţie specifică;Fabricarea altor masini si utilaje cu destinatie specifica;2
+01;289;2891;Fabricarea utilajelor pentru metalurgie;Fabricarea utilajelor pentru metalurgie;3
+01;289;2892;Fabricarea utilajelor pentru extracţie şi construcţii;Fabricarea utilajelor pentru extractie si constructii;3
+01;289;2893;Fabricarea utilajelor pentru prelucrarea produselor alimentare, băuturilor şi tutunului;Fabricarea utilajelor pentru prelucrarea produselor alimentare, bauturilor si tutunului;3
+01;289;2894;Fabricarea utilajelor pentru industria textilă, a îmbrăcămintei şi a pielăriei;Fabricarea utilajelor pentru industria textila, a imbracamintei si a pielariei;3
+01;289;2895;Fabricarea utilajelor pentru industria hârtiei şi cartonului;Fabricarea utilajelor pentru industria hartiei si cartonului;3
+01;289;2896;Fabricarea utilajelor pentru prelucrarea maselor plastice şi a cauciucului;Fabricarea utilajelor pentru prelucrarea maselor plastice si a cauciucului;3
+01;289;2897;Fabricarea mașinilor și utilajelor pentru fabricația aditivă (care utilizează tehnologia de fabricație aditivă);Fabricarea masinilor si utilajelor pentru fabricatia aditiva (care utilizeaza tehnologia de fabricatie aditiva);3
+01;289;2899;Fabricarea altor maşini şi utilaje specifice n.c.a. 29 Fabricarea autovehiculelor de transport rutier, a remorcilor şi semiremorcilor;Fabricarea altor masini si utilaje specifice n.c.a. 29 Fabricarea autovehiculelor de transport rutier, a remorcilor si semiremorcilor;3
+01;291;;Fabricarea autovehiculelor de transport rutier;Fabricarea autovehiculelor de transport rutier;2
+01;291;2910;Fabricarea autovehiculelor de transport rutier;Fabricarea autovehiculelor de transport rutier;3
+01;292;;"Producţia de caroserii pentru autovehicule; fabricarea de remorci şi semiremorci";"Productia de caroserii pentru autovehicule; fabricarea de remorci si semiremorci";2
+01;292;2920;"Producţia de caroserii pentru autovehicule; fabricarea de remorci şi semiremorci";"Productia de caroserii pentru autovehicule; fabricarea de remorci si semiremorci";3
+01;293;;Producţia de piese şi accesorii pentru autovehicule şi pentru motoare de autovehicule;Productia de piese si accesorii pentru autovehicule si pentru motoare de autovehicule;2
+01;293;2931;Fabricarea de echipamente electrice şi electronice pentru autovehicule şi pentru motoare de autovehicule;Fabricarea de echipamente electrice si electronice pentru autovehicule si pentru motoare de autovehicule;3
+01;293;2932;Fabricarea altor piese şi accesorii pentru autovehicule şi pentru motoare de autovehicule 30 Fabricarea altor mijloace de transport;Fabricarea altor piese si accesorii pentru autovehicule si pentru motoare de autovehicule 30 Fabricarea altor mijloace de transport;3
+01;301;;Construcţia de nave şi bărci;Constructia de nave si barci;2
+01;301;3011;Construcţia de nave civile şi structuri plutitoare;Constructia de nave civile si structuri plutitoare;3
+01;301;3012;Construcţia de ambarcaţiuni sportive şi de agrement;Constructia de ambarcatiuni sportive si de agrement;3
+01;301;3013;Construcţia de nave și vase militare;Constructia de nave si vase militare;3
+01;302;;Fabricarea materialului rulant;Fabricarea materialului rulant;2
+01;302;3020;Fabricarea materialului rulant;Fabricarea materialului rulant;3
+01;303;;Fabricarea de aeronave şi nave spaţiale;Fabricarea de aeronave si nave spatiale;2
+01;303;3031;Fabricarea de aeronave şi nave spaţiale, civile;Fabricarea de aeronave si nave spatiale, civile;3
+01;303;3032;Fabricarea de aeronave şi nave spaţiale, militare 11 11;Fabricarea de aeronave si nave spatiale, militare 11 11;3
+01;304;;Fabricarea vehiculelor militare de luptă;Fabricarea vehiculelor militare de lupta;2
+01;304;3040;Fabricarea vehiculelor militare de luptă;Fabricarea vehiculelor militare de lupta;3
+01;309;;Fabricarea altor echipamente de transport n.c.a.;Fabricarea altor echipamente de transport n.c.a.;2
+01;309;3091;Fabricarea de motociclete;Fabricarea de motociclete;3
+01;309;3092;Fabricarea de biciclete şi de de vehicule pentru invalizi;Fabricarea de biciclete si de de vehicule pentru invalizi;3
+01;309;3099;Fabricarea altor mijloace de transport n.c.a. 31 Fabricarea de mobilă;Fabricarea altor mijloace de transport n.c.a. 31 Fabricarea de mobila;3
+01;310;;Fabricarea de mobilă;Fabricarea de mobila;2
+01;310;3100;Fabricarea de mobilă 32 Alte activităţi industriale;Fabricarea de mobila 32 Alte activitati industriale;3
+01;321;;Fabricarea bijuteriilor, imitaţiilor de bijuterii şi articolelor similare;Fabricarea bijuteriilor, imitatiilor de bijuterii si articolelor similare;2
+01;321;3211;Baterea monedelor;Baterea monedelor;3
+01;321;3212;Fabricarea bijuteriilor şi articolelor similare din metale şi pietre preţioase;Fabricarea bijuteriilor si articolelor similare din metale si pietre pretioase;3
+01;321;3213;Fabricarea imitaţiilor de bijuterii şi articole similare;Fabricarea imitatiilor de bijuterii si articole similare;3
+01;322;;Fabricarea instrumentelor muzicale;Fabricarea instrumentelor muzicale;2
+01;322;3220;Fabricarea instrumentelor muzicale;Fabricarea instrumentelor muzicale;3
+01;323;;Fabricarea articolelor pentru sport;Fabricarea articolelor pentru sport;2
+01;323;3230;Fabricarea articolelor pentru sport;Fabricarea articolelor pentru sport;3
+01;324;;Fabricarea jocurilor şi jucăriilor;Fabricarea jocurilor si jucariilor;2
+01;324;3240;Fabricarea jocurilor şi jucăriilor;Fabricarea jocurilor si jucariilor;3
+01;325;;Fabricarea de dispozitive, aparate şi instrumente medicale şi stomatologice;Fabricarea de dispozitive, aparate si instrumente medicale si stomatologice;2
+01;325;3250;Fabricarea de dispozitive, aparate şi instrumente medicale stomatologice;Fabricarea de dispozitive, aparate si instrumente medicale stomatologice;3
+01;329;;Alte activităţi industriale;Alte activitati industriale;2
+01;329;3291;Fabricarea măturilor şi periilor;Fabricarea maturilor si periilor;3
+01;329;3299;Fabricarea altor produse manufacturiere n.c.a. 33 Repararea, întreţinerea şi instalarea maşinilor şi echipamentelor;Fabricarea altor produse manufacturiere n.c.a. 33 Repararea, intretinerea si instalarea masinilor si echipamentelor;3
+01;331;;Repararea și întreținerea articolelor fabricate din metal, a maşinilor şi echipamentelor;Repararea si intretinerea articolelor fabricate din metal, a masinilor si echipamentelor;2
+01;331;3311;Repararea și întreținerea articolelor fabricate din metal;Repararea si intretinerea articolelor fabricate din metal;3
+01;331;3312;Repararea și întreținerea maşinilor;Repararea si intretinerea masinilor;3
+01;331;3313;Repararea și întreținerea echipamentelor electronice şi optice;Repararea si intretinerea echipamentelor electronice si optice;3
+01;331;3314;Repararea și întreținerea echipamentelor electrice;Repararea si intretinerea echipamentelor electrice;3
+01;331;3315;Repararea şi întreţinerea navelor şi bărcilor, civile;Repararea si intretinerea navelor si barcilor, civile;3
+01;331;3316;Repararea şi întreţinerea aeronavelor şi navelor spaţiale, civile;Repararea si intretinerea aeronavelor si navelor spatiale, civile;3
+01;331;3317;Repararea şi întreţinerea altor echipamente civile de transport n.c.a.;Repararea si intretinerea altor echipamente civile de transport n.c.a.;3
+01;331;3318;Repararea şi întreţinerea vehiculelor militare de luptă, a navelor, vaselor, aeronavelor şi navelor spaţiale, militare;Repararea si intretinerea vehiculelor militare de lupta, a navelor, vaselor, aeronavelor si navelor spatiale, militare;3
+01;331;3319;Repararea și întreținerea altor echipamente;Repararea si intretinerea altor echipamente;3
+01;332;;Instalarea maşinilor şi echipamentelor industriale;Instalarea masinilor si echipamentelor industriale;2
+01;332;3320;Instalarea maşinilor şi echipamentelor industriale 12 12 SECŢIUNEA D - PRODUCŢIA ŞI FURNIZAREA DE ENERGIE ELECTRICĂ ŞI TERMICĂ, GAZE, APĂ CALDĂ ŞI AER CONDIŢIONAT 35 Producţia şi furnizarea de energie electrică şi termică, gaze, apă caldă şi aer condiţionat;Instalarea masinilor si echipamentelor industriale 12 12 SECTIUNEA D - PRODUCTIA SI FURNIZAREA DE ENERGIE ELECTRICA SI TERMICA, GAZE, APA CALDA SI AER CONDITIONAT 35 Productia si furnizarea de energie electrica si termica, gaze, apa calda si aer conditionat;3
+01;351;;Producţia, transportul şi distribuţia energiei electrice;Productia, transportul si distributia energiei electrice;2
+01;351;3511;Producţia de energie electrică din resurse neregenerabile;Productia de energie electrica din resurse neregenerabile;3
+01;351;3512;Producţia de energie electrică din resurse regenerabile;Productia de energie electrica din resurse regenerabile;3
+01;351;3513;Transportul energiei electrice;Transportul energiei electrice;3
+01;351;3514;Distribuţia energiei electrice;Distributia energiei electrice;3
+01;351;3515;Comercializarea energiei electrice;Comercializarea energiei electrice;3
+01;351;3516;Depozitarea energiei electrice;Depozitarea energiei electrice;3
+01;352;;"Producţia gazelor; distribuţia combustibililor gazoşi prin conducte";"Productia gazelor; distributia combustibililor gazosi prin conducte";2
+01;352;3521;Producţia gazelor;Productia gazelor;3
+01;352;3522;Distribuţia combustibililor gazoşi, prin conducte;Distributia combustibililor gazosi, prin conducte;3
+01;352;3523;Comercializarea combustibililor gazoşi, prin conducte;Comercializarea combustibililor gazosi, prin conducte;3
+01;352;3524;Depozitarea gazelor, ca parte a serviciilor de furnizare;Depozitarea gazelor, ca parte a serviciilor de furnizare;3
+01;353;;Furnizarea de abur şi aer condiţionat;Furnizarea de abur si aer conditionat;2
+01;353;3530;Furnizarea de abur şi aer condiţionat;Furnizarea de abur si aer conditionat;3
+01;354;;Activități ale agenților și brokerilor din domeniul energiei electrice și a gazelor naturale;Activitati ale agentilor si brokerilor din domeniul energiei electrice si a gazelor naturale;2
+01;354;3540;"Activități ale agenților și brokerilor din domeniul energiei electrice și a gazelor naturale SECŢIUNEA E - DISTRIBUŢIA APEI; SALUBRITATE, GESTIONAREA DEŞEURILOR, ACTIVITĂŢI DE DECONTAMINARE 36 Captarea, tratarea şi distribuţia apei";"Activitati ale agentilor si brokerilor din domeniul energiei electrice si a gazelor naturale SECTIUNEA E - DISTRIBUTIA APEI; SALUBRITATE, GESTIONAREA DESEURILOR, ACTIVITATI DE DECONTAMINARE 36 Captarea, tratarea si distributia apei";3
+01;360;;Captarea, tratarea şi distribuţia apei;Captarea, tratarea si distributia apei;2
+01;360;3600;Captarea, tratarea şi distribuţia apei 37 Colectarea şi epurarea apelor uzate;Captarea, tratarea si distributia apei 37 Colectarea si epurarea apelor uzate;3
+01;370;;Colectarea şi epurarea apelor uzate;Colectarea si epurarea apelor uzate;2
+01;370;3700;"Colectarea şi epurarea apelor uzate 38 Colectarea, tratarea şi eliminarea deşeurilor; activităţi de recuperare a materialelor reciclabile";"Colectarea si epurarea apelor uzate 38 Colectarea, tratarea si eliminarea deseurilor; activitati de recuperare a materialelor reciclabile";3
+01;381;;Colectarea deşeurilor;Colectarea deseurilor;2
+01;381;3811;Colectarea deşeurilor nepericuloase;Colectarea deseurilor nepericuloase;3
+01;381;3812;Colectarea deşeurilor periculoase;Colectarea deseurilor periculoase;3
+01;382;;Recuperarea materialelor;Recuperarea materialelor;2
+01;382;3821;Recuperarea materialelor reciclabile;Recuperarea materialelor reciclabile;3
+01;382;3822;Producția de energie (electrică sau termică) prin tratarea deșeurilor (inclusiv prin incinerare);Productia de energie (electrica sau termica) prin tratarea deseurilor (inclusiv prin incinerare);3
+01;382;3823;Alte activități de tartare a deșeurilor;Alte activitati de tartare a deseurilor;3
+01;383;;Eliminarea deșeurilor;Eliminarea deseurilor;2
+01;383;3831;Incinerarea deșeurilor fără producție de energie;Incinerarea deseurilor fara productie de energie;3
+01;383;3832;Activități ale gropilor de gunoi sau a depozitelor permanente de deșeuri 13 13;Activitati ale gropilor de gunoi sau a depozitelor permanente de deseuri 13 13;3
+01;383;3833;Alte activități de eliminare a deșeurilor 39 Activităţi şi servicii de decontaminare;Alte activitati de eliminare a deseurilor 39 Activitati si servicii de decontaminare;3
+01;390;;Activităţi şi servicii de decontaminare;Activitati si servicii de decontaminare;2
+01;390;3900;Activităţi şi servicii de decontaminare SECŢIUNEA F - CONSTRUCŢII 41 Construcţii de clădiri;Activitati si servicii de decontaminare SECTIUNEA F - CONSTRUCTII 41 Constructii de cladiri;3
+01;410;;Lucrări de construcţii a clădirilor rezidenţiale şi nerezidenţiale;Lucrari de constructii a cladirilor rezidentiale si nerezidentiale;2
+01;410;4100;Lucrări de construcţii a clădirilor rezidenţiale şi nerezidenţiale 42 Lucrări de geniu civil;Lucrari de constructii a cladirilor rezidentiale si nerezidentiale 42 Lucrari de geniu civil;3
+01;421;;Lucrări de construcţii a drumurilor şi a căilor ferate;Lucrari de constructii a drumurilor si a cailor ferate;2
+01;421;4211;Lucrări de construcţii a drumurilor şi autostrăzilor;Lucrari de constructii a drumurilor si autostrazilor;3
+01;421;4212;Lucrări de construcţii a căilor ferate de suprafaţă şi subterane.;Lucrari de constructii a cailor ferate de suprafata si subterane.;3
+01;421;4213;Construcţia de poduri şi tuneluri;Constructia de poduri si tuneluri;3
+01;422;;Lucrări de construcţii a proiectelor utilitare;Lucrari de constructii a proiectelor utilitare;2
+01;422;4221;Lucrări de construcţii a proiectelor utilitare pentru fluide;Lucrari de constructii a proiectelor utilitare pentru fluide;3
+01;422;4222;Lucrări de construcţii a proiectelor utilitare pentru electricitate şi telecomunicaţii;Lucrari de constructii a proiectelor utilitare pentru electricitate si telecomunicatii;3
+01;429;;Lucrări de construcţii a altor proiecte inginereşti;Lucrari de constructii a altor proiecte ingineresti;2
+01;429;4291;Construcţii hidrotehnice;Constructii hidrotehnice;3
+01;429;4299;Lucrări de construcţii a altor proiecte inginereşti n.c.a. 43 Lucrări speciale de construcţii;Lucrari de constructii a altor proiecte ingineresti n.c.a. 43 Lucrari speciale de constructii;3
+01;431;;Lucrări de demolare şi de pregătire a terenului;Lucrari de demolare si de pregatire a terenului;2
+01;431;4311;Lucrări de demolare a construcţiilor;Lucrari de demolare a constructiilor;3
+01;431;4312;Lucrări de pregătire a terenului;Lucrari de pregatire a terenului;3
+01;431;4313;Lucrări de foraj şi sondaj pentru construcţii;Lucrari de foraj si sondaj pentru constructii;3
+01;432;;Lucrări de instalaţii electrice şi tehnico-sanitare şi alte lucrări de instalaţii pentru construcţii;Lucrari de instalatii electrice si tehnico-sanitare si alte lucrari de instalatii pentru constructii;2
+01;432;4321;Lucrări de instalaţii electrice;Lucrari de instalatii electrice;3
+01;432;4322;Lucrări de instalaţii sanitare, de încălzire şi de aer condiţionat;Lucrari de instalatii sanitare, de incalzire si de aer conditionat;3
+01;432;4323;Lucrări de izolații;Lucrari de izolatii;3
+01;432;4324;Alte lucrări de instalaţii pentru construcţii;Alte lucrari de instalatii pentru constructii;3
+01;433;;Lucrări de finisare;Lucrari de finisare;2
+01;433;4331;Lucrări de ipsoserie;Lucrari de ipsoserie;3
+01;433;4332;Lucrări de tâmplărie şi dulgherie;Lucrari de tamplarie si dulgherie;3
+01;433;4333;Lucrări de pardosire şi placare a pereţilor;Lucrari de pardosire si placare a peretilor;3
+01;433;4334;Lucrări de vopsitorie, zugrăveli şi montări de geamuri;Lucrari de vopsitorie, zugraveli si montari de geamuri;3
+01;433;4335;Alte lucrări de finisare;Alte lucrari de finisare;3
+01;434;;Lucrări speciale de construcţii pentru clădiri;Lucrari speciale de constructii pentru cladiri;2
+01;434;4341;Lucrări de învelitori, şarpante şi terase la construcţii;Lucrari de invelitori, sarpante si terase la constructii;3
+01;434;4342;Alte lucrări speciale de construcţii pentru clădiri 14 14;Alte lucrari speciale de constructii pentru cladiri 14 14;3
+01;435;;Lucrări speciale de construcţii pentru proiecte de geniu civil;Lucrari speciale de constructii pentru proiecte de geniu civil;2
+01;435;4350;Lucrări speciale de construcţii pentru proiecte de geniu civil;Lucrari speciale de constructii pentru proiecte de geniu civil;3
+01;436;;Servicii de intermediere pentru lucrări speciale de construcţii;Servicii de intermediere pentru lucrari speciale de constructii;2
+01;436;4360;Servicii de intermediere pentru lucrări speciale de construcţii;Servicii de intermediere pentru lucrari speciale de constructii;3
+01;439;;Alte lucrări speciale de construcții;Alte lucrari speciale de constructii;2
+01;439;4391;Activități de zidărie;Activitati de zidarie;3
+01;439;4399;"Alte lucrări speciale de construcții n.c.a. SECŢIUNEA G - COMERŢ CU RIDICATA ŞI CU AMĂNUNTUL; 46 Comerţ cu ridicata";"Alte lucrari speciale de constructii n.c.a. SECTIUNEA G - COMERT CU RIDICATA SI CU AMANUNTUL; 46 Comert cu ridicata";3
+01;461;;Activităţi de intermediere în comerţul cu ridicata;Activitati de intermediere in comertul cu ridicata;2
+01;461;4611;Intermedieri în comerţul cu materii prime agricole, animale vii, materii prime textile şi cu semifabricate;Intermedieri in comertul cu materii prime agricole, animale vii, materii prime textile si cu semifabricate;3
+01;461;4612;Intermedieri în comerţul cu combustibili, minereuri, metale şi produse chimice pentru industrie;Intermedieri in comertul cu combustibili, minereuri, metale si produse chimice pentru industrie;3
+01;461;4613;Intermedieri în comerţul cu material lemnos şi materiale de construcţii;Intermedieri in comertul cu material lemnos si materiale de constructii;3
+01;461;4614;Intermedieri în comerţul cu maşini, echipamente industriale, nave şi avioane;Intermedieri in comertul cu masini, echipamente industriale, nave si avioane;3
+01;461;4615;Intermedieri în comerţul cu mobilă, articole de menaj şi de fierărie;Intermedieri in comertul cu mobila, articole de menaj si de fierarie;3
+01;461;4616;Intermedieri în comerţul cu textile, confecţii din blană, încălţăminte şi articole din piele;Intermedieri in comertul cu textile, confectii din blana, incaltaminte si articole din piele;3
+01;461;4617;Intermedieri în comerţul cu produse alimentare, băuturi şi tutun;Intermedieri in comertul cu produse alimentare, bauturi si tutun;3
+01;461;4618;Intermedieri în comerţul specializat în vânzarea produselor cu caracter specific, n.c.a.;Intermedieri in comertul specializat in vanzarea produselor cu caracter specific, n.c.a.;3
+01;461;4619;Intermedieri în comerţul cu produse diverse;Intermedieri in comertul cu produse diverse;3
+01;462;;Comerţ cu ridicata al produselor agricole brute şi al animalelor vii;Comert cu ridicata al produselor agricole brute si al animalelor vii;2
+01;462;4621;Comerţ cu ridicata al cerealelor, seminţelor, furajelor şi tutunului neprelucrat;Comert cu ridicata al cerealelor, semintelor, furajelor si tutunului neprelucrat;3
+01;462;4622;Comerţ cu ridicata al florilor şi al plantelor;Comert cu ridicata al florilor si al plantelor;3
+01;462;4623;Comerţ cu ridicata al animalelor vii;Comert cu ridicata al animalelor vii;3
+01;462;4624;Comerţ cu ridicata al blănurilor, pieilor brute şi al pieilor prelucrate;Comert cu ridicata al blanurilor, pieilor brute si al pieilor prelucrate;3
+01;463;;Comerţ cu ridicata al produselor alimentare, al băuturilor şi al tutunului;Comert cu ridicata al produselor alimentare, al bauturilor si al tutunului;2
+01;463;4631;Comerţ cu ridicata al fructelor şi legumelor;Comert cu ridicata al fructelor si legumelor;3
+01;463;4632;Comerţ cu ridicata al cărnii şi produselor din carne, peşte şi produse din pește, crustacee şi moluşte;Comert cu ridicata al carnii si produselor din carne, peste si produse din peste, crustacee si moluste;3
+01;463;4633;Comerţ cu ridicata al produselor lactate, ouălor, uleiurilor şi grăsimilor comestibile;Comert cu ridicata al produselor lactate, oualor, uleiurilor si grasimilor comestibile;3
+01;463;4634;Comerţ cu ridicata al băuturilor;Comert cu ridicata al bauturilor;3
+01;463;4635;Comerţ cu ridicata al produselor din tutun;Comert cu ridicata al produselor din tutun;3
+01;463;4636;Comerţ cu ridicata al zahărului, ciocolatei şi produselor zaharoase;Comert cu ridicata al zaharului, ciocolatei si produselor zaharoase;3
+01;463;4637;Comerţ cu ridicata cu cafea, ceai, cacao şi condimente;Comert cu ridicata cu cafea, ceai, cacao si condimente;3
+01;463;4638;Comerţ cu ridicata specializat al altor alimente;Comert cu ridicata specializat al altor alimente;3
+01;463;4639;Comerţ cu ridicata nespecializat de produse alimentare, băuturi şi tutun;Comert cu ridicata nespecializat de produse alimentare, bauturi si tutun;3
+01;464;;Comerţ cu ridicata al bunurilor de consum;Comert cu ridicata al bunurilor de consum;2
+01;464;4641;Comerţ cu ridicata al produselor textile;Comert cu ridicata al produselor textile;3
+01;464;4642;Comerţ cu ridicata al îmbrăcămintei şi încălţămintei;Comert cu ridicata al imbracamintei si incaltamintei;3
+01;464;4643;Comerţ cu ridicata al aparatelor electrice de uz gospodăresc, al aparatelor de radio şi televizoarelor;Comert cu ridicata al aparatelor electrice de uz gospodaresc, al aparatelor de radio si televizoarelor;3
+01;464;4644;Comerţ cu ridicata al produselor din ceramică, sticlărie, şi produse de întreţinere;Comert cu ridicata al produselor din ceramica, sticlarie, si produse de intretinere;3
+01;464;4645;Comerţ cu ridicata al produselor cosmetice şi de parfumerie;Comert cu ridicata al produselor cosmetice si de parfumerie;3
+01;464;4646;Comerţ cu ridicata al produselor farmaceutice și medicale 15 15;Comert cu ridicata al produselor farmaceutice si medicale 15 15;3
+01;464;4647;Comerţ cu ridicata al mobilei (inclusiv de birou și pentru magazine), covoarelor şi a articolelor de iluminat;Comert cu ridicata al mobilei (inclusiv de birou si pentru magazine), covoarelor si a articolelor de iluminat;3
+01;464;4648;Comerţ cu ridicata al ceasurilor şi bijuteriilor;Comert cu ridicata al ceasurilor si bijuteriilor;3
+01;464;4649;Comerţ cu ridicata al altor bunuri de uz gospodăresc;Comert cu ridicata al altor bunuri de uz gospodaresc;3
+01;465;;Comerţ cu ridicata al echipamentului informatic şi de telecomunicaţii;Comert cu ridicata al echipamentului informatic si de telecomunicatii;2
+01;465;4650;Comerţ cu ridicata al echipamentului informatic şi de telecomunicaţii;Comert cu ridicata al echipamentului informatic si de telecomunicatii;3
+01;466;;Comerţ cu ridicata al altor maşini, echipamente şi furnituri;Comert cu ridicata al altor masini, echipamente si furnituri;2
+01;466;4661;Comerţ cu ridicata al maşinilor agricole, echipamentelor şi furniturilor;Comert cu ridicata al masinilor agricole, echipamentelor si furniturilor;3
+01;466;4662;Comerţ cu ridicata al maşinilor-unelte;Comert cu ridicata al masinilor-unelte;3
+01;466;4663;Comerţ cu ridicata al maşinilor pentru industria minieră şi construcţii;Comert cu ridicata al masinilor pentru industria miniera si constructii;3
+01;466;4664;Comerţ cu ridicata al altor maşini şi echipamente;Comert cu ridicata al altor masini si echipamente;3
+01;467;;"Comerţ cu ridicata al autovehiculelor şi motocicletelor; comerţ cu ridicata al pieselor şi accesoriilor pentru autovehicule și motociclete";"Comert cu ridicata al autovehiculelor si motocicletelor; comert cu ridicata al pieselor si accesoriilor pentru autovehicule si motociclete";2
+01;467;4671;Comerţ cu ridicata al autovehiculelor;Comert cu ridicata al autovehiculelor;3
+01;467;4672;Comerţ cu ridicata al pieselor şi accesoriilor pentru autovehicule;Comert cu ridicata al pieselor si accesoriilor pentru autovehicule;3
+01;467;4673;"Comerţ cu ridicata al motocicletelor; comerț cu ridicata al pieselor şi accesoriilor pentru motociclete";"Comert cu ridicata al motocicletelor; comert cu ridicata al pieselor si accesoriilor pentru motociclete";3
+01;468;;Comerţ cu ridicata specializat al altor produse;Comert cu ridicata specializat al altor produse;2
+01;468;4681;Comerţ cu ridicata al combustibililor solizi, lichizi şi gazoşi şi al produselor derivate;Comert cu ridicata al combustibililor solizi, lichizi si gazosi si al produselor derivate;3
+01;468;4682;Comerţ cu ridicata al metalelor şi minereurilor metalice;Comert cu ridicata al metalelor si minereurilor metalice;3
+01;468;4683;Comerţ cu ridicata al materialului lemnos şi a materialelor de construcţie şi echipamentelor sanitare;Comert cu ridicata al materialului lemnos si a materialelor de constructie si echipamentelor sanitare;3
+01;468;4684;Comerţ cu ridicata al echipamentelor şi furniturilor de fierărie pentru instalaţii sanitare şi de încălzire;Comert cu ridicata al echipamentelor si furniturilor de fierarie pentru instalatii sanitare si de incalzire;3
+01;468;4685;Comerţ cu ridicata al produselor chimice;Comert cu ridicata al produselor chimice;3
+01;468;4686;Comerţ cu ridicata al altor produse intermediare;Comert cu ridicata al altor produse intermediare;3
+01;468;4687;Comerţ cu ridicata al deşeurilor şi resturilor;Comert cu ridicata al deseurilor si resturilor;3
+01;468;4689;Comerţ cu ridicata specializat al altor produse n.c.a.;Comert cu ridicata specializat al altor produse n.c.a.;3
+01;469;;Comerţ cu ridicata nespecializat;Comert cu ridicata nespecializat;2
+01;469;4690;Comerţ cu ridicata nespecializat 47 Comerţ cu amănuntul;Comert cu ridicata nespecializat 47 Comert cu amanuntul;3
+01;471;;Comerţ cu amănuntul nespecializat;Comert cu amanuntul nespecializat;2
+01;471;4711;Comerţ cu amănuntul nespecializat, cu vânzare predominantă de produse alimentare, băuturi şi tutun;Comert cu amanuntul nespecializat, cu vanzare predominanta de produse alimentare, bauturi si tutun;3
+01;471;4712;Comerţ cu amănuntul nespecializat, cu vânzare predominantă de produse nealimentare;Comert cu amanuntul nespecializat, cu vanzare predominanta de produse nealimentare;3
+01;472;;Comerţ cu amănuntul al produselor alimentare, băuturilor şi al produselor din tutun;Comert cu amanuntul al produselor alimentare, bauturilor si al produselor din tutun;2
+01;472;4721;Comerţ cu amănuntul al fructelor şi legumelor proaspete;Comert cu amanuntul al fructelor si legumelor proaspete;3
+01;472;4722;Comerţ cu amănuntul al cărnii şi al produselor din carne;Comert cu amanuntul al carnii si al produselor din carne;3
+01;472;4723;Comerţ cu amănuntul al peştelui, crustaceelor şi moluştelor;Comert cu amanuntul al pestelui, crustaceelor si molustelor;3
+01;472;4724;Comerţ cu amănuntul al pâinii, produselor de patiserie şi produselor zaharoase;Comert cu amanuntul al painii, produselor de patiserie si produselor zaharoase;3
+01;472;4725;Comerţ cu amănuntul al băuturilor;Comert cu amanuntul al bauturilor;3
+01;472;4726;Comerţ cu amănuntul al produselor din tutun;Comert cu amanuntul al produselor din tutun;3
+01;472;4727;Comerţ cu amănuntul al altor produse alimentare;Comert cu amanuntul al altor produse alimentare;3
+01;473;;Comerţ cu amănuntul al carburanţilor pentru autovehicule î;Comert cu amanuntul al carburantilor pentru autovehicule i;2
+01;473;4730;Comerţ cu amănuntul al carburanţilor pentru autovehicule 16 16;Comert cu amanuntul al carburantilor pentru autovehicule 16 16;3
+01;474;;Comerţ cu amănuntul al echipamentului informatic şi de telecomunicaţii;Comert cu amanuntul al echipamentului informatic si de telecomunicatii;2
+01;474;4740;Comerţ cu amănuntul al echipamentului informatic şi de telecomunicaţii;Comert cu amanuntul al echipamentului informatic si de telecomunicatii;3
+01;475;;Comerţ cu amănuntul al altor produse casnice;Comert cu amanuntul al altor produse casnice;2
+01;475;4751;Comerţ cu amănuntul al textilelor;Comert cu amanuntul al textilelor;3
+01;475;4752;Comerţ cu amănuntul al articolelor de fierărie, al materialelor de construcții, al articolelor din sticlă şi a celor pentru vopsit;Comert cu amanuntul al articolelor de fierarie, al materialelor de constructii, al articolelor din sticla si a celor pentru vopsit;3
+01;475;4753;Comerţ cu amănuntul al covoarelor, carpetelor, tapetelor şi a altor acoperitoare de podea;Comert cu amanuntul al covoarelor, carpetelor, tapetelor si a altor acoperitoare de podea;3
+01;475;4754;Comerţ cu amănuntul al articolelor şi aparatelor electrocasnice;Comert cu amanuntul al articolelor si aparatelor electrocasnice;3
+01;475;4755;Comerţ cu amănuntul al mobilei, al articolelor de iluminat şi al altor articole de uz casnic n.c.a.;Comert cu amanuntul al mobilei, al articolelor de iluminat si al altor articole de uz casnic n.c.a.;3
+01;476;;Comerţ cu amănuntul de bunuri culturale şi recreative;Comert cu amanuntul de bunuri culturale si recreative;2
+01;476;4761;Comerţ cu amănuntul al cărţilor;Comert cu amanuntul al cartilor;3
+01;476;4762;Comerţ cu amănuntul al ziarelor şi articolelor de papetărie;Comert cu amanuntul al ziarelor si articolelor de papetarie;3
+01;476;4763;Comerţ cu amănuntul al echipamentelor sportive;Comert cu amanuntul al echipamentelor sportive;3
+01;476;4764;Comerţ cu amănuntul al jocurilor şi jucăriilor;Comert cu amanuntul al jocurilor si jucariilor;3
+01;476;4769;Comerţ cu amănuntul de bunuri culturale şi recreative n.c.a.;Comert cu amanuntul de bunuri culturale si recreative n.c.a.;3
+01;477;;Comerţ cu amănuntul al altor bunuri, cu excepţia autovehiculelor şi motociclete;Comert cu amanuntul al altor bunuri, cu exceptia autovehiculelor si motociclete;2
+01;477;4771;Comerţ cu amănuntul al îmbrăcămintei;Comert cu amanuntul al imbracamintei;3
+01;477;4772;Comerţ cu amănuntul al încălţămintei şi articolelor din piele;Comert cu amanuntul al incaltamintei si articolelor din piele;3
+01;477;4773;Comerţ cu amănuntul al produselor farmaceutice;Comert cu amanuntul al produselor farmaceutice;3
+01;477;4774;Comerţ cu amănuntul al articolelor medicale şi ortopedice;Comert cu amanuntul al articolelor medicale si ortopedice;3
+01;477;4775;Comerţ cu amănuntul al produselor cosmetice şi de parfumerie;Comert cu amanuntul al produselor cosmetice si de parfumerie;3
+01;477;4776;"Comerţ cu amănuntul al florilor, plantelor şi seminţelor; comerţ cu amănuntul al animalelor de companie şi a hranei pentru acestea";"Comert cu amanuntul al florilor, plantelor si semintelor; comert cu amanuntul al animalelor de companie si a hranei pentru acestea";3
+01;477;4777;Comerţ cu amănuntul al ceasurilor şi bijuteriilor;Comert cu amanuntul al ceasurilor si bijuteriilor;3
+01;477;4778;Comerţ cu amănuntul al altor bunuri noi;Comert cu amanuntul al altor bunuri noi;3
+01;477;4779;Comerţ cu amănuntul al bunurilor de ocazie;Comert cu amanuntul al bunurilor de ocazie;3
+01;478;;"Comerţ cu amănuntul al autovehiculelor şi motocicletelor; comerţ cu amănuntul al pieselor şi accesoriilor pentru autovehicule și motociclete";"Comert cu amanuntul al autovehiculelor si motocicletelor; comert cu amanuntul al pieselor si accesoriilor pentru autovehicule si motociclete";2
+01;478;4781;Comerţ cu amănuntul al autovehiculelor;Comert cu amanuntul al autovehiculelor;3
+01;478;4782;Comerţ cu amănuntul al pieselor şi accesoriilor pentru autovehicule;Comert cu amanuntul al pieselor si accesoriilor pentru autovehicule;3
+01;478;4783;"Comerţ cu amănuntul al motocicletelor; comerț cu amănuntul al pieselor şi accesoriilor pentru motociclete";"Comert cu amanuntul al motocicletelor; comert cu amanuntul al pieselor si accesoriilor pentru motociclete";3
+01;479;;Activităţi de intermediere în comerţul cu amănuntul;Activitati de intermediere in comertul cu amanuntul;2
+01;479;4791;Intermedieri în comerţul cu amănuntul nespecializat;Intermedieri in comertul cu amanuntul nespecializat;3
+01;479;4792;Intermedieri în comerţul cu amănuntul specializat SECŢIUNEA H - TRANSPORT ŞI DEPOZITARE 49 Transporturi terestre şi transporturi prin conducte;Intermedieri in comertul cu amanuntul specializat SECTIUNEA H - TRANSPORT SI DEPOZITARE 49 Transporturi terestre si transporturi prin conducte;3
+01;491;;Transporturi de călători pe calea ferată;Transporturi de calatori pe calea ferata;2
+01;491;4911;Transport de pasageri pe căi ferate grele/magistrale;Transport de pasageri pe cai ferate grele/magistrale;3
+01;491;4912;Alte transporturi de pasageri pe căi ferate ușoare;Alte transporturi de pasageri pe cai ferate usoare;3
+01;492;;Transporturi de marfă pe calea ferată;Transporturi de marfa pe calea ferata;2
+01;492;4920;Transporturi de marfă pe calea ferată;Transporturi de marfa pe calea ferata;3
+01;493;;Alte transporturi terestre de călători;Alte transporturi terestre de calatori;2
+01;493;4931;Transporturi terestre de pasageri, pe bază de grafic 17 17;Transporturi terestre de pasageri, pe baza de grafic 17 17;3
+01;493;4932;Transporturi terestre de pasageri, ocazionale;Transporturi terestre de pasageri, ocazionale;3
+01;493;4933;Transporturi terestre de pasageri cu vehicule cu șofer, pe bază de comandă;Transporturi terestre de pasageri cu vehicule cu sofer, pe baza de comanda;3
+01;493;4934;Transporturi de pasageri cu funiculare, teleferice și schilifturi;Transporturi de pasageri cu funiculare, teleferice si schilifturi;3
+01;493;4939;Alte transporturi terestre de călători n.c.a.;Alte transporturi terestre de calatori n.c.a.;3
+01;494;;Transporturi rutiere de mărfuri şi servicii de mutare;Transporturi rutiere de marfuri si servicii de mutare;2
+01;494;4941;Transporturi rutiere de mărfuri;Transporturi rutiere de marfuri;3
+01;494;4942;Servicii de mutare;Servicii de mutare;3
+01;495;;Transporturi prin conducte;Transporturi prin conducte;2
+01;495;4950;Transporturi prin conducte 50 Transporturi pe apă;Transporturi prin conducte 50 Transporturi pe apa;3
+01;501;;Transporturi maritime şi costiere de pasageri;Transporturi maritime si costiere de pasageri;2
+01;501;5010;Transporturi maritime şi costiere de pasageri;Transporturi maritime si costiere de pasageri;3
+01;502;;Transporturi maritime şi costiere de marfă;Transporturi maritime si costiere de marfa;2
+01;502;5020;Transporturi maritime şi costiere de marfă;Transporturi maritime si costiere de marfa;3
+01;503;;Transporturi de pasageri pe căi navigabile interioare;Transporturi de pasageri pe cai navigabile interioare;2
+01;503;5030;Transportul de pasageri pe căi navigabile interioare;Transportul de pasageri pe cai navigabile interioare;3
+01;504;;Transportul de marfă pe căi navigabile interioare;Transportul de marfa pe cai navigabile interioare;2
+01;504;5040;Transportul de marfă pe căi navigabile interioare 51 Transporturi aeriene;Transportul de marfa pe cai navigabile interioare 51 Transporturi aeriene;3
+01;511;;Transporturi aeriene de pasageri;Transporturi aeriene de pasageri;2
+01;511;5110;Transporturi aeriene de pasageri;Transporturi aeriene de pasageri;3
+01;512;;Transporturi aeriene de marfă şi transporturi spaţiale;Transporturi aeriene de marfa si transporturi spatiale;2
+01;512;5121;Transporturi aeriene de marfă;Transporturi aeriene de marfa;3
+01;512;5122;Transporturi spaţiale 52 Depozitare şi activităţi auxiliare pentru transporturi;Transporturi spatiale 52 Depozitare si activitati auxiliare pentru transporturi;3
+01;521;;Depozitări;Depozitari;2
+01;521;5210;Depozitări;Depozitari;3
+01;522;;Activităţi anexe pentru transporturi;Activitati anexe pentru transporturi;2
+01;522;5221;Activităţi de servicii anexe pentru transporturi terestre;Activitati de servicii anexe pentru transporturi terestre;3
+01;522;5222;Activităţi de servicii anexe transporturilor pe apă;Activitati de servicii anexe transporturilor pe apa;3
+01;522;5223;Activităţi de servicii anexe transporturilor aeriene;Activitati de servicii anexe transporturilor aeriene;3
+01;522;5224;Manipulări;Manipulari;3
+01;522;5225;Activități de servicii logistice pentru transporturi;Activitati de servicii logistice pentru transporturi;3
+01;522;5226;Alte activităţi anexe transporturilor;Alte activitati anexe transporturilor;3
+01;523;;Activităţi de intermediere pentru transporturi;Activitati de intermediere pentru transporturi;2
+01;523;5231;Activităţi de intermediere pentru transportul de marfă;Activitati de intermediere pentru transportul de marfa;3
+01;523;5232;Activităţi de intermediere pentru transportul de pasageri 53 Activităţi de poştă şi de curier;Activitati de intermediere pentru transportul de pasageri 53 Activitati de posta si de curier;3
+01;531;;Activităţi poştale desfăşurate sub obligativitatea serviciului universal;Activitati postale desfasurate sub obligativitatea serviciului universal;2
+01;531;5310;Activităţi poştale desfăşurate sub obligativitatea serviciului universal 18 18;Activitati postale desfasurate sub obligativitatea serviciului universal 18 18;3
+01;532;;Alte activităţi poştale şi de curier;Alte activitati postale si de curier;2
+01;532;5320;Alte activităţi poştale şi de curier;Alte activitati postale si de curier;3
+01;533;;Servicii de intermediere pentru activităţi poştale şi de curier;Servicii de intermediere pentru activitati postale si de curier;2
+01;533;5330;Servicii de intermediere pentru activităţi poştale şi de curier SECŢIUNEA I - HOTELURI ŞI RESTAURANTE 55 Hoteluri şi alte facilităţi de cazare;Servicii de intermediere pentru activitati postale si de curier SECTIUNEA I - HOTELURI SI RESTAURANTE 55 Hoteluri si alte facilitati de cazare;3
+01;551;;Hoteluri şi alte facilităţi de cazare similare;Hoteluri si alte facilitati de cazare similare;2
+01;551;5510;Hoteluri şi alte facilităţi de cazare similare;Hoteluri si alte facilitati de cazare similare;3
+01;552;;Facilităţi de cazare pentru vacanţe şi perioade de scurtă durată;Facilitati de cazare pentru vacante si perioade de scurta durata;2
+01;552;5520;Facilităţi de cazare pentru vacanţe şi perioade de scurtă durată;Facilitati de cazare pentru vacante si perioade de scurta durata;3
+01;553;;Parcuri pentru rulote, campinguri şi tabere;Parcuri pentru rulote, campinguri si tabere;2
+01;553;5530;Parcuri pentru rulote, campinguri şi tabere;Parcuri pentru rulote, campinguri si tabere;3
+01;554;;Intermedieri pentru servicii de cazare;Intermedieri pentru servicii de cazare;2
+01;554;5540;Intermedieri pentru servicii de cazare;Intermedieri pentru servicii de cazare;3
+01;559;;Alte servicii de cazare;Alte servicii de cazare;2
+01;559;5590;Alte servicii de cazare 56 Restaurante şi alte activităţi de servicii de alimentaţie;Alte servicii de cazare 56 Restaurante si alte activitati de servicii de alimentatie;3
+01;561;;Restaurante;Restaurante;2
+01;561;5611;Restaurante;Restaurante;3
+01;561;5612;Activități ale unităților mobile de alimentație;Activitati ale unitatilor mobile de alimentatie;3
+01;562;;Activităţi de alimentaţie (catering) pentru evenimente şi alte servicii de alimentaţie;Activitati de alimentatie (catering) pentru evenimente si alte servicii de alimentatie;2
+01;562;5621;Activităţi de alimentaţie (catering) pentru evenimente;Activitati de alimentatie (catering) pentru evenimente;3
+01;562;5622;Alte servicii de alimentaţie n.c.a.;Alte servicii de alimentatie n.c.a.;3
+01;563;;Baruri şi alte activităţi de servire a băuturilor;Baruri si alte activitati de servire a bauturilor;2
+01;563;5630;Baruri şi alte activităţi de servire a băuturilor;Baruri si alte activitati de servire a bauturilor;3
+01;564;;Intermedieri pentru servicii de alimentație și de servire a băuturilor;Intermedieri pentru servicii de alimentatie si de servire a bauturilor;2
+01;564;5640;"Intermedieri pentru servicii de alimentație și de servire a băuturilor SECŢIUNEA J - ACTIVITĂȚI DE EDITARE; DIFUZAREA DE PROGRAME DE RADIO ȘI TELEVIZIUNE; ACTIVITĂȚI DE PRODUCȚIE ȘI DISTRIBUȚIE DE CONȚINUTURI 58 Activităţi de editare";"Intermedieri pentru servicii de alimentatie si de servire a bauturilor SECTIUNEA J - ACTIVITATI DE EDITARE; DIFUZAREA DE PROGRAME DE RADIO SI TELEVIZIUNE; ACTIVITATI DE PRODUCTIE SI DISTRIBUTIE DE CONTINUTURI 58 Activitati de editare";3
+01;581;;Activităţi de editare a cărţilor, ziarelor, revistelor şi alte activităţi de editare;Activitati de editare a cartilor, ziarelor, revistelor si alte activitati de editare;2
+01;581;5811;Activităţi de editare a cărţilor;Activitati de editare a cartilor;3
+01;581;5812;Activităţi de editare a ziarelor;Activitati de editare a ziarelor;3
+01;581;5813;Activităţi de editare a revistelor şi periodicelor;Activitati de editare a revistelor si periodicelor;3
+01;581;5819;Alte activităţi de editare 19 19;Alte activitati de editare 19 19;3
+01;582;;Activităţi de editare a produselor software;Activitati de editare a produselor software;2
+01;582;5821;Activităţi de editare a jocurilor de calculator;Activitati de editare a jocurilor de calculator;3
+01;582;5829;"Activităţi de editare a altor produse software 59 Activităţi de producţie cinematografică, video şi de programe de televiziune; înregistrări audio şi activităţi de editare muzicală";"Activitati de editare a altor produse software 59 Activitati de productie cinematografica, video si de programe de televiziune; inregistrari audio si activitati de editare muzicala";3
+01;591;;Activităţi de producţie cinematografică, video şi de programe de televiziune;Activitati de productie cinematografica, video si de programe de televiziune;2
+01;591;5911;Activităţi de producţie cinematografică, video şi de programe de televiziune;Activitati de productie cinematografica, video si de programe de televiziune;3
+01;591;5912;Activităţi post-producţie cinematografică, video şi de programe de televiziune;Activitati post-productie cinematografica, video si de programe de televiziune;3
+01;591;5913;Activităţi de distribuţie a filmelor cinematografice, video şi a programelor de televiziune;Activitati de distributie a filmelor cinematografice, video si a programelor de televiziune;3
+01;591;5914;Proiecţia de filme cinematografice;Proiectia de filme cinematografice;3
+01;592;;Activităţi de realizare a înregistrărilor audio şi activităţi de editare muzicală;Activitati de realizare a inregistrarilor audio si activitati de editare muzicala;2
+01;592;5920;Activităţi de realizare a înregistrărilor audio şi activităţi de editare muzicală 60 Activităţi de difuzare şi transmitere de programe, agenții de știri și alte activitoți de distribuție de conținut;Activitati de realizare a inregistrarilor audio si activitati de editare muzicala 60 Activitati de difuzare si transmitere de programe, agentii de stiri si alte activitoti de distributie de continut;3
+01;601;;Activităţi radiodifuziune, activități de distribuție de programe audio;Activitati radiodifuziune, activitati de distributie de programe audio;2
+01;601;6010;Activităţi radiodifuziune, activități de distribuție de programe audio;Activitati radiodifuziune, activitati de distributie de programe audio;3
+01;602;;Activităţi de difuzare a programelor de televiziune, activități de distribuție de programe video;Activitati de difuzare a programelor de televiziune, activitati de distributie de programe video;2
+01;602;6020;Activităţi de difuzare a programelor de televiziune, activități de distribuție de programe video;Activitati de difuzare a programelor de televiziune, activitati de distributie de programe video;3
+01;603;;Activităţi ale agenţiilor de ştiri și de distribuție a altor conținuturi;Activitati ale agentiilor de stiri si de distributie a altor continuturi;2
+01;603;6031;Activităţi ale agenţiilor de ştiri;Activitati ale agentiilor de stiri;3
+01;603;6039;"Activități de distribuție a altor conținuturi SECŢIUNEA K – TELECOMUNICAȚII; ACTIVITĂȚI DE PROGRAMARE ȘI DE CONSULTANȚĂ ÎN TEHNOLOGIA INFORMAȚIEI; ALTE SERVICII INFORMAȚIONALE 61 Telecomunicaţii";"Activitati de distributie a altor continuturi SECTIUNEA K – TELECOMUNICATII; ACTIVITATI DE PROGRAMARE SI DE CONSULTANTA IN TEHNOLOGIA INFORMATIEI; ALTE SERVICII INFORMATIONALE 61 Telecomunicatii";3
+01;611;;Activităţi de telecomunicaţii prin reţele cu cablu, prin rețele fără cablu și prin satelit;Activitati de telecomunicatii prin retele cu cablu, prin retele fara cablu si prin satelit;2
+01;611;6110;Activităţi de telecomunicaţii prin reţele cu cablu, prin rețele fără cablu și prin satelit;Activitati de telecomunicatii prin retele cu cablu, prin retele fara cablu si prin satelit;3
+01;612;;Activități de revânzare a serviciilor de telecomunicații și servicii de intermediere pentru telecomunicații;Activitati de revanzare a serviciilor de telecomunicatii si servicii de intermediere pentru telecomunicatii;2
+01;612;6120;Activități de revânzare a serviciilor de telecomunicații și servicii de intermediere pentru telecomunicații;Activitati de revanzare a serviciilor de telecomunicatii si servicii de intermediere pentru telecomunicatii;3
+01;619;;Alte activităţi de telecomunicaţii;Alte activitati de telecomunicatii;2
+01;619;6190;Alte activităţi de telecomunicaţii 62 Activităţi de programare și activități de consultanță în tehnologia informaţiei;Alte activitati de telecomunicatii 62 Activitati de programare si activitati de consultanta in tehnologia informatiei;3
+01;621;;Activităţi de programare;Activitati de programare;2
+01;621;6210;Activităţi de realizare a soft-ului la comandă (software orientat client) 20 20;Activitati de realizare a soft-ului la comanda (software orientat client) 20 20;3
+01;622;;Activităţi de consultanţă în tehnologia informaţiei și de management (gestiune şi exploatare) a mijloacelor de calcul;Activitati de consultanta in tehnologia informatiei si de management (gestiune si exploatare) a mijloacelor de calcul;2
+01;622;6220;Activităţi de consultanţă în tehnologia informaţiei și de management (gestiune şi exploatare) a mijloacelor de calcul;Activitati de consultanta in tehnologia informatiei si de management (gestiune si exploatare) a mijloacelor de calcul;3
+01;629;;Alte activităţi de servicii privind tehnologia informaţiei;Alte activitati de servicii privind tehnologia informatiei;2
+01;629;6290;Alte activităţi de servicii privind tehnologia informaţiei 63 Activităţi ale portalurilor web, prelucrarea datelor, administrarea paginilor web şi activităţi conexe;Alte activitati de servicii privind tehnologia informatiei 63 Activitati ale portalurilor web, prelucrarea datelor, administrarea paginilor web si activitati conexe;3
+01;631;;Prelucrarea datelor, administrarea paginilor web şi activităţi conexe;Prelucrarea datelor, administrarea paginilor web si activitati conexe;2
+01;631;6310;Prelucrarea datelor, administrarea paginilor web şi activităţi conexe;Prelucrarea datelor, administrarea paginilor web si activitati conexe;3
+01;639;;Activităţi ale portalurilor web și alte activităţi de servicii informaţionale;Activitati ale portalurilor web si alte activitati de servicii informationale;2
+01;639;6391;Activităţi ale portalurilor web;Activitati ale portalurilor web;3
+01;639;6392;Alte activităţi de servicii informaţionale n.c. a SECŢIUNEA L- INTERMEDIERI FINANCIARE ŞI ASIGURARI 64 Intermedieri financiare, cu excepţia activităţilor de asigurări şi ale fondurilor de pensii;Alte activitati de servicii informationale n.c. a SECTIUNEA L- INTERMEDIERI FINANCIARE SI ASIGURARI 64 Intermedieri financiare, cu exceptia activitatilor de asigurari si ale fondurilor de pensii;3
+01;641;;Intermediere monetară;Intermediere monetara;2
+01;641;6411;Activităţi ale băncii centrale (naţionale);Activitati ale bancii centrale (nationale);3
+01;641;6419;Alte activităţi de intermedieri monetare;Alte activitati de intermedieri monetare;3
+01;642;;Activităţi ale holding-urilor și canalelor de finanțare;Activitati ale holding-urilor si canalelor de finantare;2
+01;642;6421;Activităţi ale holding-urilor;Activitati ale holding-urilor;3
+01;642;6422;Activităţi ale canalelor de finanțare;Activitati ale canalelor de finantare;3
+01;643;;"Activități ale fondurilor de investiții; fonduri mutuale şi alte entităţi financiare similare";"Activitati ale fondurilor de investitii; fonduri mutuale si alte entitati financiare similare";2
+01;643;6431;Activități ale fondurilor de investiții de pe piața monetară și ale fondurilor de investiții din afara pieței monetare;Activitati ale fondurilor de investitii de pe piata monetara si ale fondurilor de investitii din afara pietei monetare;3
+01;643;6432;Fonduri mutuale şi alte entităţi financiare similare;Fonduri mutuale si alte entitati financiare similare;3
+01;649;;Alte activităţi de intermedieri financiare, exceptând activităţi de asigurări şi fonduri de pensii;Alte activitati de intermedieri financiare, exceptand activitati de asigurari si fonduri de pensii;2
+01;649;6491;Leasing financiar;Leasing financiar;3
+01;649;6492;Alte activităţi de creditare;Alte activitati de creditare;3
+01;649;6499;Alte intermedieri financiare n.c.a., exceptând activităţi de asigurări şi fonduri de pensii 65 Activităţi de asigurări, reasigurări şi ale fondurilor de pensii (cu excepţia celor din sistemul public de asigurări sociale);Alte intermedieri financiare n.c.a., exceptand activitati de asigurari si fonduri de pensii 65 Activitati de asigurari, reasigurari si ale fondurilor de pensii (cu exceptia celor din sistemul public de asigurari sociale);3
+01;651;;Activităţi de asigurări;Activitati de asigurari;2
+01;651;6511;Activităţi de asigurări de viaţă;Activitati de asigurari de viata;3
+01;651;6512;Alte activităţi de asigurări (exceptând asigurările de viaţă);Alte activitati de asigurari (exceptand asigurarile de viata);3
+01;652;;Activităţi de reasigurare;Activitati de reasigurare;2
+01;652;6520;Activităţi de reasigurare;Activitati de reasigurare;3
+01;653;;Activităţi ale fondurilor de pensii (cu excepţia celor din sistemul public de asigurări sociale) 21 21;Activitati ale fondurilor de pensii (cu exceptia celor din sistemul public de asigurari sociale) 21 21;2
+01;653;6530;Activităţi ale fondurilor de pensii (cu excepţia celor din sistemul public de asigurări sociale) 66 Activităţi auxiliare pentru intermedieri financiare, activităţi de asigurare şi fonduri de pensii;Activitati ale fondurilor de pensii (cu exceptia celor din sistemul public de asigurari sociale) 66 Activitati auxiliare pentru intermedieri financiare, activitati de asigurare si fonduri de pensii;3
+01;661;;Activităţi auxiliare intermedierilor financiare, cu excepţia activităţilor de asigurări şi fonduri de pensii;Activitati auxiliare intermedierilor financiare, cu exceptia activitatilor de asigurari si fonduri de pensii;2
+01;661;6611;Administrarea pieţelor financiare;Administrarea pietelor financiare;3
+01;661;6612;Activităţi de intermediere a tranzacţiilor financiare;Activitati de intermediere a tranzactiilor financiare;3
+01;661;6619;Activităţi auxiliare intermedierilor financiare, exceptând activităţi de asigurări şi fonduri de pensii;Activitati auxiliare intermedierilor financiare, exceptand activitati de asigurari si fonduri de pensii;3
+01;662;;Activităţi auxiliare de asigurări şi fonduri de pensii;Activitati auxiliare de asigurari si fonduri de pensii;2
+01;662;6621;Activităţi de evaluare a riscului de asigurare şi a pagubelor;Activitati de evaluare a riscului de asigurare si a pagubelor;3
+01;662;6622;Activităţi ale agenţilor şi broker-ilor de asigurări;Activitati ale agentilor si broker-ilor de asigurari;3
+01;662;6629;Alte activităţi auxiliare de asigurări şi fonduri de pensii;Alte activitati auxiliare de asigurari si fonduri de pensii;3
+01;663;;Activităţi de administrare a fondurilor;Activitati de administrare a fondurilor;2
+01;663;6630;Activităţi de administrare a fondurilor SECŢIUNEA M - TRANZACŢII IMOBILIARE 68 Tranzacţii imobiliare;Activitati de administrare a fondurilor SECTIUNEA M - TRANZACTII IMOBILIARE 68 Tranzactii imobiliare;3
+01;681;;Cumpărarea şi vânzarea de bunuri imobiliare proprii și dezvoltare imobiliară;Cumpararea si vanzarea de bunuri imobiliare proprii si dezvoltare imobiliara;2
+01;681;6811;Cumpărarea şi vânzarea de bunuri imobiliare proprii;Cumpararea si vanzarea de bunuri imobiliare proprii;3
+01;681;6812;Dezvoltare (promovare) imobiliară;Dezvoltare (promovare) imobiliara;3
+01;682;;Închirierea şi subînchirierea bunurilor imobiliare proprii sau închiriate;Inchirierea si subinchirierea bunurilor imobiliare proprii sau inchiriate;2
+01;682;6820;Închirierea şi subînchirierea bunurilor imobiliare proprii sau închiriate;Inchirierea si subinchirierea bunurilor imobiliare proprii sau inchiriate;3
+01;683;;Activităţi imobiliare pe bază de comision sau contract;Activitati imobiliare pe baza de comision sau contract;2
+01;683;6831;Servicii de intermediere a tranzacțiilor imobiliare;Servicii de intermediere a tranzactiilor imobiliare;3
+01;683;6832;Alte activități pentru tranzacții imobiliare pe bază de comision sau contract SECŢIUNEA N - ACTIVITĂŢI PROFESIONALE, ŞTIINŢIFICE ŞI TEHNICE 69 Activităţi juridice şi de contabilitate;Alte activitati pentru tranzactii imobiliare pe baza de comision sau contract SECTIUNEA N - ACTIVITATI PROFESIONALE, STIINTIFICE SI TEHNICE 69 Activitati juridice si de contabilitate;3
+01;691;;Activităţi juridice;Activitati juridice;2
+01;691;6910;Activităţi juridice;Activitati juridice;3
+01;692;;"Activităţi de contabilitate şi audit financiar; consultanţă în domeniul fiscal";"Activitati de contabilitate si audit financiar; consultanta in domeniul fiscal";2
+01;692;6920;"Activităţi de contabilitate şi audit financiar; consultanţă în domeniul fiscal 70 Activităţi ale direcţiilor(centralelor), birourilor administrative centralizate; activităţi de management şi de consultanţă în management";"Activitati de contabilitate si audit financiar; consultanta in domeniul fiscal 70 Activitati ale directiilor(centralelor), birourilor administrative centralizate; activitati de management si de consultanta in management";3
+01;701;;Activităţi ale direcţiilor(centralelor), birourilor administrative centralizate;Activitati ale directiilor(centralelor), birourilor administrative centralizate;2
+01;701;7010;Activităţi ale direcţiilor(centralelor), birourilor administrative centralizate 22 22;Activitati ale directiilor(centralelor), birourilor administrative centralizate 22 22;3
+01;702;;Activităţi de consultanţă în afaceri și management;Activitati de consultanta in afaceri si management;2
+01;702;7020;"Activităţi de consultanţă în afaceri și management 71 Activităţi de arhitectură şi inginerie; activităţi de testări şi analiză tehnică";"Activitati de consultanta in afaceri si management 71 Activitati de arhitectura si inginerie; activitati de testari si analiza tehnica";3
+01;711;;Activităţi de arhitectură, inginerie şi servicii de consultanţă tehnică legate de acestea;Activitati de arhitectura, inginerie si servicii de consultanta tehnica legate de acestea;2
+01;711;7111;Activităţi de arhitectură;Activitati de arhitectura;3
+01;711;7112;Activităţi de inginerie şi consultanţă tehnică legate de acestea;Activitati de inginerie si consultanta tehnica legate de acestea;3
+01;712;;Activităţi de testări şi analize tehnice;Activitati de testari si analize tehnice;2
+01;712;7120;Activităţi de testări şi analize tehnice 72 Cercetare-dezvoltare;Activitati de testari si analize tehnice 72 Cercetare-dezvoltare;3
+01;721;;Cercetare-dezvoltare în ştiinţe naturale şi inginerie;Cercetare-dezvoltare in stiinte naturale si inginerie;2
+01;721;7210;Cercetare-dezvoltare în ştiinţe naturale şi inginerie;Cercetare-dezvoltare in stiinte naturale si inginerie;3
+01;722;;Cercetare-dezvoltare în ştiinţe sociale şi umaniste;Cercetare-dezvoltare in stiinte sociale si umaniste;2
+01;722;7220;Cercetare-dezvoltare în ştiinţe sociale şi umaniste 73 Publicitate, activităţi de studiere a pieţei și relatii publice;Cercetare-dezvoltare in stiinte sociale si umaniste 73 Publicitate, activitati de studiere a pietei si relatii publice;3
+01;731;;Publicitate;Publicitate;2
+01;731;7311;Activităţi ale agenţiilor de publicitate;Activitati ale agentiilor de publicitate;3
+01;731;7312;Servicii de reprezentare media;Servicii de reprezentare media;3
+01;732;;Activităţi de studiere a pieţei şi de sondare a opiniei publice;Activitati de studiere a pietei si de sondare a opiniei publice;2
+01;732;7320;Activităţi de studiere a pieţei şi de sondare a opiniei publice;Activitati de studiere a pietei si de sondare a opiniei publice;3
+01;733;;Activităţi în domeniul relaţiilor publice şi al comunicării;Activitati in domeniul relatiilor publice si al comunicarii;2
+01;733;7330;Activităţi în domeniul relaţiilor publice şi al comunicării 74 Alte activităţi profesionale, stiinţifice şi tehnice;Activitati in domeniul relatiilor publice si al comunicarii 74 Alte activitati profesionale, stiintifice si tehnice;3
+01;741;;Activităţi de design specializat;Activitati de design specializat;2
+01;741;7411;Activități de design industrial și vestimentar;Activitati de design industrial si vestimentar;3
+01;741;7412;Design grafic și activități de comunicare vizuală;Design grafic si activitati de comunicare vizuala;3
+01;741;7413;Activități de design de interior;Activitati de design de interior;3
+01;741;7414;Alte activităţi de design specializat;Alte activitati de design specializat;3
+01;742;;Activităţi fotografice;Activitati fotografice;2
+01;742;7420;Activităţi fotografice;Activitati fotografice;3
+01;743;;Activităţi de traducere scrisă şi orală (interpreţi);Activitati de traducere scrisa si orala (interpreti);2
+01;743;7430;Activităţi de traducere scrisă şi orală (interpreţi);Activitati de traducere scrisa si orala (interpreti);3
+01;749;;Alte activităţi profesionale, stiinţifice şi tehnice n.c.a.;Alte activitati profesionale, stiintifice si tehnice n.c.a.;2
+01;749;7491;Activități de brokeraj în materie de brevete și servicii de marketing;Activitati de brokeraj in materie de brevete si servicii de marketing;3
+01;749;7499;Alte activităţi profesionale, stiinţifice şi tehnice n.c.a. 75 Activităţi veterinare;Alte activitati profesionale, stiintifice si tehnice n.c.a. 75 Activitati veterinare;3
+01;750;;Activităţi veterinare 23 23;Activitati veterinare 23 23;2
+01;750;7500;Activităţi veterinare SECŢIUNEA O- ACTIVITĂŢI DE SERVICII ADMINISTRATIVE ŞI ACTIVITĂŢI DE SERVICII SUPORT 77 Activităţi de închiriere şi leasing;Activitati veterinare SECTIUNEA O- ACTIVITATI DE SERVICII ADMINISTRATIVE SI ACTIVITATI DE SERVICII SUPORT 77 Activitati de inchiriere si leasing;3
+01;771;;Activităţi de închiriere şi leasing cu autovehicule;Activitati de inchiriere si leasing cu autovehicule;2
+01;771;7711;Activităţi de închiriere şi leasing cu autoturisme şi autovehicule rutiere uşoare;Activitati de inchiriere si leasing cu autoturisme si autovehicule rutiere usoare;3
+01;771;7712;Activităţi de închiriere şi leasing cu autovehicule rutiere grele;Activitati de inchiriere si leasing cu autovehicule rutiere grele;3
+01;772;;Activităţi de închiriere şi leasing cu bunuri personale şi gospodăreşti;Activitati de inchiriere si leasing cu bunuri personale si gospodaresti;2
+01;772;7721;Activităţi de închiriere şi leasing cu bunuri recreaţionale şi echipament sportiv;Activitati de inchiriere si leasing cu bunuri recreationale si echipament sportiv;3
+01;772;7722;Activităţi de închiriere şi leasing cu alte bunuri personale şi gospodăreşti n.c.a.;Activitati de inchiriere si leasing cu alte bunuri personale si gospodaresti n.c.a.;3
+01;773;;Activităţi de închiriere şi leasing cu alte maşini, echipamente şi bunuri tangibile;Activitati de inchiriere si leasing cu alte masini, echipamente si bunuri tangibile;2
+01;773;7731;Activităţi de închiriere şi leasing cu maşini şi echipamente agricole;Activitati de inchiriere si leasing cu masini si echipamente agricole;3
+01;773;7732;Activităţi de închiriere şi leasing cu maşini şi echipamente pentru construcţii;Activitati de inchiriere si leasing cu masini si echipamente pentru constructii;3
+01;773;7733;Activităţi de închiriere şi leasing cu maşini şi echipamente de birou (inclusiv calculatoare);Activitati de inchiriere si leasing cu masini si echipamente de birou (inclusiv calculatoare);3
+01;773;7734;Activităţi de închiriere şi leasing cu echipamente de transport pe apă;Activitati de inchiriere si leasing cu echipamente de transport pe apa;3
+01;773;7735;Activităţi de închiriere şi leasing cu echipamente de transport aerian;Activitati de inchiriere si leasing cu echipamente de transport aerian;3
+01;773;7739;Activităţi de închirierea şi leasing cu alte maşini, echipamente şi bunuri tangibile n.c.a.;Activitati de inchirierea si leasing cu alte masini, echipamente si bunuri tangibile n.c.a.;3
+01;774;;Leasing cu bunuri intangibile (cu excepția lucrărilor care fac obiectul drepturilor de autor);Leasing cu bunuri intangibile (cu exceptia lucrarilor care fac obiectul drepturilor de autor);2
+01;774;7740;Leasing cu bunuri intangibile (cu excepția lucrărilor care fac obiectul drepturilor de autor);Leasing cu bunuri intangibile (cu exceptia lucrarilor care fac obiectul drepturilor de autor);3
+01;775;;Servicii de intermediere pentru închirierea și leasingul de bunuri corporale și bunuri intangibile (exceptând financiare);Servicii de intermediere pentru inchirierea si leasingul de bunuri corporale si bunuri intangibile (exceptand financiare);2
+01;775;7751;Servicii de intermediere pentru închirierea și leasingul autoturismelor, autorulotelor și remorcilor;Servicii de intermediere pentru inchirierea si leasingul autoturismelor, autorulotelor si remorcilor;3
+01;775;7752;Servicii de intermediere pentru închirierea și leasingul altor bunuri corporale și bunuri intangibile (exceptând financiare) 78 Activităţi de servicii privind forţa de muncă;Servicii de intermediere pentru inchirierea si leasingul altor bunuri corporale si bunuri intangibile (exceptand financiare) 78 Activitati de servicii privind forta de munca;3
+01;781;;Activităţi ale agenţiilor de plasare a forţei de muncă;Activitati ale agentiilor de plasare a fortei de munca;2
+01;781;7810;Activităţi ale agenţiilor de plasare a forţei de muncă;Activitati ale agentiilor de plasare a fortei de munca;3
+01;782;;Activități ale agențiilor de plasare temporară a forței de muncă și furnizarea altor resurse umane;Activitati ale agentiilor de plasare temporara a fortei de munca si furnizarea altor resurse umane;2
+01;782;7820;"Activități ale agențiilor de plasare temporară a forței de muncă și furnizarea altor resurse umane 79 Activităţi ale agenţiilor turistice şi a tur-operatorilor; alte servicii de rezervare şi asistenţă turistică";"Activitati ale agentiilor de plasare temporara a fortei de munca si furnizarea altor resurse umane 79 Activitati ale agentiilor turistice si a tur-operatorilor; alte servicii de rezervare si asistenta turistica";3
+01;791;;Activităţi ale agenţiilor turistice şi a tur-operatorilor;Activitati ale agentiilor turistice si a tur-operatorilor;2
+01;791;7911;Activităţi ale agenţiilor turistice;Activitati ale agentiilor turistice;3
+01;791;7912;Activităţi ale tur-operatorilor;Activitati ale tur-operatorilor;3
+01;799;;Alte servicii de rezervare şi asistenţă turistică;Alte servicii de rezervare si asistenta turistica;2
+01;799;7990;Alte servicii de rezervare şi asistenţă turistică 24 24 80 Activităţi de investigaţii şi protecţie;Alte servicii de rezervare si asistenta turistica 24 24 80 Activitati de investigatii si protectie;3
+01;800;;Activități de investigații și protecție;Activitati de investigatii si protectie;2
+01;800;8001;Activități de investigații și servicii private de protecție;Activitati de investigatii si servicii private de protectie;3
+01;800;8009;Alte activități de protecție n.c.a. 81 Activităţi de peisagistică şi servicii pentru clădiri;Alte activitati de protectie n.c.a. 81 Activitati de peisagistica si servicii pentru cladiri;3
+01;811;;Activităţi de servicii suport combinate;Activitati de servicii suport combinate;2
+01;811;8110;Activităţi de servicii suport combinate;Activitati de servicii suport combinate;3
+01;812;;Activităţi de curăţenie;Activitati de curatenie;2
+01;812;8121;Activităţi generale de curăţenie a clădirilor;Activitati generale de curatenie a cladirilor;3
+01;812;8122;Activităţi specializate de curăţenie;Activitati specializate de curatenie;3
+01;812;8123;Alte activităţi de curăţenie;Alte activitati de curatenie;3
+01;813;;Activităţi de înteţinere peisagistică;Activitati de intetinere peisagistica;2
+01;813;8130;Activităţi de înteţinere peisagistică 82 Activităţi de secretariat, servicii suport şi alte activităţi de servicii prestate în principal întreprinderilor;Activitati de intetinere peisagistica 82 Activitati de secretariat, servicii suport si alte activitati de servicii prestate in principal intreprinderilor;3
+01;821;;Activităţi de secretariat şi servicii suport;Activitati de secretariat si servicii suport;2
+01;821;8210;Activităţi de secretariat şi servicii suport;Activitati de secretariat si servicii suport;3
+01;822;;Activităţi ale centrelor de intermediere telefonică (call center);Activitati ale centrelor de intermediere telefonica (call center);2
+01;822;8220;Activităţi ale centrelor de intermediere telefonică (call center);Activitati ale centrelor de intermediere telefonica (call center);3
+01;823;;Activităţi de organizare a expoziţiilor, târgurilor şi congreselor;Activitati de organizare a expozitiilor, targurilor si congreselor;2
+01;823;8230;Activităţi de organizare a expoziţiilor, târgurilor şi congreselor;Activitati de organizare a expozitiilor, targurilor si congreselor;3
+01;824;;Activități de intermediere pentru servicii suport pentru întreprinderi n.c.a.;Activitati de intermediere pentru servicii suport pentru intreprinderi n.c.a.;2
+01;824;8240;Activități de intermediere pentru servicii suport pentru întreprinderi n.c.a.;Activitati de intermediere pentru servicii suport pentru intreprinderi n.c.a.;3
+01;829;;Activităţi de servicii suport pentru întreprinderi n.c.a.;Activitati de servicii suport pentru intreprinderi n.c.a.;2
+01;829;8291;Activităţi ale agenţiilor de colectare şi a birourilor (oficiilor) de raportare a creditului;Activitati ale agentiilor de colectare si a birourilor (oficiilor) de raportare a creditului;3
+01;829;8292;Activităţi de ambalare;Activitati de ambalare;3
+01;829;8299;"Alte activităţi de servicii suport pentru întreprinderi n.c.a. SECŢIUNEA P -ADMINISTRAŢIE PUBLICĂ ŞI APĂRARE; ASIGURĂRI SOCIALE DIN SISTEMUL PUBLIC 84 Administraţie publică şi apărare; asigurări sociale din sistemul public";"Alte activitati de servicii suport pentru intreprinderi n.c.a. SECTIUNEA P -ADMINISTRATIE PUBLICA SI APARARE; ASIGURARI SOCIALE DIN SISTEMUL PUBLIC 84 Administratie publica si aparare; asigurari sociale din sistemul public";3
+01;841;;Administraţie publică generală, economică şi socială;Administratie publica generala, economica si sociala;2
+01;841;8411;Activități de administraţie publică generală;Activitati de administratie publica generala;3
+01;841;8412;Reglementarea activităţilor organismelor care prestează servicii în domeniul îngrijirii sănătăţii, învăţământului, culturii şi al altor activităţi sociale, exceptând protecţia socială;Reglementarea activitatilor organismelor care presteaza servicii in domeniul ingrijirii sanatatii, invatamantului, culturii si al altor activitati sociale, exceptand protectia sociala;3
+01;841;8413;Reglementarea şi eficientizarea activităţilor economice;Reglementarea si eficientizarea activitatilor economice;3
+01;842;;Activităţi de servicii pentru societate;Activitati de servicii pentru societate;2
+01;842;8421;Activităţi de afaceri externe 25 25;Activitati de afaceri externe 25 25;3
+01;842;8422;Activităţi de apărare naţională;Activitati de aparare nationala;3
+01;842;8423;Activităţi de justiţie;Activitati de justitie;3
+01;842;8424;Activităţi de ordine publică şi de protecţie civilă;Activitati de ordine publica si de protectie civila;3
+01;842;8425;Activităţi de luptă împotriva incendiilor şi de prevenire a acestora;Activitati de lupta impotriva incendiilor si de prevenire a acestora;3
+01;843;;Activităţi de protecţie socială obligatorie;Activitati de protectie sociala obligatorie;2
+01;843;8430;Activităţi de protecţie socială obligatorie SECŢIUNEA Q - ÎNVĂŢĂMÂNT 85 Învăţământ;Activitati de protectie sociala obligatorie SECTIUNEA Q - INVATAMANT 85 Invatamant;3
+01;851;;Învăţământ preşcolar;Invatamant prescolar;2
+01;851;8510;Învăţământ preşcolar;Invatamant prescolar;3
+01;852;;Învăţământ primar;Invatamant primar;2
+01;852;8520;Învăţământ primar;Invatamant primar;3
+01;853;;Învăţământ secundar;Invatamant secundar;2
+01;853;8531;Învăţământ secundar general;Invatamant secundar general;3
+01;853;8532;Învăţământ secundar, tehnic sau profesional;Invatamant secundar, tehnic sau profesional;3
+01;853;8533;Învăţământ post-secundar, non-universitar;Invatamant post-secundar, non-universitar;3
+01;854;;Învăţământ superior;Invatamant superior;2
+01;854;8540;Învăţământ superior universitar;Invatamant superior universitar;3
+01;855;;Alte forme de învăţământ;Alte forme de invatamant;2
+01;855;8551;Învăţământ în domeniul sportiv şi recreaţional;Invatamant in domeniul sportiv si recreational;3
+01;855;8552;Învăţământ în domeniul cultural (muzică, teatru, dans, arte plastice, etc.);Invatamant in domeniul cultural (muzica, teatru, dans, arte plastice, etc.);3
+01;855;8553;Şcoli de conducere (pilotaj);Scoli de conducere (pilotaj);3
+01;855;8559;Alte forme de învăţământ n.c.a.;Alte forme de invatamant n.c.a.;3
+01;856;;Activităţi de servicii suport pentru învăţământ;Activitati de servicii suport pentru invatamant;2
+01;856;8561;Activități de intermediere pentru cursuri și tutori (îndrumători, profesori);Activitati de intermediere pentru cursuri si tutori (indrumatori, profesori);3
+01;856;8569;Activităţi de servicii suport pentru învăţământ SECŢIUNEA R - SĂNĂTATE ŞI ASISTENŢĂ SOCIALĂ 86 Activităţi referitoare la sănătatea umană;Activitati de servicii suport pentru invatamant SECTIUNEA R - SANATATE SI ASISTENTA SOCIALA 86 Activitati referitoare la sanatatea umana;3
+01;861;;Activităţi de asistenţă spitalicească;Activitati de asistenta spitaliceasca;2
+01;861;8610;Activităţi de asistenţă spitalicească;Activitati de asistenta spitaliceasca;3
+01;862;;Activităţi de asistenţă medicală ambulatorie şi stomatologică;Activitati de asistenta medicala ambulatorie si stomatologica;2
+01;862;8621;Activităţi de asistenţă medicală generală;Activitati de asistenta medicala generala;3
+01;862;8622;Activităţi de asistenţă medicală specializată;Activitati de asistenta medicala specializata;3
+01;862;8623;Activităţi de asistenţă stomatologică;Activitati de asistenta stomatologica;3
+01;869;;Alte activităţi referitoare la sănătatea umană;Alte activitati referitoare la sanatatea umana;2
+01;869;8691;Servicii de diagnostic imagistic și activități ale laboratoarelor medicale;Servicii de diagnostic imagistic si activitati ale laboratoarelor medicale;3
+01;869;8692;Transportul pacienților cu ambulanța;Transportul pacientilor cu ambulanta;3
+01;869;8693;Activități ale psihologilor și psihoterapeuților, cu excepția medicilor;Activitati ale psihologilor si psihoterapeutilor, cu exceptia medicilor;3
+01;869;8694;Activități ale infirmierelor și moașelor 26 26;Activitati ale infirmierelor si moaselor 26 26;3
+01;869;8695;Activități de fizioterapie;Activitati de fizioterapie;3
+01;869;8696;Activități de medicină tradițională, complementară și alternativă;Activitati de medicina traditionala, complementara si alternativa;3
+01;869;8697;Servicii de intermediere pentru servicii medicale, stomatologice și pentru alte servicii referitoare la sănătatea umană;Servicii de intermediere pentru servicii medicale, stomatologice si pentru alte servicii referitoare la sanatatea umana;3
+01;869;8699;Alte activităţi referitoare la sănătatea umană n.c.a. 87 Servicii combinate de îngrijire medicală şi asistenţă socială, cu cazare;Alte activitati referitoare la sanatatea umana n.c.a. 87 Servicii combinate de ingrijire medicala si asistenta sociala, cu cazare;3
+01;871;;Activităţi ale centrelor de îngrijire medicală;Activitati ale centrelor de ingrijire medicala;2
+01;871;8710;Activităţi ale centrelor de îngrijire medicală;Activitati ale centrelor de ingrijire medicala;3
+01;872;;Activităţi ale centrelor de recuperare pshică şi de dezintoxicare, exclusiv spitale;Activitati ale centrelor de recuperare pshica si de dezintoxicare, exclusiv spitale;2
+01;872;8720;Activităţi ale centrelor de recuperare pshică şi de dezintoxicare, exclusiv spitale;Activitati ale centrelor de recuperare pshica si de dezintoxicare, exclusiv spitale;3
+01;873;;Activităţi ale căminelor de bătrâni şi ale căminelor pentru persoane cu dizabilități aflate în incapacitate de a se îngriji singure;Activitati ale caminelor de batrani si ale caminelor pentru persoane cu dizabilitati aflate in incapacitate de a se ingriji singure;2
+01;873;8730;Activităţi ale căminelor de bătrâni şi ale căminelor pentru persoane cu dizabilități aflate în incapacitate de a se îngriji singure;Activitati ale caminelor de batrani si ale caminelor pentru persoane cu dizabilitati aflate in incapacitate de a se ingriji singure;3
+01;879;;Alte activităţi de asistenţă socială, cu cazare;Alte activitati de asistenta sociala, cu cazare;2
+01;879;8791;Activități de intermediere pentru servicii de îngrijire la domiciliu;Activitati de intermediere pentru servicii de ingrijire la domiciliu;3
+01;879;8799;Alte activităţi de asistenţă socială, cu cazare n.c.a. 88 Activităţi de asistenţă socială, fără cazare;Alte activitati de asistenta sociala, cu cazare n.c.a. 88 Activitati de asistenta sociala, fara cazare;3
+01;881;;Activităţi de asistenţă socială, fără cazare, pentru bătrâni şi pentru persoane cu dizabilități aflate în incapacitate de a se îngriji singure;Activitati de asistenta sociala, fara cazare, pentru batrani si pentru persoane cu dizabilitati aflate in incapacitate de a se ingriji singure;2
+01;881;8810;Activităţi de asistenţă socială, fără cazare, pentru bătrâni şi pentru persoane cu dizabilități aflate în incapacitate de a se îngriji singure;Activitati de asistenta sociala, fara cazare, pentru batrani si pentru persoane cu dizabilitati aflate in incapacitate de a se ingriji singure;3
+01;889;;Alte activităţi de asistenţă socială, fără cazare;Alte activitati de asistenta sociala, fara cazare;2
+01;889;8891;Activităţi de îngrijire zilnică pentru copii;Activitati de ingrijire zilnica pentru copii;3
+01;889;8899;Alte activităţi de asistenţă socială, fără cazare, n.c.a. SECŢIUNEA S - ACTIVITĂŢI DE SPECTACOLE, CULTURALE, SPORTIVE ŞI RECREATIVE 90 Activităţi de creaţie şi interpretare artistică;Alte activitati de asistenta sociala, fara cazare, n.c.a. SECTIUNEA S - ACTIVITATI DE SPECTACOLE, CULTURALE, SPORTIVE SI RECREATIVE 90 Activitati de creatie si interpretare artistica;3
+01;901;;Activități de creație artistică;Activitati de creatie artistica;2
+01;901;9011;Activități de creație literară și compoziție muzicală;Activitati de creatie literara si compozitie muzicala;3
+01;901;9012;Activități de creație în domeniul artelor vizuale;Activitati de creatie in domeniul artelor vizuale;3
+01;901;9013;Alte activități de creație artistică;Alte activitati de creatie artistica;3
+01;902;;Activităţi de interpretare artistică (spectacole);Activitati de interpretare artistica (spectacole);2
+01;902;9020;Activităţi de interpretare artistică (spectacole);Activitati de interpretare artistica (spectacole);3
+01;903;;Activităţi suport pentru creație și interpretare artistică;Activitati suport pentru creatie si interpretare artistica;2
+01;903;9031;Activităţi de gestionare a sălilor și amplasamentelor de spectacole;Activitati de gestionare a salilor si amplasamentelor de spectacole;3
+01;903;9039;Alte activităţi suport pentru creație și interpretare artistică 91 Activităţi ale bibliotecilor, arhivelor, muzeelor şi alte activităţi culturale;Alte activitati suport pentru creatie si interpretare artistica 91 Activitati ale bibliotecilor, arhivelor, muzeelor si alte activitati culturale;3
+01;911;;Activităţi ale bibliotecilor și arhivelor 27 27;Activitati ale bibliotecilor si arhivelor 27 27;2
+01;911;9111;Activităţi ale bibliotecilor;Activitati ale bibliotecilor;3
+01;911;9112;Activităţi ale arhivelor;Activitati ale arhivelor;3
+01;912;;Activități ale muzeelor, colecțiilor, siturilor și monumentelor istorice;Activitati ale muzeelor, colectiilor, siturilor si monumentelor istorice;2
+01;912;9121;Activități ale muzeelor și colecțiilor;Activitati ale muzeelor si colectiilor;3
+01;912;9122;Activități ale siturilor și monumentelor istorice;Activitati ale siturilor si monumentelor istorice;3
+01;913;;Activități de conservare, restaurare și alte activități suport pentru patrimoniul cultural;Activitati de conservare, restaurare si alte activitati suport pentru patrimoniul cultural;2
+01;913;9130;Activități de conservare, restaurare și alte activități suport pentru patrimoniul cultural;Activitati de conservare, restaurare si alte activitati suport pentru patrimoniul cultural;3
+01;914;;Activităţi ale grădinilor botanice, zoologice şi ale rezervaţiilor naturale;Activitati ale gradinilor botanice, zoologice si ale rezervatiilor naturale;2
+01;914;9141;Activităţi ale grădinilor botanice și zoologice;Activitati ale gradinilor botanice si zoologice;3
+01;914;9142;Activităţi ale rezervaţiilor naturale 92 Activităţi de jocuri de noroc şi pariuri;Activitati ale rezervatiilor naturale 92 Activitati de jocuri de noroc si pariuri;3
+01;920;;Activităţi de jocuri de noroc şi pariuri;Activitati de jocuri de noroc si pariuri;2
+01;920;9200;Activităţi de jocuri de noroc şi pariuri 93 Activităţi spotive, recreative şi distractive;Activitati de jocuri de noroc si pariuri 93 Activitati spotive, recreative si distractive;3
+01;931;;Activităţi sportive;Activitati sportive;2
+01;931;9311;Activităţi ale bazelor sportive;Activitati ale bazelor sportive;3
+01;931;9312;Activităţi ale cluburilor sportive;Activitati ale cluburilor sportive;3
+01;931;9313;Activităţi ale centrelor de fitness;Activitati ale centrelor de fitness;3
+01;931;9319;Alte activităţi sportive n.c.a;Alte activitati sportive n.c.a;3
+01;932;;Alte activităţi recreative şi distractive;Alte activitati recreative si distractive;2
+01;932;9321;Activități ale parcurilor tematice și de distracţii;Activitati ale parcurilor tematice si de distractii;3
+01;932;9329;Alte activităţi recreative şi distractive n.c.a. SECŢIUNEA T - ALTE ACTIVITĂŢI DE SERVICII 94 Activităţi asociative diverse;Alte activitati recreative si distractive n.c.a. SECTIUNEA T - ALTE ACTIVITATI DE SERVICII 94 Activitati asociative diverse;3
+01;941;;Activităţi ale organizaţiilor economice, patronale şi profesionale;Activitati ale organizatiilor economice, patronale si profesionale;2
+01;941;9411;Activităţi ale organizaţiilor economice şi patronale;Activitati ale organizatiilor economice si patronale;3
+01;941;9412;Activităţi ale organizaţiilor profesionale;Activitati ale organizatiilor profesionale;3
+01;942;;Activităţi ale sindicatelor salariaţilor;Activitati ale sindicatelor salariatilor;2
+01;942;9420;Activităţi ale sindicatelor salariaţilor;Activitati ale sindicatelor salariatilor;3
+01;949;;Alte activităţi asociative;Alte activitati asociative;2
+01;949;9491;Activităţi ale organizaţiilor religioase;Activitati ale organizatiilor religioase;3
+01;949;9492;Activităţi ale organizaţiilor politice;Activitati ale organizatiilor politice;3
+01;949;9499;Activităţi ale altor organizaţii n.c.a. 95 Repararea și întreținerea calculatoarelor, a articolelor personale și de uz gospodăresc, a autovehiculelor și motocicletelor;Activitati ale altor organizatii n.c.a. 95 Repararea si intretinerea calculatoarelor, a articolelor personale si de uz gospodaresc, a autovehiculelor si motocicletelor;3
+01;951;;Repararea și întreținerea calculatoarelor şi a echipamentelor de comunicaţii;Repararea si intretinerea calculatoarelor si a echipamentelor de comunicatii;2
+01;951;9510;Repararea și întreținerea calculatoarelor şi a echipamentelor de comunicaţii 28 28;Repararea si intretinerea calculatoarelor si a echipamentelor de comunicatii 28 28;3
+01;952;;Repararea și întreținerea articolelor personale şi de uz gospodăresc;Repararea si intretinerea articolelor personale si de uz gospodaresc;2
+01;952;9521;Repararea și întreținerea aparatelor electronice de uz casnic;Repararea si intretinerea aparatelor electronice de uz casnic;3
+01;952;9522;Repararea și întreținerea dispozitivelor de uz gospodăresc şi a echipamentelor pentru casă şi grădină;Repararea si intretinerea dispozitivelor de uz gospodaresc si a echipamentelor pentru casa si gradina;3
+01;952;9523;Repararea și întreținerea încălţămintei şi a articolelor din piele;Repararea si intretinerea incaltamintei si a articolelor din piele;3
+01;952;9524;Repararea și întreținerea mobilei şi a furniturilor casnice;Repararea si intretinerea mobilei si a furniturilor casnice;3
+01;952;9525;Repararea și întreținerea ceasurilor şi a bijuteriilor;Repararea si intretinerea ceasurilor si a bijuteriilor;3
+01;952;9529;Repararea și întreținerea articolelor de uz personal şi gospodăresc n.c.a.;Repararea si intretinerea articolelor de uz personal si gospodaresc n.c.a.;3
+01;953;;Repararea și întreținerea autovehiculelor și motocicletelor;Repararea si intretinerea autovehiculelor si motocicletelor;2
+01;953;9531;Repararea și întreținerea autovehiculelor;Repararea si intretinerea autovehiculelor;3
+01;953;9532;Repararea și întreținerea motocicletelor;Repararea si intretinerea motocicletelor;3
+01;954;;Servicii de intermediere pentru repararea și întreținerea calculatoarelor, a articolelor personale și de uz gospodăresc, a autovehiculelor și motocicletelor;Servicii de intermediere pentru repararea si intretinerea calculatoarelor, a articolelor personale si de uz gospodaresc, a autovehiculelor si motocicletelor;2
+01;954;9540;Servicii de intermediere pentru repararea și întreținerea calculatoarelor, a articolelor personale și de uz gospodăresc, a autovehiculelor și motocicletelor 96 Alte activităţi de servicii;Servicii de intermediere pentru repararea si intretinerea calculatoarelor, a articolelor personale si de uz gospodaresc, a autovehiculelor si motocicletelor 96 Alte activitati de servicii;3
+01;961;;Spălarea şi curăţarea articolelor textile şi a produselor din blană;Spalarea si curatarea articolelor textile si a produselor din blana;2
+01;961;9610;Spălarea şi curăţarea articolelor textile şi a produselor din blană;Spalarea si curatarea articolelor textile si a produselor din blana;3
+01;962;;Coafură, activităţi de înfrumuseţare, tratamente spa și alte activități similare;Coafura, activitati de infrumusetare, tratamente spa si alte activitati similare;2
+01;962;9621;Activități de coafură şi frizerie;Activitati de coafura si frizerie;3
+01;962;9622;Activități de tratament și înfrumusețare;Activitati de tratament si infrumusetare;3
+01;962;9623;Activități ale centrelor spa, saunelor și bailor de abur;Activitati ale centrelor spa, saunelor si bailor de abur;3
+01;963;;Activităţi de pompe funebre şi similare;Activitati de pompe funebre si similare;2
+01;963;9630;Activităţi de pompe funebre şi similare;Activitati de pompe funebre si similare;3
+01;964;;Activități de intermediere pentru servicii personale;Activitati de intermediere pentru servicii personale;2
+01;964;9640;Activități de intermediere pentru servicii personale;Activitati de intermediere pentru servicii personale;3
+01;969;;Alte servicii personale;Alte servicii personale;2
+01;969;9691;Activități de servicii personale la domiciliu;Activitati de servicii personale la domiciliu;3
+01;969;9699;"Alte servicii personale n.c.a. SECŢIUNEA U – ACTIVITĂŢI ALE GOSPODĂRIILOR PRIVATE ÎN CALITATE DE ANGAJATOR DE PERSONAL CASNIC; ACTIVITĂŢI ALE GOSPODĂRIILOR PRIVATE DE PRODUCERE DE BUNURI ŞI SERVICII DESTINATE CONSUMULUI PROPRIU 97 Activităţi ale gospodăriilor private în calitate de angajator de personal casnic";"Alte servicii personale n.c.a. SECTIUNEA U – ACTIVITATI ALE GOSPODARIILOR PRIVATE IN CALITATE DE ANGAJATOR DE PERSONAL CASNIC; ACTIVITATI ALE GOSPODARIILOR PRIVATE DE PRODUCERE DE BUNURI SI SERVICII DESTINATE CONSUMULUI PROPRIU 97 Activitati ale gospodariilor private in calitate de angajator de personal casnic";3
+01;970;;Activităţi ale gospodăriilor private în calitate de angajator de personal casnic;Activitati ale gospodariilor private in calitate de angajator de personal casnic;2
+01;970;9700;Activităţi ale gospodăriilor private în calitate de angajator de personal casnic 98 Activităţi ale gospodăriilor private de producere de bunuri şi servicii destinate consumului propriu Activităţi ale gospodăriilor private de producere de bunuri destinate consumului;Activitati ale gospodariilor private in calitate de angajator de personal casnic 98 Activitati ale gospodariilor private de producere de bunuri si servicii destinate consumului propriu Activitati ale gospodariilor private de producere de bunuri destinate consumului;3
+01;981;;propriu 29 29;propriu 29 29;2
+01;981;9810;Activităţi ale gospodăriilor private de producere de bunuri destinate consumului propriu;Activitati ale gospodariilor private de producere de bunuri destinate consumului propriu;3
+01;982;;Activităţi ale gospodăriilor private de producere de servicii pentru scopuri proprii;Activitati ale gospodariilor private de producere de servicii pentru scopuri proprii;2
+01;982;9820;Activităţi ale gospodăriilor private de producere de servicii pentru scopuri proprii SECŢIUNEA V - ACTIVITĂŢI ALE ORGANIZAŢIILOR ŞI ORGANISMELOR EXTRATERITORIALE 99 Activităţi ale organizaţiilor şi organismelor extrateritoriale;Activitati ale gospodariilor private de producere de servicii pentru scopuri proprii SECTIUNEA V - ACTIVITATI ALE ORGANIZATIILOR SI ORGANISMELOR EXTRATERITORIALE 99 Activitati ale organizatiilor si organismelor extrateritoriale;3
+01;990;;Activităţi ale organizaţiilor şi organismelor extrateritoriale;Activitati ale organizatiilor si organismelor extrateritoriale;2
+01;990;9900;Activităţi ale organizaţiilor şi organismelor extrateritoriale 30 30;Activitati ale organizatiilor si organismelor extrateritoriale 30 30;3

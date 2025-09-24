@@ -1,0 +1,934 @@
+﻿diviziune,grupa,clasa,denumire,nivel
+1,,,"Agricultura, vanatoare si servicii anexe",1
+1,11,,Cultivarea plantelor nepermanente,2
+1,11,111,"Cultivarea cerealelor (excluzand orezul), plantelor leguminoase si a plantelor oleaginoase",3
+1,11,112,Cultivarea orezului,3
+1,11,113,"Cultivarea legumelor si a pepenilor, a radacinoaselor si tuberculiferelor",3
+1,11,114,Cultivarea trestiei de zahar,3
+1,11,115,Cultivarea tutunului,3
+1,11,116,Cultivarea plantelor pentru fibre textile,3
+1,11,119,Cultivarea altor plante din culturi nepermanente,3
+1,12,,Cultivarea plantelor din culturi permanente,2
+1,12,121,Cultivarea strugurilor,3
+1,12,122,Cultivarea fructelor tropicale si subtropicale,3
+1,12,123,Cultivarea fructelor citrice,3
+1,12,124,Cultivarea fructelor semintoase si samburoase,3
+1,12,125,"Cultivarea altor pomi fructiferi, a arbustilor fructiferi, capsunilor si a nuciferelor",3
+1,12,126,Cultivarea fructelor oleaginoase,3
+1,12,127,Cultivarea plantelor pentru prepararea bauturilor,3
+1,12,128,"Cultivarea condimentelor, plantelor aromatice, medicinale si a plantelor de uz farmaceutic",3
+1,12,129,Cultivarea altor plante permanente,3
+1,13,,Cultivarea plantelor pentru inmultire,2
+1,13,130,Cultivarea plantelor pentru inmultire,3
+1,14,,Cresterea animalelor,2
+1,14,141,Cresterea bovinelor de lapte,3
+1,14,142,Cresterea altor bovine,3
+1,14,143,Cresterea cailor si a altor cabaline,3
+1,14,144,Cresterea camilelor si a camelidelor,3
+1,14,145,Cresterea ovinelor si caprinelor,3
+1,14,146,Cresterea porcinelor,3
+1,14,147,Cresterea pasarilor,3
+1,14,148,Cresterea altor animale,3
+1,15,,Activitati in ferme mixte (cultura vegetala combinata cu cresterea animalelor),2
+1,15,150,Activitati in ferme mixte (cultura vegetala combinata cu cresterea animalelor),3
+1,16,,Activitati auxiliare agriculturii si activitati dupa recoltare,2
+1,16,161,Activitati auxiliare pentru productia vegetala,3
+1,16,162,Activitati auxiliare pentru cresterea animalelor,3
+1,16,163,Activitati dupa recoltare si pregatirea semintelor 1 1,3
+1,17,,"Vanatoare, capturarea cu capcane a vanatului si activitati de servicii anexe vanatorii",2
+1,17,170,"Vanatoare, capturarea cu capcane a vanatului si activitati de servicii anexe vanatorii 02 Silvicultura si exploatare forestiera",3
+1,21,,Silvicultura si alte activitati forestiere,2
+1,21,210,Silvicultura si alte activitati forestiere,3
+1,22,,Exploatarea forestiera,2
+1,22,220,Exploatarea forestiera,3
+1,23,,Colectarea produselor forestiere nelemnoase din flora spontana,2
+1,23,230,Colectarea produselor forestiere nelemnoase din flora spontana,3
+1,24,,Activitati de servicii anexe silviculturii,2
+1,24,240,Activitati de servicii anexe silviculturii 03 Pescuitul si acvacultura,3
+1,31,,Pescuitul,2
+1,31,311,Pescuitul maritim,3
+1,31,312,Pescuitul in ape dulci,3
+1,32,,Acvacultura,2
+1,32,321,Acvacultura maritima,3
+1,32,322,Acvacultura in ape dulci,3
+1,33,,Activitati anexe pescuitului si acvaculturii,2
+1,33,330,Activitati anexe pescuitului si acvaculturii SECTIUNEA B - INDUSTRIA EXTRACTIVA 05 Extractia carbunelui superior si inferior,3
+1,51,,Extractia carbunelui superior (PCS=>23865 kJ/kg),2
+1,51,510,Extractia carbunelui superior (PCS=>23865 kJ/kg),3
+1,52,,Extractia carbunelui inferior (PCS<23865 kJ/kg),2
+1,52,520,Extractia carbunelui inferior (PCS<23865 kJ/kg) 06 Extractia petrolului brut si a gazelor naturale,3
+1,61,,Extractia petrolului brut,2
+1,61,610,Extractia petrolului brut,3
+1,62,,Extractia gazelor naturale,2
+1,62,620,Extractia gazelor naturale 07 Extractia minereurilor metalifere,3
+1,71,,Extractia minereurilor feroase,2
+1,71,710,Extractia minereurilor feroase,3
+1,72,,Extractia minereurilor metalifere neferoase 2 2,2
+1,72,721,Extractia minereurilor de uraniu si toriu,3
+1,72,729,Extractia altor minereuri metalifere neferoase 08 Alte activitati extractive,3
+1,81,,"Extractia pietrei, nisipului si argilei",2
+1,81,811,"Extractia pietrei ornamentale si a pietrei pentru constructii, extractia pietrei calcaroase, ghipsului, cretei si a ardeziei",3
+1,81,812,Extractia pietrisului si nisipului; extractia argilei si caolinului,3
+1,89,,Alte activitati extractive n.c.a.,2
+1,89,891,Extractia mineralelor pentru industria chimica si a ingrasamintelor naturale,3
+1,89,892,Extractia turbei,3
+1,89,893,Extractia sarii,3
+1,89,899,Alte activitati extractive n.c.a. 09 Activitati de servicii anexe extractiei,3
+1,91,,Activitati de servicii anexe extractiei petrolului brut si gazelor naturale,2
+1,91,910,Activitati de servicii anexe extractiei petrolului brut si gazelor naturale,3
+1,99,,Activitati de servicii anexe pentru extractia mineralelor,2
+1,99,990,"Activitati de servicii anexe pentru extractia mineralelor SECTIUNEA C - INDUSTRIA PRELUCRATOARE 10 Industria alimentara 101 Productia, prelucrarea si conservarea carnii si a produselor din carne",3
+1,99,1011,Prelucrarea si conservarea carnii,3
+1,99,1012,Prelucrarea si conservarea carnii de pasare,3
+1,99,1013,Fabricarea produselor din carne (inclusiv din carne de pasare),3
+1,102,,"Prelucrarea si conservarea pestelui, crustaceelor si molustelor",2
+1,102,1020,"Prelucrarea si conservarea pestelui, crustaceelor si molustelor",3
+1,103,,Prelucrarea si conservarea fructelor si legumelor,2
+1,103,1031,Prelucrarea si conservarea cartofilor,3
+1,103,1032,Fabricarea sucurilor de fructe si legume,3
+1,103,1039,Prelucrarea si conservarea fructelor si legumelor n.c.a.,3
+1,104,,Fabricarea uleiurilor si a grasimilor vegetale si animale,2
+1,104,1041,Fabricarea uleiurilor si grasimilor,3
+1,104,1042,Fabricarea margarinei si a altor produse comestibile similare,3
+1,105,,Fabricarea produselor lactate,2
+1,105,1051,Fabricarea produselor lactate si a branzeturilor,3
+1,105,1052,Fabricarea inghetatei 3 3,3
+1,106,,"Fabricarea produselor de morarit, a amidonului si produselor din amidon",2
+1,106,1061,Fabricarea produselor de morarit,3
+1,106,1062,Fabricarea amidonului si a produselor din amidon,3
+1,107,,Fabricarea produselor de brutarie si a produselor fainoase,2
+1,107,1071,Fabricarea painii; fabricarea prajiturilor si a produselor proaspete de patiserie,3
+1,107,1072,Fabricarea biscuitilor si piscoturilor; fabricarea prajiturilor si a produselor conservate de patiserie,3
+1,107,1073,"Fabricarea macaroanelor, taiteilor, cus-cus-ului si a altor produse fainoase similar",3
+1,108,,Fabricarea altor produse alimentare,2
+1,108,1081,Fabricarea zaharului,3
+1,108,1082,"Fabricarea produselor din cacao, a ciocolatei si a produselor zaharoase",3
+1,108,1083,Prelucrarea ceaiului si cafelei,3
+1,108,1084,Fabricarea condimentelor si ingredientelor,3
+1,108,1085,Fabricarea de mancarururi preparate,3
+1,108,1086,Fabricarea preparatelor alimentare omogenizate si alimentelor dietetice,3
+1,108,1089,Fabricarea altor produse alimentare n.c.a.,3
+1,109,,Fabricarea preparatelor pentru hrana animalelor,2
+1,109,1091,Fabricarea preparatelor pentru hrana animalelor de ferma,3
+1,109,1092,Fabricarea preparatelor pentru hrana animalelor de companie 11 Fabricarea bauturilor,3
+1,110,,Fabricarea bauturilor,2
+1,110,1101,"Distilarea, rafinarea si mixarea bauturilor alcoolice",3
+1,110,1102,Fabricarea vinurilor din struguri,3
+1,110,1103,Fabricarea cidrului si a altor vinuri din fructe,3
+1,110,1104,"Fabricarea altor bauturi nedistilate, obtinute prin fermentare",3
+1,110,1105,Fabricarea berii,3
+1,110,1106,Fabricarea maltului,3
+1,110,1107,Productia de bauturi racoritoare nealcoolice; productia de ape minerale si alte ape imbuteliate 12 Fabricarea produselor din tutun,3
+1,120,,Fabricarea produselor din tutun,2
+1,120,1200,Fabricarea produselor din tutun 13 Fabricarea produselor textile,3
+1,131,,Pregatirea fibrelor si filarea fibrelor textile,2
+1,131,1310,Pregatirea fibrelor si filarea fibrelor textile,3
+1,132,,Productia de tesaturi,2
+1,132,1320,Productia de tesaturi,3
+1,133,,Finisarea materialelor textile,2
+1,133,1330,Finisarea materialelor textile,3
+1,139,,Fabricarea altor articole textile,2
+1,139,1391,Fabricarea de metraje prin tricotare sau crosetare 4 4,3
+1,139,1392,Fabricarea de articole confectionate din textile (excluzand imbracamintea si lenjeria de corp),3
+1,139,1393,Fabricarea de covoare si mochete,3
+1,139,1394,"Fabricarea de odgoane, franghii, sfori si plase",3
+1,139,1395,"Fabricarea de textile netesute si articole din acestea, cu exceptia confectiilor de imbracaminte",3
+1,139,1396,Fabricarea de articole tehnice si industriale din textile,3
+1,139,1399,Fabricarea altor articole textile n.c.a. 14 Fabricarea articolelor de imbracaminte,3
+1,141,,Fabricarea articolelor de imbracaminte prin tricotare sau crosetare,2
+1,141,1410,Fabricarea articolelor de imbracaminte prin tricotare sau crosetare,3
+1,142,,Fabricarea altor articole de imbracaminte si accesorii,2
+1,142,1421,Fabricarea articolelor de imbracaminte,3
+1,142,1422,Fabricarea de articole de lenjerie de corp,3
+1,142,1423,Fabricarea de articole de imbracaminte pentru lucru,3
+1,142,1424,Fabricarea articolelor de imbracaminte din piele si blana,3
+1,142,1429,"Fabricarea altor articole de imbracaminte si accesorii n.c.a. 15 Tabacirea si finisarea pieilor; fabricarea articolelor de voiaj si marochinarie, harnasamentelor si incaltamintei; prepararea si vopsirea blanurilor",3
+1,151,,Tabacirea si finisarea pieilor; fabricarea articolelor de voiaj si marochinarie si a articolelor de harnasament; prepararea si vopsirea blanurilor,2
+1,151,1511,Tabacirea si finisarea pieilor; prepararea si vopsirea blanurilor,3
+1,151,1512,Fabricarea articolelor de voiaj si marochinarie si a articolelor de harnasament,3
+1,152,,Fabricarea incaltamintei,2
+1,152,1520,"Fabricarea incaltamintei 16 Prelucrarea lemnului, fabricarea produselor din lemn si pluta, cu exceptia mobilei; fabricarea articolelor din paie si din alte materiale vegetale impletite",3
+1,161,,Taierea si rindeluirea lemnului,2
+1,161,1611,Taierea si rindeluirea lemnului,3
+1,161,1612,Prelucrarea si finisarea lemnului,3
+1,162,,"Fabricarea produselor din lemn, pluta, paie si din alte materiale vegetale",2
+1,162,1621,Fabricarea de furnire si a panourilor din lemn,3
+1,162,1622,Fabricarea parchetului asamblat in panouri,3
+1,162,1623,"Fabricarea altor elemente de dulgherie si tamplarie, pentru constructii",3
+1,162,1624,Fabricarea ambalajelor din lemn,3
+1,162,1625,Fabricarea de usi si ferestre din lemn,3
+1,162,1626,Fabricarea de combustibili solizi din biomasa vegetala,3
+1,162,1627,Finisarea articolelor din lemn,3
+1,162,1628,"Fabricarea altor produse din lemn; fabricarea articolelor din pluta, paie si din alte materiale vegetale impletite 17 Fabricarea hartiei si a produselor din hartie 5 5",3
+1,171,,"Fabricarea celulozei, hartiei si cartonului",2
+1,171,1711,Fabricarea celulozei,3
+1,171,1712,Fabricarea hartiei si cartonului,3
+1,172,,Fabricarea articolelor din hartie si carton 1721 Fabricarea hartiei si cartonului ondulat si a ambalajelor din hartie si carton,2
+1,172,1722,"Fabricarea produselor de uz gospodaresc si sanitar, din hartie sau carton",3
+1,172,1723,Fabricarea articolelor de papetarie,3
+1,172,1724,Fabricarea tapetului,3
+1,172,1725,Fabricarea altor articole din hartie si carton n.c.a. 18 Tiparire si reproducerea pe suporti a inregistrarilor,3
+1,181,,Tiparire si activitati de servicii conexe tiparirii,2
+1,181,1811,Tiparirea ziarelor,3
+1,181,1812,Alte activitati de tiparire n.c.a.,3
+1,181,1813,Servicii pregatitoare pentru pretiparire,3
+1,181,1814,Legatorie si servicii conexe,3
+1,182,,Reproducerea inregistrarilor,2
+1,182,1820,Reproducerea inregistrarilor 19 Fabricarea produselor de cocserie si a produselor obtinute din prelucrarea titeiului,3
+1,191,,Fabricarea produselor de cocserie,2
+1,191,1910,Fabricarea produselor de cocserie,3
+1,192,,Fabricarea produselor obtinute din prelucrarea titeiului,2
+1,192,1920,Fabricarea produselor obtinute din prelucrarea titeiului 20 Fabricarea substantelor si a produselor chimice,3
+1,201,,"Fabricarea produselor chimice de baza, a ingrasamintelor si produselor azotoase; fabricarea materialelor plastice si a cauciucului sintetic, in forme primare",2
+1,201,2011,Fabricarea gazelor industriale,3
+1,201,2012,Fabricarea colorantilor si a pigmentilor,3
+1,201,2013,"Fabricarea altor produse chimice anorganice, de baza",3
+1,201,2014,"Fabricarea altor produse chimice organice, de baza",3
+1,201,2015,Fabricarea ingrasamintelor si produselor azotoase,3
+1,201,2016,Fabricarea materialelor plastice in forme primare,3
+1,201,2017,Fabricarea cauciucului sintetic in forme primare,3
+1,202,,Fabricarea pesticidelor si a altor produse agrochimice,2
+1,202,2020,"Fabricarea pesticidelor si a altor produse agrochimice 203 Fabricarea vopselelor, lacurilor, cernelii tipografice si masticurilor 2030 Fabricarea vopselelor, lacurilor, cernelii tipografice si masticurilor",3
+1,204,,"Fabricarea sapunurilor, detergentilor si a produselor de intretinere, cosmetice si de parfumerie",2
+1,204,2041,"Fabricarea sapunurilor, detergentilor si a produselor de intretinere 6 6",3
+1,204,2042,Fabricarea parfumurilor si a produselor cosmetice (de toaleta),3
+1,205,,Fabricarea altor produse chimice,2
+1,205,2051,Fabricarea biocombustibililor lichizi,3
+1,205,2059,Fabricarea altor produse chimice n.c.a.,3
+1,206,,Fabricarea fibrelor sintetice si artificiale,2
+1,206,2060,Fabricarea fibrelor sintetice si artificiale 21 Fabricarea produselor farmaceutice de baza si a preparatelor farmaceutice,3
+1,211,,Fabricarea produselor farmaceutice de baza,2
+1,211,2110,Fabricarea produselor farmaceutice de baza,3
+1,212,,Fabricarea preparatelor farmaceutice,2
+1,212,2120,Fabricarea preparatelor farmaceutice 22 Fabricarea produselor din cauciuc si mase plastice,3
+1,221,,Fabricarea articolelor din cauciuc,2
+1,221,2211,Fabricarea anvelopelor si a camerelor de aer; resaparea si refacerea anvelopelor,3
+1,221,2212,Fabricarea altor produse din cauciuc,3
+1,222,,Fabricarea articolelor din material plastic,2
+1,222,2221,"Fabricarea placilor, foliilor, tuburilor si profilelor din material plastic",3
+1,222,2222,Fabricarea articolelor de ambalaj din material plastic,3
+1,222,2223,Fabricarea de usi si ferestre din material plastic,3
+1,222,2224,Fabricarea articolelor din material plastic pentru constructii,3
+1,222,2225,Prelucrarea si finisarea articolelor din material plastic,3
+1,222,2226,Fabricarea altor produse din material plastic 23 Fabricarea altor produse din minerale nemetalice,3
+1,231,,Fabricarea sticlei si a articolelor din sticla,2
+1,231,2311,Fabricarea sticlei plate,3
+1,231,2312,Prelucrarea si fasonarea sticlei plate,3
+1,231,2313,Fabricarea articolelor din sticla,3
+1,231,2314,Fabricarea fibrelor din sticla,3
+1,231,2315,Fabricarea de sticlarie tehnica,3
+1,232,,Fabricarea de produse refractare,2
+1,232,2320,Fabricarea de produse refractare,3
+1,233,,Fabricarea materialelelor de constructii din argila,2
+1,233,2331,Fabricarea placilor si dalelor din ceramica,3
+1,233,2332,"Fabricarea caramizilor, tiglelor si altor produse pentru constructii, din argila arsa",3
+1,234,,Fabricarea altor articole din ceramica si portelan,2
+1,234,2341,Fabricarea articolelor ceramice pentru uz gospodaresc si ornamental,3
+1,234,2342,Fabricarea de obiecte sanitare din ceramica,3
+1,234,2343,Fabricarea izolatorilor si pieselor izolante din ceramica,3
+1,234,2344,Fabricarea altor produse tehnice din ceramica,3
+1,234,2345,Fabricarea altor produse ceramice n.c.a. 7 7,3
+1,235,,"Fabricarea cimentului, varului si ipsosului",2
+1,235,2351,Fabricarea cimentului,3
+1,235,2352,Fabricarea varului si ipsosului,3
+1,236,,"Fabricarea articolelor din beton, ciment si ipsos",2
+1,236,2361,Fabricarea produselor din beton pentru constructii,3
+1,236,2362,Fabricarea produselor din ipsos pentru constructii,3
+1,236,2363,Fabricarea betonului,3
+1,236,2364,Fabricarea mortarului,3
+1,236,2365,Fabricarea produselor din azbociment,3
+1,236,2366,"Fabricarea altor articole din beton, ciment si ipsos",3
+1,237,,"Taierea, fasonarea si finisarea pietrei",2
+1,237,2370,"Taierea, fasonarea si finisarea pietrei",3
+1,239,,Fabricarea produselor abrazive si a altor produse din minerale nemetalice n.c.a.,2
+1,239,2391,Fabricarea de produse abrazive,3
+1,239,2399,"Fabricarea altor produse din minerale nemetalice, n.c.a. 24 Industria metalurgica",3
+1,241,,Productia de metale feroase sub forme primare si de feroaliaje,2
+1,241,2410,Productia de metale feroase sub forme primare si de feroaliaje,3
+1,242,,"Productia de tuburi, tevi, profile tubulare si accesorii pentru acestea, din otel",2
+1,242,2420,"Productia de tuburi, tevi, profile tubulare si accesorii pentru acestea, din otel",3
+1,243,,Fabricarea altor produse prin prelucrarea primara a otelului,2
+1,243,2431,Tragere la rece a barelor,3
+1,243,2432,Laminare la rece a benzilor inguste,3
+1,243,2433,Productia de profile obtinute la rece,3
+1,243,2434,Trefilarea firelor la rece,3
+1,244,,Productia metalelor pretioase si a altor metale neferoase,2
+1,244,2441,Productia metalelor pretioase,3
+1,244,2442,Metalurgia aluminiului,3
+1,244,2443,"Productia plumbului, zincului si cositorului",3
+1,244,2444,Metalurgia cuprului,3
+1,244,2445,Productia altor metale neferoase,3
+1,244,2446,Prelucrarea combustibililor nucleari,3
+1,245,,Turnarea metalelor,2
+1,245,2451,Turnarea fontei,3
+1,245,2452,Turnarea otelului,3
+1,245,2453,Turnarea metalelor neferoase usoare,3
+1,245,2454,"Turnarea altor metale neferoase 25 Industria constructiilor metalice si a produselor din metal, exclusiv masini, utilaje si instalatii",3
+1,251,,Fabricarea de constructii metalice,2
+1,251,2511,Fabricarea de constructii metalice si parti componente ale structurilor metalice,3
+1,251,2512,Fabricarea de usi si ferestre din metal 8 8,3
+1,252,,"Productia de rezervoare, cisterne si containere metalice; productia de radiatoare si cazane pentru incalzire centrala",2
+1,252,2521,Productia de radiatoare si cazane pentru incalzire central; productia de generatoare de abur si boilere,3
+1,252,2522,"Productia de rezervoare, cisterne si containere metalice",3
+1,253,,Fabricarea armamentului si munitiei,2
+1,253,2530,Fabricarea armamentului si munitiei,3
+1,254,,Fabricarea produselor metalice obtinute prin deformare plastica; metalurgia pulberilor,2
+1,254,2540,Fabricarea produselor metalice obtinute prin deformare plastica; metalurgia pulberilor,3
+1,255,,Tratarea si acoperirea metalelor; operatiuni de mecanica generala pe baza de plata sau contract,2
+1,255,2551,Acoperirea metalelor,3
+1,255,2552,Tratamente termice ale metalelor,3
+1,255,2553,Operatiuni de mecanica generala,3
+1,256,,Productia de unelte si articole de fierarie,2
+1,256,2561,Fabricarea produselor de taiat,3
+1,256,2562,Fabricarea articolelor de feronerie,3
+1,256,2563,Fabricarea uneltelor,3
+1,259,,Fabricarea altor produse prelucrate din metal,2
+1,259,2591,"Fabricarea de recipienti, containere si alte produse similare din otel",3
+1,259,2592,Fabricarea ambalajelor metalice usoare,3
+1,259,2593,Fabricarea articolelor din fire metalice; fabricarea de lanturi si arcuri,3
+1,259,2594,"Fabricarea de suruburi, buloane si alte articole filetate; fabricarea de nituri si saibe",3
+1,259,2599,Fabricarea altor articole din metal n.c.a. 26 Fabricarea calculatoarelor si a produselor electronice si optice,3
+1,261,,Fabricarea componentelor electronice,2
+1,261,2611,Fabricarea componentelor electronice,3
+1,261,2612,Fabricarea subansamblurilor electronice (module),3
+1,262,,Fabricarea calculatoarelor si a echipamentelor periferice,2
+1,262,2620,Fabricarea calculatoarelor si a echipamentelor periferice,3
+1,263,,Fabricarea echipamentelor de comunicatii,2
+1,263,2630,Fabricarea echipamentelor de comunicatii,3
+1,264,,Fabricarea produselor electronice de larg consum,2
+1,264,2640,Fabricarea produselor electronice de larg consum,3
+1,265,,"Fabricarea de echipamente de masura, verificare, control si navigatie; productia de ceasuri",2
+1,265,2651,"Fabricarea de instrumente si dispozitive pentru masura, verificare, control, navigatie",3
+1,265,2652,"Productia de ceasuri 9 9 266 Fabricarea de echipamente pentru radiologie, electrodiagnostic si electroterapie 2660 Fabricarea de echipamente pentru radiologie, electrodiagnostic si electroterapie",3
+1,267,,"Fabricarea de instrumente optice, suporti magnetici si optici; fabricarea de echipamente fotografice",2
+1,267,2670,"Fabricarea de instrumente optice, suporti magnetici si optici; fabricarea de echipamente fotografice 27 Fabricarea echipamentelor electrice",3
+1,271,,"Fabricarea motoarelor electrice, generatoarelor si transformatoarelor electrice si a aparatelor de distributie si control a electricitatii",2
+1,271,2711,"Fabricarea motoarelor, generatoarelor si transformatoarelor electrice",3
+1,271,2712,Fabricarea aparatelor de distributie si control a electricitatii,3
+1,272,,Fabricarea de acumulatori si baterii,2
+1,272,2720,Fabricarea de acumulatori si baterii,3
+1,273,,Fabricarea de fire si cabluri; fabricarea dispozitivelor de conexiune pentru acestea,2
+1,273,2731,Fabricarea de cabluri cu fibra optica,3
+1,273,2732,Fabricarea altor fire si cabluri electrice si electronice,3
+1,273,2733,Fabricarea dispozitivelor de conexiune pentru fire si cabluri electrice si electronice,3
+1,274,,Fabricarea de echipamente electrice de iluminat,2
+1,274,2740,Fabricarea de echipamente electrice de iluminat,3
+1,275,,Fabricarea de echipamente casnice,2
+1,275,2751,Fabricarea de aparate electrocasnice,3
+1,275,2752,Fabricarea de echipamente casnice neelectrice,3
+1,279,,Fabricarea altor echipamente electrice,2
+1,279,2790,"Fabricarea altor echipamente electrice 28 Fabricarea de masini, utilaje si echipamente n.c.a.",3
+1,281,,Fabricarea de masini si utilaje de utilizare generala,2
+1,281,2811,"Fabricarea de motoare si turbine (cu exceptia celor pentru avioane, autovehicule si motociclete.)",3
+1,281,2812,Fabricarea de motoare hidraulice,3
+1,281,2813,Fabricarea de pompe si compresoare,3
+1,281,2814,Fabricarea de articole de robinetarie,3
+1,281,2815,"Fabricarea lagarelor, angrenajelor, cutiilor de viteza si a elementelor mecanice de transmisie 10 10",3
+1,282,,Fabricarea altor masini si utilaje de utilizare generala,2
+1,282,2821,"Fabricarea cuptoarelor, furnalelor si arzatoarelor",3
+1,282,2822,Fabricarea echipamentelor de ridicat si manipulat,3
+1,282,2823,Fabricarea masinilor si echipamentelor de birou (exceptand fabricarea calculatoarelor si a echipamentelor periferice),3
+1,282,2824,Fabricarea masinilor-unelte portabile actionate electric,3
+1,282,2825,"Fabricarea echipamentelor de ventilatie si frigorifice, exceptand echipamentele de uz casnic",3
+1,282,2829,Fabricarea altor masini si utilaje de utilizare generala n.c.a.,3
+1,283,,Fabricarea masinilor si utilajelor pentru agricultura si exploatari forestiere,2
+1,283,2830,Fabricarea masinilor si utilajelor pentru agricultura si exploatari forestiere,3
+1,284,,Fabricarea utilajelor pentru prelucrarea metalului si a masinilor-unelte,2
+1,284,2841,Fabricarea utilajelor si a masinilor-unelte pentru prelucrarea metalului,3
+1,284,2842,Fabricarea altor masini-unelte n.c.a.,3
+1,289,,Fabricarea altor masini si utilaje cu destinatie specifica,2
+1,289,2891,Fabricarea utilajelor pentru metalurgie,3
+1,289,2892,Fabricarea utilajelor pentru extractie si constructii,3
+1,289,2893,"Fabricarea utilajelor pentru prelucrarea produselor alimentare, bauturilor si tutunului",3
+1,289,2894,"Fabricarea utilajelor pentru industria textila, a imbracamintei si a pielariei",3
+1,289,2895,Fabricarea utilajelor pentru industria hartiei si cartonului,3
+1,289,2896,Fabricarea utilajelor pentru prelucrarea maselor plastice si a cauciucului,3
+1,289,2897,Fabricarea masinilor si utilajelor pentru fabricatia aditiva (care utilizeaza tehnologia de fabricatie aditiva),3
+1,289,2899,"Fabricarea altor masini si utilaje specifice n.c.a. 29 Fabricarea autovehiculelor de transport rutier, a remorcilor si semiremorcilor",3
+1,291,,Fabricarea autovehiculelor de transport rutier,2
+1,291,2910,Fabricarea autovehiculelor de transport rutier,3
+1,292,,Productia de caroserii pentru autovehicule; fabricarea de remorci si semiremorci,2
+1,292,2920,Productia de caroserii pentru autovehicule; fabricarea de remorci si semiremorci,3
+1,293,,Productia de piese si accesorii pentru autovehicule si pentru motoare de autovehicule,2
+1,293,2931,Fabricarea de echipamente electrice si electronice pentru autovehicule si pentru motoare de autovehicule,3
+1,293,2932,Fabricarea altor piese si accesorii pentru autovehicule si pentru motoare de autovehicule 30 Fabricarea altor mijloace de transport,3
+1,301,,Constructia de nave si barci,2
+1,301,3011,Constructia de nave civile si structuri plutitoare,3
+1,301,3012,Constructia de ambarcatiuni sportive si de agrement,3
+1,301,3013,Constructia de nave si vase militare,3
+1,302,,Fabricarea materialului rulant,2
+1,302,3020,Fabricarea materialului rulant,3
+1,303,,Fabricarea de aeronave si nave spatiale,2
+1,303,3031,"Fabricarea de aeronave si nave spatiale, civile",3
+1,303,3032,"Fabricarea de aeronave si nave spatiale, militare 11 11",3
+1,304,,Fabricarea vehiculelor militare de lupta,2
+1,304,3040,Fabricarea vehiculelor militare de lupta,3
+1,309,,Fabricarea altor echipamente de transport n.c.a.,2
+1,309,3091,Fabricarea de motociclete,3
+1,309,3092,Fabricarea de biciclete si de de vehicule pentru invalizi,3
+1,309,3099,Fabricarea altor mijloace de transport n.c.a. 31 Fabricarea de mobila,3
+1,310,,Fabricarea de mobila,2
+1,310,3100,Fabricarea de mobila 32 Alte activitati industriale,3
+1,321,,"Fabricarea bijuteriilor, imitatiilor de bijuterii si articolelor similare",2
+1,321,3211,Baterea monedelor,3
+1,321,3212,Fabricarea bijuteriilor si articolelor similare din metale si pietre pretioase,3
+1,321,3213,Fabricarea imitatiilor de bijuterii si articole similare,3
+1,322,,Fabricarea instrumentelor muzicale,2
+1,322,3220,Fabricarea instrumentelor muzicale,3
+1,323,,Fabricarea articolelor pentru sport,2
+1,323,3230,Fabricarea articolelor pentru sport,3
+1,324,,Fabricarea jocurilor si jucariilor,2
+1,324,3240,Fabricarea jocurilor si jucariilor,3
+1,325,,"Fabricarea de dispozitive, aparate si instrumente medicale si stomatologice",2
+1,325,3250,"Fabricarea de dispozitive, aparate si instrumente medicale stomatologice",3
+1,329,,Alte activitati industriale,2
+1,329,3291,Fabricarea maturilor si periilor,3
+1,329,3299,"Fabricarea altor produse manufacturiere n.c.a. 33 Repararea, intretinerea si instalarea masinilor si echipamentelor",3
+1,331,,"Repararea si intretinerea articolelor fabricate din metal, a masinilor si echipamentelor",2
+1,331,3311,Repararea si intretinerea articolelor fabricate din metal,3
+1,331,3312,Repararea si intretinerea masinilor,3
+1,331,3313,Repararea si intretinerea echipamentelor electronice si optice,3
+1,331,3314,Repararea si intretinerea echipamentelor electrice,3
+1,331,3315,"Repararea si intretinerea navelor si barcilor, civile",3
+1,331,3316,"Repararea si intretinerea aeronavelor si navelor spatiale, civile",3
+1,331,3317,Repararea si intretinerea altor echipamente civile de transport n.c.a.,3
+1,331,3318,"Repararea si intretinerea vehiculelor militare de lupta, a navelor, vaselor, aeronavelor si navelor spatiale, militare",3
+1,331,3319,Repararea si intretinerea altor echipamente,3
+1,332,,Instalarea masinilor si echipamentelor industriale,2
+1,332,3320,"Instalarea masinilor si echipamentelor industriale 12 12 SECTIUNEA D - PRODUCTIA SI FURNIZAREA DE ENERGIE ELECTRICA SI TERMICA, GAZE, APA CALDA SI AER CONDITIONAT 35 Productia si furnizarea de energie electrica si termica, gaze, apa calda si aer conditionat",3
+1,351,,"Productia, transportul si distributia energiei electrice",2
+1,351,3511,Productia de energie electrica din resurse neregenerabile,3
+1,351,3512,Productia de energie electrica din resurse regenerabile,3
+1,351,3513,Transportul energiei electrice,3
+1,351,3514,Distributia energiei electrice,3
+1,351,3515,Comercializarea energiei electrice,3
+1,351,3516,Depozitarea energiei electrice,3
+1,352,,Productia gazelor; distributia combustibililor gazosi prin conducte,2
+1,352,3521,Productia gazelor,3
+1,352,3522,"Distributia combustibililor gazosi, prin conducte",3
+1,352,3523,"Comercializarea combustibililor gazosi, prin conducte",3
+1,352,3524,"Depozitarea gazelor, ca parte a serviciilor de furnizare",3
+1,353,,Furnizarea de abur si aer conditionat,2
+1,353,3530,Furnizarea de abur si aer conditionat,3
+1,354,,Activitati ale agentilor si brokerilor din domeniul energiei electrice si a gazelor naturale,2
+1,354,3540,"Activitati ale agentilor si brokerilor din domeniul energiei electrice si a gazelor naturale SECTIUNEA E - DISTRIBUTIA APEI; SALUBRITATE, GESTIONAREA DESEURILOR, ACTIVITATI DE DECONTAMINARE 36 Captarea, tratarea si distributia apei",3
+1,360,,"Captarea, tratarea si distributia apei",2
+1,360,3600,"Captarea, tratarea si distributia apei 37 Colectarea si epurarea apelor uzate",3
+1,370,,Colectarea si epurarea apelor uzate,2
+1,370,3700,"Colectarea si epurarea apelor uzate 38 Colectarea, tratarea si eliminarea deseurilor; activitati de recuperare a materialelor reciclabile",3
+1,381,,Colectarea deseurilor,2
+1,381,3811,Colectarea deseurilor nepericuloase,3
+1,381,3812,Colectarea deseurilor periculoase,3
+1,382,,Recuperarea materialelor,2
+1,382,3821,Recuperarea materialelor reciclabile,3
+1,382,3822,Productia de energie (electrica sau termica) prin tratarea deseurilor (inclusiv prin incinerare),3
+1,382,3823,Alte activitati de tartare a deseurilor,3
+1,383,,Eliminarea deseurilor,2
+1,383,3831,Incinerarea deseurilor fara productie de energie,3
+1,383,3832,Activitati ale gropilor de gunoi sau a depozitelor permanente de deseuri 13 13,3
+1,383,3833,Alte activitati de eliminare a deseurilor 39 Activitati si servicii de decontaminare,3
+1,390,,Activitati si servicii de decontaminare,2
+1,390,3900,Activitati si servicii de decontaminare SECTIUNEA F - CONSTRUCTII 41 Constructii de cladiri,3
+1,410,,Lucrari de constructii a cladirilor rezidentiale si nerezidentiale,2
+1,410,4100,Lucrari de constructii a cladirilor rezidentiale si nerezidentiale 42 Lucrari de geniu civil,3
+1,421,,Lucrari de constructii a drumurilor si a cailor ferate,2
+1,421,4211,Lucrari de constructii a drumurilor si autostrazilor,3
+1,421,4212,Lucrari de constructii a cailor ferate de suprafata si subterane.,3
+1,421,4213,Constructia de poduri si tuneluri,3
+1,422,,Lucrari de constructii a proiectelor utilitare,2
+1,422,4221,Lucrari de constructii a proiectelor utilitare pentru fluide,3
+1,422,4222,Lucrari de constructii a proiectelor utilitare pentru electricitate si telecomunicatii,3
+1,429,,Lucrari de constructii a altor proiecte ingineresti,2
+1,429,4291,Constructii hidrotehnice,3
+1,429,4299,Lucrari de constructii a altor proiecte ingineresti n.c.a. 43 Lucrari speciale de constructii,3
+1,431,,Lucrari de demolare si de pregatire a terenului,2
+1,431,4311,Lucrari de demolare a constructiilor,3
+1,431,4312,Lucrari de pregatire a terenului,3
+1,431,4313,Lucrari de foraj si sondaj pentru constructii,3
+1,432,,Lucrari de instalatii electrice si tehnico-sanitare si alte lucrari de instalatii pentru constructii,2
+1,432,4321,Lucrari de instalatii electrice,3
+1,432,4322,"Lucrari de instalatii sanitare, de incalzire si de aer conditionat",3
+1,432,4323,Lucrari de izolatii,3
+1,432,4324,Alte lucrari de instalatii pentru constructii,3
+1,433,,Lucrari de finisare,2
+1,433,4331,Lucrari de ipsoserie,3
+1,433,4332,Lucrari de tamplarie si dulgherie,3
+1,433,4333,Lucrari de pardosire si placare a peretilor,3
+1,433,4334,"Lucrari de vopsitorie, zugraveli si montari de geamuri",3
+1,433,4335,Alte lucrari de finisare,3
+1,434,,Lucrari speciale de constructii pentru cladiri,2
+1,434,4341,"Lucrari de invelitori, sarpante si terase la constructii",3
+1,434,4342,Alte lucrari speciale de constructii pentru cladiri 14 14,3
+1,435,,Lucrari speciale de constructii pentru proiecte de geniu civil,2
+1,435,4350,Lucrari speciale de constructii pentru proiecte de geniu civil,3
+1,436,,Servicii de intermediere pentru lucrari speciale de constructii,2
+1,436,4360,Servicii de intermediere pentru lucrari speciale de constructii,3
+1,439,,Alte lucrari speciale de constructii,2
+1,439,4391,Activitati de zidarie,3
+1,439,4399,Alte lucrari speciale de constructii n.c.a. SECTIUNEA G - COMERT CU RIDICATA SI CU AMANUNTUL; 46 Comert cu ridicata,3
+1,461,,Activitati de intermediere in comertul cu ridicata,2
+1,461,4611,"Intermedieri in comertul cu materii prime agricole, animale vii, materii prime textile si cu semifabricate",3
+1,461,4612,"Intermedieri in comertul cu combustibili, minereuri, metale si produse chimice pentru industrie",3
+1,461,4613,Intermedieri in comertul cu material lemnos si materiale de constructii,3
+1,461,4614,"Intermedieri in comertul cu masini, echipamente industriale, nave si avioane",3
+1,461,4615,"Intermedieri in comertul cu mobila, articole de menaj si de fierarie",3
+1,461,4616,"Intermedieri in comertul cu textile, confectii din blana, incaltaminte si articole din piele",3
+1,461,4617,"Intermedieri in comertul cu produse alimentare, bauturi si tutun",3
+1,461,4618,"Intermedieri in comertul specializat in vanzarea produselor cu caracter specific, n.c.a.",3
+1,461,4619,Intermedieri in comertul cu produse diverse,3
+1,462,,Comert cu ridicata al produselor agricole brute si al animalelor vii,2
+1,462,4621,"Comert cu ridicata al cerealelor, semintelor, furajelor si tutunului neprelucrat",3
+1,462,4622,Comert cu ridicata al florilor si al plantelor,3
+1,462,4623,Comert cu ridicata al animalelor vii,3
+1,462,4624,"Comert cu ridicata al blanurilor, pieilor brute si al pieilor prelucrate",3
+1,463,,"Comert cu ridicata al produselor alimentare, al bauturilor si al tutunului",2
+1,463,4631,Comert cu ridicata al fructelor si legumelor,3
+1,463,4632,"Comert cu ridicata al carnii si produselor din carne, peste si produse din peste, crustacee si moluste",3
+1,463,4633,"Comert cu ridicata al produselor lactate, oualor, uleiurilor si grasimilor comestibile",3
+1,463,4634,Comert cu ridicata al bauturilor,3
+1,463,4635,Comert cu ridicata al produselor din tutun,3
+1,463,4636,"Comert cu ridicata al zaharului, ciocolatei si produselor zaharoase",3
+1,463,4637,"Comert cu ridicata cu cafea, ceai, cacao si condimente",3
+1,463,4638,Comert cu ridicata specializat al altor alimente,3
+1,463,4639,"Comert cu ridicata nespecializat de produse alimentare, bauturi si tutun",3
+1,464,,Comert cu ridicata al bunurilor de consum,2
+1,464,4641,Comert cu ridicata al produselor textile,3
+1,464,4642,Comert cu ridicata al imbracamintei si incaltamintei,3
+1,464,4643,"Comert cu ridicata al aparatelor electrice de uz gospodaresc, al aparatelor de radio si televizoarelor",3
+1,464,4644,"Comert cu ridicata al produselor din ceramica, sticlarie, si produse de intretinere",3
+1,464,4645,Comert cu ridicata al produselor cosmetice si de parfumerie,3
+1,464,4646,Comert cu ridicata al produselor farmaceutice si medicale 15 15,3
+1,464,4647,"Comert cu ridicata al mobilei (inclusiv de birou si pentru magazine), covoarelor si a articolelor de iluminat",3
+1,464,4648,Comert cu ridicata al ceasurilor si bijuteriilor,3
+1,464,4649,Comert cu ridicata al altor bunuri de uz gospodaresc,3
+1,465,,Comert cu ridicata al echipamentului informatic si de telecomunicatii,2
+1,465,4650,Comert cu ridicata al echipamentului informatic si de telecomunicatii,3
+1,466,,"Comert cu ridicata al altor masini, echipamente si furnituri",2
+1,466,4661,"Comert cu ridicata al masinilor agricole, echipamentelor si furniturilor",3
+1,466,4662,Comert cu ridicata al masinilor-unelte,3
+1,466,4663,Comert cu ridicata al masinilor pentru industria miniera si constructii,3
+1,466,4664,Comert cu ridicata al altor masini si echipamente,3
+1,467,,Comert cu ridicata al autovehiculelor si motocicletelor; comert cu ridicata al pieselor si accesoriilor pentru autovehicule si motociclete,2
+1,467,4671,Comert cu ridicata al autovehiculelor,3
+1,467,4672,Comert cu ridicata al pieselor si accesoriilor pentru autovehicule,3
+1,467,4673,Comert cu ridicata al motocicletelor; comert cu ridicata al pieselor si accesoriilor pentru motociclete,3
+1,468,,Comert cu ridicata specializat al altor produse,2
+1,468,4681,"Comert cu ridicata al combustibililor solizi, lichizi si gazosi si al produselor derivate",3
+1,468,4682,Comert cu ridicata al metalelor si minereurilor metalice,3
+1,468,4683,Comert cu ridicata al materialului lemnos si a materialelor de constructie si echipamentelor sanitare,3
+1,468,4684,Comert cu ridicata al echipamentelor si furniturilor de fierarie pentru instalatii sanitare si de incalzire,3
+1,468,4685,Comert cu ridicata al produselor chimice,3
+1,468,4686,Comert cu ridicata al altor produse intermediare,3
+1,468,4687,Comert cu ridicata al deseurilor si resturilor,3
+1,468,4689,Comert cu ridicata specializat al altor produse n.c.a.,3
+1,469,,Comert cu ridicata nespecializat,2
+1,469,4690,Comert cu ridicata nespecializat 47 Comert cu amanuntul,3
+1,471,,Comert cu amanuntul nespecializat,2
+1,471,4711,"Comert cu amanuntul nespecializat, cu vanzare predominanta de produse alimentare, bauturi si tutun",3
+1,471,4712,"Comert cu amanuntul nespecializat, cu vanzare predominanta de produse nealimentare",3
+1,472,,"Comert cu amanuntul al produselor alimentare, bauturilor si al produselor din tutun",2
+1,472,4721,Comert cu amanuntul al fructelor si legumelor proaspete,3
+1,472,4722,Comert cu amanuntul al carnii si al produselor din carne,3
+1,472,4723,"Comert cu amanuntul al pestelui, crustaceelor si molustelor",3
+1,472,4724,"Comert cu amanuntul al painii, produselor de patiserie si produselor zaharoase",3
+1,472,4725,Comert cu amanuntul al bauturilor,3
+1,472,4726,Comert cu amanuntul al produselor din tutun,3
+1,472,4727,Comert cu amanuntul al altor produse alimentare,3
+1,473,,Comert cu amanuntul al carburantilor pentru autovehicule i,2
+1,473,4730,Comert cu amanuntul al carburantilor pentru autovehicule 16 16,3
+1,474,,Comert cu amanuntul al echipamentului informatic si de telecomunicatii,2
+1,474,4740,Comert cu amanuntul al echipamentului informatic si de telecomunicatii,3
+1,475,,Comert cu amanuntul al altor produse casnice,2
+1,475,4751,Comert cu amanuntul al textilelor,3
+1,475,4752,"Comert cu amanuntul al articolelor de fierarie, al materialelor de constructii, al articolelor din sticla si a celor pentru vopsit",3
+1,475,4753,"Comert cu amanuntul al covoarelor, carpetelor, tapetelor si a altor acoperitoare de podea",3
+1,475,4754,Comert cu amanuntul al articolelor si aparatelor electrocasnice,3
+1,475,4755,"Comert cu amanuntul al mobilei, al articolelor de iluminat si al altor articole de uz casnic n.c.a.",3
+1,476,,Comert cu amanuntul de bunuri culturale si recreative,2
+1,476,4761,Comert cu amanuntul al cartilor,3
+1,476,4762,Comert cu amanuntul al ziarelor si articolelor de papetarie,3
+1,476,4763,Comert cu amanuntul al echipamentelor sportive,3
+1,476,4764,Comert cu amanuntul al jocurilor si jucariilor,3
+1,476,4769,Comert cu amanuntul de bunuri culturale si recreative n.c.a.,3
+1,477,,"Comert cu amanuntul al altor bunuri, cu exceptia autovehiculelor si motociclete",2
+1,477,4771,Comert cu amanuntul al imbracamintei,3
+1,477,4772,Comert cu amanuntul al incaltamintei si articolelor din piele,3
+1,477,4773,Comert cu amanuntul al produselor farmaceutice,3
+1,477,4774,Comert cu amanuntul al articolelor medicale si ortopedice,3
+1,477,4775,Comert cu amanuntul al produselor cosmetice si de parfumerie,3
+1,477,4776,"Comert cu amanuntul al florilor, plantelor si semintelor; comert cu amanuntul al animalelor de companie si a hranei pentru acestea",3
+1,477,4777,Comert cu amanuntul al ceasurilor si bijuteriilor,3
+1,477,4778,Comert cu amanuntul al altor bunuri noi,3
+1,477,4779,Comert cu amanuntul al bunurilor de ocazie,3
+1,478,,Comert cu amanuntul al autovehiculelor si motocicletelor; comert cu amanuntul al pieselor si accesoriilor pentru autovehicule si motociclete,2
+1,478,4781,Comert cu amanuntul al autovehiculelor,3
+1,478,4782,Comert cu amanuntul al pieselor si accesoriilor pentru autovehicule,3
+1,478,4783,Comert cu amanuntul al motocicletelor; comert cu amanuntul al pieselor si accesoriilor pentru motociclete,3
+1,479,,Activitati de intermediere in comertul cu amanuntul,2
+1,479,4791,Intermedieri in comertul cu amanuntul nespecializat,3
+1,479,4792,Intermedieri in comertul cu amanuntul specializat SECTIUNEA H - TRANSPORT SI DEPOZITARE 49 Transporturi terestre si transporturi prin conducte,3
+1,491,,Transporturi de calatori pe calea ferata,2
+1,491,4911,Transport de pasageri pe cai ferate grele/magistrale,3
+1,491,4912,Alte transporturi de pasageri pe cai ferate usoare,3
+1,492,,Transporturi de marfa pe calea ferata,2
+1,492,4920,Transporturi de marfa pe calea ferata,3
+1,493,,Alte transporturi terestre de calatori,2
+1,493,4931,"Transporturi terestre de pasageri, pe baza de grafic 17 17",3
+1,493,4932,"Transporturi terestre de pasageri, ocazionale",3
+1,493,4933,"Transporturi terestre de pasageri cu vehicule cu sofer, pe baza de comanda",3
+1,493,4934,"Transporturi de pasageri cu funiculare, teleferice si schilifturi",3
+1,493,4939,Alte transporturi terestre de calatori n.c.a.,3
+1,494,,Transporturi rutiere de marfuri si servicii de mutare,2
+1,494,4941,Transporturi rutiere de marfuri,3
+1,494,4942,Servicii de mutare,3
+1,495,,Transporturi prin conducte,2
+1,495,4950,Transporturi prin conducte 50 Transporturi pe apa,3
+1,501,,Transporturi maritime si costiere de pasageri,2
+1,501,5010,Transporturi maritime si costiere de pasageri,3
+1,502,,Transporturi maritime si costiere de marfa,2
+1,502,5020,Transporturi maritime si costiere de marfa,3
+1,503,,Transporturi de pasageri pe cai navigabile interioare,2
+1,503,5030,Transportul de pasageri pe cai navigabile interioare,3
+1,504,,Transportul de marfa pe cai navigabile interioare,2
+1,504,5040,Transportul de marfa pe cai navigabile interioare 51 Transporturi aeriene,3
+1,511,,Transporturi aeriene de pasageri,2
+1,511,5110,Transporturi aeriene de pasageri,3
+1,512,,Transporturi aeriene de marfa si transporturi spatiale,2
+1,512,5121,Transporturi aeriene de marfa,3
+1,512,5122,Transporturi spatiale 52 Depozitare si activitati auxiliare pentru transporturi,3
+1,521,,Depozitari,2
+1,521,5210,Depozitari,3
+1,522,,Activitati anexe pentru transporturi,2
+1,522,5221,Activitati de servicii anexe pentru transporturi terestre,3
+1,522,5222,Activitati de servicii anexe transporturilor pe apa,3
+1,522,5223,Activitati de servicii anexe transporturilor aeriene,3
+1,522,5224,Manipulari,3
+1,522,5225,Activitati de servicii logistice pentru transporturi,3
+1,522,5226,Alte activitati anexe transporturilor,3
+1,523,,Activitati de intermediere pentru transporturi,2
+1,523,5231,Activitati de intermediere pentru transportul de marfa,3
+1,523,5232,Activitati de intermediere pentru transportul de pasageri 53 Activitati de posta si de curier,3
+1,531,,Activitati postale desfasurate sub obligativitatea serviciului universal,2
+1,531,5310,Activitati postale desfasurate sub obligativitatea serviciului universal 18 18,3
+1,532,,Alte activitati postale si de curier,2
+1,532,5320,Alte activitati postale si de curier,3
+1,533,,Servicii de intermediere pentru activitati postale si de curier,2
+1,533,5330,Servicii de intermediere pentru activitati postale si de curier SECTIUNEA I - HOTELURI SI RESTAURANTE 55 Hoteluri si alte facilitati de cazare,3
+1,551,,Hoteluri si alte facilitati de cazare similare,2
+1,551,5510,Hoteluri si alte facilitati de cazare similare,3
+1,552,,Facilitati de cazare pentru vacante si perioade de scurta durata,2
+1,552,5520,Facilitati de cazare pentru vacante si perioade de scurta durata,3
+1,553,,"Parcuri pentru rulote, campinguri si tabere",2
+1,553,5530,"Parcuri pentru rulote, campinguri si tabere",3
+1,554,,Intermedieri pentru servicii de cazare,2
+1,554,5540,Intermedieri pentru servicii de cazare,3
+1,559,,Alte servicii de cazare,2
+1,559,5590,Alte servicii de cazare 56 Restaurante si alte activitati de servicii de alimentatie,3
+1,561,,Restaurante,2
+1,561,5611,Restaurante,3
+1,561,5612,Activitati ale unitatilor mobile de alimentatie,3
+1,562,,Activitati de alimentatie (catering) pentru evenimente si alte servicii de alimentatie,2
+1,562,5621,Activitati de alimentatie (catering) pentru evenimente,3
+1,562,5622,Alte servicii de alimentatie n.c.a.,3
+1,563,,Baruri si alte activitati de servire a bauturilor,2
+1,563,5630,Baruri si alte activitati de servire a bauturilor,3
+1,564,,Intermedieri pentru servicii de alimentatie si de servire a bauturilor,2
+1,564,5640,Intermedieri pentru servicii de alimentatie si de servire a bauturilor SECTIUNEA J - ACTIVITATI DE EDITARE; DIFUZAREA DE PROGRAME DE RADIO SI TELEVIZIUNE; ACTIVITATI DE PRODUCTIE SI DISTRIBUTIE DE CONTINUTURI 58 Activitati de editare,3
+1,581,,"Activitati de editare a cartilor, ziarelor, revistelor si alte activitati de editare",2
+1,581,5811,Activitati de editare a cartilor,3
+1,581,5812,Activitati de editare a ziarelor,3
+1,581,5813,Activitati de editare a revistelor si periodicelor,3
+1,581,5819,Alte activitati de editare 19 19,3
+1,582,,Activitati de editare a produselor software,2
+1,582,5821,Activitati de editare a jocurilor de calculator,3
+1,582,5829,"Activitati de editare a altor produse software 59 Activitati de productie cinematografica, video si de programe de televiziune; inregistrari audio si activitati de editare muzicala",3
+1,591,,"Activitati de productie cinematografica, video si de programe de televiziune",2
+1,591,5911,"Activitati de productie cinematografica, video si de programe de televiziune",3
+1,591,5912,"Activitati post-productie cinematografica, video si de programe de televiziune",3
+1,591,5913,"Activitati de distributie a filmelor cinematografice, video si a programelor de televiziune",3
+1,591,5914,Proiectia de filme cinematografice,3
+1,592,,Activitati de realizare a inregistrarilor audio si activitati de editare muzicala,2
+1,592,5920,"Activitati de realizare a inregistrarilor audio si activitati de editare muzicala 60 Activitati de difuzare si transmitere de programe, agentii de stiri si alte activitoti de distributie de continut",3
+1,601,,"Activitati radiodifuziune, activitati de distributie de programe audio",2
+1,601,6010,"Activitati radiodifuziune, activitati de distributie de programe audio",3
+1,602,,"Activitati de difuzare a programelor de televiziune, activitati de distributie de programe video",2
+1,602,6020,"Activitati de difuzare a programelor de televiziune, activitati de distributie de programe video",3
+1,603,,Activitati ale agentiilor de stiri si de distributie a altor continuturi,2
+1,603,6031,Activitati ale agentiilor de stiri,3
+1,603,6039,Activitati de distributie a altor continuturi SECTIUNEA K – TELECOMUNICATII; ACTIVITATI DE PROGRAMARE SI DE CONSULTANTA IN TEHNOLOGIA INFORMATIEI; ALTE SERVICII INFORMATIONALE 61 Telecomunicatii,3
+1,611,,"Activitati de telecomunicatii prin retele cu cablu, prin retele fara cablu si prin satelit",2
+1,611,6110,"Activitati de telecomunicatii prin retele cu cablu, prin retele fara cablu si prin satelit",3
+1,612,,Activitati de revanzare a serviciilor de telecomunicatii si servicii de intermediere pentru telecomunicatii,2
+1,612,6120,Activitati de revanzare a serviciilor de telecomunicatii si servicii de intermediere pentru telecomunicatii,3
+1,619,,Alte activitati de telecomunicatii,2
+1,619,6190,Alte activitati de telecomunicatii 62 Activitati de programare si activitati de consultanta in tehnologia informatiei,3
+1,621,,Activitati de programare,2
+1,621,6210,Activitati de realizare a soft-ului la comanda (software orientat client) 20 20,3
+1,622,,Activitati de consultanta in tehnologia informatiei si de management (gestiune si exploatare) a mijloacelor de calcul,2
+1,622,6220,Activitati de consultanta in tehnologia informatiei si de management (gestiune si exploatare) a mijloacelor de calcul,3
+1,629,,Alte activitati de servicii privind tehnologia informatiei,2
+1,629,6290,"Alte activitati de servicii privind tehnologia informatiei 63 Activitati ale portalurilor web, prelucrarea datelor, administrarea paginilor web si activitati conexe",3
+1,631,,"Prelucrarea datelor, administrarea paginilor web si activitati conexe",2
+1,631,6310,"Prelucrarea datelor, administrarea paginilor web si activitati conexe",3
+1,639,,Activitati ale portalurilor web si alte activitati de servicii informationale,2
+1,639,6391,Activitati ale portalurilor web,3
+1,639,6392,"Alte activitati de servicii informationale n.c. a SECTIUNEA L- INTERMEDIERI FINANCIARE SI ASIGURARI 64 Intermedieri financiare, cu exceptia activitatilor de asigurari si ale fondurilor de pensii",3
+1,641,,Intermediere monetara,2
+1,641,6411,Activitati ale bancii centrale (nationale),3
+1,641,6419,Alte activitati de intermedieri monetare,3
+1,642,,Activitati ale holding-urilor si canalelor de finantare,2
+1,642,6421,Activitati ale holding-urilor,3
+1,642,6422,Activitati ale canalelor de finantare,3
+1,643,,Activitati ale fondurilor de investitii; fonduri mutuale si alte entitati financiare similare,2
+1,643,6431,Activitati ale fondurilor de investitii de pe piata monetara si ale fondurilor de investitii din afara pietei monetare,3
+1,643,6432,Fonduri mutuale si alte entitati financiare similare,3
+1,649,,"Alte activitati de intermedieri financiare, exceptand activitati de asigurari si fonduri de pensii",2
+1,649,6491,Leasing financiar,3
+1,649,6492,Alte activitati de creditare,3
+1,649,6499,"Alte intermedieri financiare n.c.a., exceptand activitati de asigurari si fonduri de pensii 65 Activitati de asigurari, reasigurari si ale fondurilor de pensii (cu exceptia celor din sistemul public de asigurari sociale)",3
+1,651,,Activitati de asigurari,2
+1,651,6511,Activitati de asigurari de viata,3
+1,651,6512,Alte activitati de asigurari (exceptand asigurarile de viata),3
+1,652,,Activitati de reasigurare,2
+1,652,6520,Activitati de reasigurare,3
+1,653,,Activitati ale fondurilor de pensii (cu exceptia celor din sistemul public de asigurari sociale) 21 21,2
+1,653,6530,"Activitati ale fondurilor de pensii (cu exceptia celor din sistemul public de asigurari sociale) 66 Activitati auxiliare pentru intermedieri financiare, activitati de asigurare si fonduri de pensii",3
+1,661,,"Activitati auxiliare intermedierilor financiare, cu exceptia activitatilor de asigurari si fonduri de pensii",2
+1,661,6611,Administrarea pietelor financiare,3
+1,661,6612,Activitati de intermediere a tranzactiilor financiare,3
+1,661,6619,"Activitati auxiliare intermedierilor financiare, exceptand activitati de asigurari si fonduri de pensii",3
+1,662,,Activitati auxiliare de asigurari si fonduri de pensii,2
+1,662,6621,Activitati de evaluare a riscului de asigurare si a pagubelor,3
+1,662,6622,Activitati ale agentilor si broker-ilor de asigurari,3
+1,662,6629,Alte activitati auxiliare de asigurari si fonduri de pensii,3
+1,663,,Activitati de administrare a fondurilor,2
+1,663,6630,Activitati de administrare a fondurilor SECTIUNEA M - TRANZACTII IMOBILIARE 68 Tranzactii imobiliare,3
+1,681,,Cumpararea si vanzarea de bunuri imobiliare proprii si dezvoltare imobiliara,2
+1,681,6811,Cumpararea si vanzarea de bunuri imobiliare proprii,3
+1,681,6812,Dezvoltare (promovare) imobiliara,3
+1,682,,Inchirierea si subinchirierea bunurilor imobiliare proprii sau inchiriate,2
+1,682,6820,Inchirierea si subinchirierea bunurilor imobiliare proprii sau inchiriate,3
+1,683,,Activitati imobiliare pe baza de comision sau contract,2
+1,683,6831,Servicii de intermediere a tranzactiilor imobiliare,3
+1,683,6832,"Alte activitati pentru tranzactii imobiliare pe baza de comision sau contract SECTIUNEA N - ACTIVITATI PROFESIONALE, STIINTIFICE SI TEHNICE 69 Activitati juridice si de contabilitate",3
+1,691,,Activitati juridice,2
+1,691,6910,Activitati juridice,3
+1,692,,Activitati de contabilitate si audit financiar; consultanta in domeniul fiscal,2
+1,692,6920,"Activitati de contabilitate si audit financiar; consultanta in domeniul fiscal 70 Activitati ale directiilor(centralelor), birourilor administrative centralizate; activitati de management si de consultanta in management",3
+1,701,,"Activitati ale directiilor(centralelor), birourilor administrative centralizate",2
+1,701,7010,"Activitati ale directiilor(centralelor), birourilor administrative centralizate 22 22",3
+1,702,,Activitati de consultanta in afaceri si management,2
+1,702,7020,Activitati de consultanta in afaceri si management 71 Activitati de arhitectura si inginerie; activitati de testari si analiza tehnica,3
+1,711,,"Activitati de arhitectura, inginerie si servicii de consultanta tehnica legate de acestea",2
+1,711,7111,Activitati de arhitectura,3
+1,711,7112,Activitati de inginerie si consultanta tehnica legate de acestea,3
+1,712,,Activitati de testari si analize tehnice,2
+1,712,7120,Activitati de testari si analize tehnice 72 Cercetare-dezvoltare,3
+1,721,,Cercetare-dezvoltare in stiinte naturale si inginerie,2
+1,721,7210,Cercetare-dezvoltare in stiinte naturale si inginerie,3
+1,722,,Cercetare-dezvoltare in stiinte sociale si umaniste,2
+1,722,7220,"Cercetare-dezvoltare in stiinte sociale si umaniste 73 Publicitate, activitati de studiere a pietei si relatii publice",3
+1,731,,Publicitate,2
+1,731,7311,Activitati ale agentiilor de publicitate,3
+1,731,7312,Servicii de reprezentare media,3
+1,732,,Activitati de studiere a pietei si de sondare a opiniei publice,2
+1,732,7320,Activitati de studiere a pietei si de sondare a opiniei publice,3
+1,733,,Activitati in domeniul relatiilor publice si al comunicarii,2
+1,733,7330,"Activitati in domeniul relatiilor publice si al comunicarii 74 Alte activitati profesionale, stiintifice si tehnice",3
+1,741,,Activitati de design specializat,2
+1,741,7411,Activitati de design industrial si vestimentar,3
+1,741,7412,Design grafic si activitati de comunicare vizuala,3
+1,741,7413,Activitati de design de interior,3
+1,741,7414,Alte activitati de design specializat,3
+1,742,,Activitati fotografice,2
+1,742,7420,Activitati fotografice,3
+1,743,,Activitati de traducere scrisa si orala (interpreti),2
+1,743,7430,Activitati de traducere scrisa si orala (interpreti),3
+1,749,,"Alte activitati profesionale, stiintifice si tehnice n.c.a.",2
+1,749,7491,Activitati de brokeraj in materie de brevete si servicii de marketing,3
+1,749,7499,"Alte activitati profesionale, stiintifice si tehnice n.c.a. 75 Activitati veterinare",3
+1,750,,Activitati veterinare 23 23,2
+1,750,7500,Activitati veterinare SECTIUNEA O- ACTIVITATI DE SERVICII ADMINISTRATIVE SI ACTIVITATI DE SERVICII SUPORT 77 Activitati de inchiriere si leasing,3
+1,771,,Activitati de inchiriere si leasing cu autovehicule,2
+1,771,7711,Activitati de inchiriere si leasing cu autoturisme si autovehicule rutiere usoare,3
+1,771,7712,Activitati de inchiriere si leasing cu autovehicule rutiere grele,3
+1,772,,Activitati de inchiriere si leasing cu bunuri personale si gospodaresti,2
+1,772,7721,Activitati de inchiriere si leasing cu bunuri recreationale si echipament sportiv,3
+1,772,7722,Activitati de inchiriere si leasing cu alte bunuri personale si gospodaresti n.c.a.,3
+1,773,,"Activitati de inchiriere si leasing cu alte masini, echipamente si bunuri tangibile",2
+1,773,7731,Activitati de inchiriere si leasing cu masini si echipamente agricole,3
+1,773,7732,Activitati de inchiriere si leasing cu masini si echipamente pentru constructii,3
+1,773,7733,Activitati de inchiriere si leasing cu masini si echipamente de birou (inclusiv calculatoare),3
+1,773,7734,Activitati de inchiriere si leasing cu echipamente de transport pe apa,3
+1,773,7735,Activitati de inchiriere si leasing cu echipamente de transport aerian,3
+1,773,7739,"Activitati de inchirierea si leasing cu alte masini, echipamente si bunuri tangibile n.c.a.",3
+1,774,,Leasing cu bunuri intangibile (cu exceptia lucrarilor care fac obiectul drepturilor de autor),2
+1,774,7740,Leasing cu bunuri intangibile (cu exceptia lucrarilor care fac obiectul drepturilor de autor),3
+1,775,,Servicii de intermediere pentru inchirierea si leasingul de bunuri corporale si bunuri intangibile (exceptand financiare),2
+1,775,7751,"Servicii de intermediere pentru inchirierea si leasingul autoturismelor, autorulotelor si remorcilor",3
+1,775,7752,Servicii de intermediere pentru inchirierea si leasingul altor bunuri corporale si bunuri intangibile (exceptand financiare) 78 Activitati de servicii privind forta de munca,3
+1,781,,Activitati ale agentiilor de plasare a fortei de munca,2
+1,781,7810,Activitati ale agentiilor de plasare a fortei de munca,3
+1,782,,Activitati ale agentiilor de plasare temporara a fortei de munca si furnizarea altor resurse umane,2
+1,782,7820,Activitati ale agentiilor de plasare temporara a fortei de munca si furnizarea altor resurse umane 79 Activitati ale agentiilor turistice si a tur-operatorilor; alte servicii de rezervare si asistenta turistica,3
+1,791,,Activitati ale agentiilor turistice si a tur-operatorilor,2
+1,791,7911,Activitati ale agentiilor turistice,3
+1,791,7912,Activitati ale tur-operatorilor,3
+1,799,,Alte servicii de rezervare si asistenta turistica,2
+1,799,7990,Alte servicii de rezervare si asistenta turistica 24 24 80 Activitati de investigatii si protectie,3
+1,800,,Activitati de investigatii si protectie,2
+1,800,8001,Activitati de investigatii si servicii private de protectie,3
+1,800,8009,Alte activitati de protectie n.c.a. 81 Activitati de peisagistica si servicii pentru cladiri,3
+1,811,,Activitati de servicii suport combinate,2
+1,811,8110,Activitati de servicii suport combinate,3
+1,812,,Activitati de curatenie,2
+1,812,8121,Activitati generale de curatenie a cladirilor,3
+1,812,8122,Activitati specializate de curatenie,3
+1,812,8123,Alte activitati de curatenie,3
+1,813,,Activitati de intetinere peisagistica,2
+1,813,8130,"Activitati de intetinere peisagistica 82 Activitati de secretariat, servicii suport si alte activitati de servicii prestate in principal intreprinderilor",3
+1,821,,Activitati de secretariat si servicii suport,2
+1,821,8210,Activitati de secretariat si servicii suport,3
+1,822,,Activitati ale centrelor de intermediere telefonica (call center),2
+1,822,8220,Activitati ale centrelor de intermediere telefonica (call center),3
+1,823,,"Activitati de organizare a expozitiilor, targurilor si congreselor",2
+1,823,8230,"Activitati de organizare a expozitiilor, targurilor si congreselor",3
+1,824,,Activitati de intermediere pentru servicii suport pentru intreprinderi n.c.a.,2
+1,824,8240,Activitati de intermediere pentru servicii suport pentru intreprinderi n.c.a.,3
+1,829,,Activitati de servicii suport pentru intreprinderi n.c.a.,2
+1,829,8291,Activitati ale agentiilor de colectare si a birourilor (oficiilor) de raportare a creditului,3
+1,829,8292,Activitati de ambalare,3
+1,829,8299,Alte activitati de servicii suport pentru intreprinderi n.c.a. SECTIUNEA P -ADMINISTRATIE PUBLICA SI APARARE; ASIGURARI SOCIALE DIN SISTEMUL PUBLIC 84 Administratie publica si aparare; asigurari sociale din sistemul public,3
+1,841,,"Administratie publica generala, economica si sociala",2
+1,841,8411,Activitati de administratie publica generala,3
+1,841,8412,"Reglementarea activitatilor organismelor care presteaza servicii in domeniul ingrijirii sanatatii, invatamantului, culturii si al altor activitati sociale, exceptand protectia sociala",3
+1,841,8413,Reglementarea si eficientizarea activitatilor economice,3
+1,842,,Activitati de servicii pentru societate,2
+1,842,8421,Activitati de afaceri externe 25 25,3
+1,842,8422,Activitati de aparare nationala,3
+1,842,8423,Activitati de justitie,3
+1,842,8424,Activitati de ordine publica si de protectie civila,3
+1,842,8425,Activitati de lupta impotriva incendiilor si de prevenire a acestora,3
+1,843,,Activitati de protectie sociala obligatorie,2
+1,843,8430,Activitati de protectie sociala obligatorie SECTIUNEA Q - INVATAMANT 85 Invatamant,3
+1,851,,Invatamant prescolar,2
+1,851,8510,Invatamant prescolar,3
+1,852,,Invatamant primar,2
+1,852,8520,Invatamant primar,3
+1,853,,Invatamant secundar,2
+1,853,8531,Invatamant secundar general,3
+1,853,8532,"Invatamant secundar, tehnic sau profesional",3
+1,853,8533,"Invatamant post-secundar, non-universitar",3
+1,854,,Invatamant superior,2
+1,854,8540,Invatamant superior universitar,3
+1,855,,Alte forme de invatamant,2
+1,855,8551,Invatamant in domeniul sportiv si recreational,3
+1,855,8552,"Invatamant in domeniul cultural (muzica, teatru, dans, arte plastice, etc.)",3
+1,855,8553,Scoli de conducere (pilotaj),3
+1,855,8559,Alte forme de invatamant n.c.a.,3
+1,856,,Activitati de servicii suport pentru invatamant,2
+1,856,8561,"Activitati de intermediere pentru cursuri si tutori (indrumatori, profesori)",3
+1,856,8569,Activitati de servicii suport pentru invatamant SECTIUNEA R - SANATATE SI ASISTENTA SOCIALA 86 Activitati referitoare la sanatatea umana,3
+1,861,,Activitati de asistenta spitaliceasca,2
+1,861,8610,Activitati de asistenta spitaliceasca,3
+1,862,,Activitati de asistenta medicala ambulatorie si stomatologica,2
+1,862,8621,Activitati de asistenta medicala generala,3
+1,862,8622,Activitati de asistenta medicala specializata,3
+1,862,8623,Activitati de asistenta stomatologica,3
+1,869,,Alte activitati referitoare la sanatatea umana,2
+1,869,8691,Servicii de diagnostic imagistic si activitati ale laboratoarelor medicale,3
+1,869,8692,Transportul pacientilor cu ambulanta,3
+1,869,8693,"Activitati ale psihologilor si psihoterapeutilor, cu exceptia medicilor",3
+1,869,8694,Activitati ale infirmierelor si moaselor 26 26,3
+1,869,8695,Activitati de fizioterapie,3
+1,869,8696,"Activitati de medicina traditionala, complementara si alternativa",3
+1,869,8697,"Servicii de intermediere pentru servicii medicale, stomatologice si pentru alte servicii referitoare la sanatatea umana",3
+1,869,8699,"Alte activitati referitoare la sanatatea umana n.c.a. 87 Servicii combinate de ingrijire medicala si asistenta sociala, cu cazare",3
+1,871,,Activitati ale centrelor de ingrijire medicala,2
+1,871,8710,Activitati ale centrelor de ingrijire medicala,3
+1,872,,"Activitati ale centrelor de recuperare pshica si de dezintoxicare, exclusiv spitale",2
+1,872,8720,"Activitati ale centrelor de recuperare pshica si de dezintoxicare, exclusiv spitale",3
+1,873,,Activitati ale caminelor de batrani si ale caminelor pentru persoane cu dizabilitati aflate in incapacitate de a se ingriji singure,2
+1,873,8730,Activitati ale caminelor de batrani si ale caminelor pentru persoane cu dizabilitati aflate in incapacitate de a se ingriji singure,3
+1,879,,"Alte activitati de asistenta sociala, cu cazare",2
+1,879,8791,Activitati de intermediere pentru servicii de ingrijire la domiciliu,3
+1,879,8799,"Alte activitati de asistenta sociala, cu cazare n.c.a. 88 Activitati de asistenta sociala, fara cazare",3
+1,881,,"Activitati de asistenta sociala, fara cazare, pentru batrani si pentru persoane cu dizabilitati aflate in incapacitate de a se ingriji singure",2
+1,881,8810,"Activitati de asistenta sociala, fara cazare, pentru batrani si pentru persoane cu dizabilitati aflate in incapacitate de a se ingriji singure",3
+1,889,,"Alte activitati de asistenta sociala, fara cazare",2
+1,889,8891,Activitati de ingrijire zilnica pentru copii,3
+1,889,8899,"Alte activitati de asistenta sociala, fara cazare, n.c.a. SECTIUNEA S - ACTIVITATI DE SPECTACOLE, CULTURALE, SPORTIVE SI RECREATIVE 90 Activitati de creatie si interpretare artistica",3
+1,901,,Activitati de creatie artistica,2
+1,901,9011,Activitati de creatie literara si compozitie muzicala,3
+1,901,9012,Activitati de creatie in domeniul artelor vizuale,3
+1,901,9013,Alte activitati de creatie artistica,3
+1,902,,Activitati de interpretare artistica (spectacole),2
+1,902,9020,Activitati de interpretare artistica (spectacole),3
+1,903,,Activitati suport pentru creatie si interpretare artistica,2
+1,903,9031,Activitati de gestionare a salilor si amplasamentelor de spectacole,3
+1,903,9039,"Alte activitati suport pentru creatie si interpretare artistica 91 Activitati ale bibliotecilor, arhivelor, muzeelor si alte activitati culturale",3
+1,911,,Activitati ale bibliotecilor si arhivelor 27 27,2
+1,911,9111,Activitati ale bibliotecilor,3
+1,911,9112,Activitati ale arhivelor,3
+1,912,,"Activitati ale muzeelor, colectiilor, siturilor si monumentelor istorice",2
+1,912,9121,Activitati ale muzeelor si colectiilor,3
+1,912,9122,Activitati ale siturilor si monumentelor istorice,3
+1,913,,"Activitati de conservare, restaurare si alte activitati suport pentru patrimoniul cultural",2
+1,913,9130,"Activitati de conservare, restaurare si alte activitati suport pentru patrimoniul cultural",3
+1,914,,"Activitati ale gradinilor botanice, zoologice si ale rezervatiilor naturale",2
+1,914,9141,Activitati ale gradinilor botanice si zoologice,3
+1,914,9142,Activitati ale rezervatiilor naturale 92 Activitati de jocuri de noroc si pariuri,3
+1,920,,Activitati de jocuri de noroc si pariuri,2
+1,920,9200,"Activitati de jocuri de noroc si pariuri 93 Activitati spotive, recreative si distractive",3
+1,931,,Activitati sportive,2
+1,931,9311,Activitati ale bazelor sportive,3
+1,931,9312,Activitati ale cluburilor sportive,3
+1,931,9313,Activitati ale centrelor de fitness,3
+1,931,9319,Alte activitati sportive n.c.a,3
+1,932,,Alte activitati recreative si distractive,2
+1,932,9321,Activitati ale parcurilor tematice si de distractii,3
+1,932,9329,Alte activitati recreative si distractive n.c.a. SECTIUNEA T - ALTE ACTIVITATI DE SERVICII 94 Activitati asociative diverse,3
+1,941,,"Activitati ale organizatiilor economice, patronale si profesionale",2
+1,941,9411,Activitati ale organizatiilor economice si patronale,3
+1,941,9412,Activitati ale organizatiilor profesionale,3
+1,942,,Activitati ale sindicatelor salariatilor,2
+1,942,9420,Activitati ale sindicatelor salariatilor,3
+1,949,,Alte activitati asociative,2
+1,949,9491,Activitati ale organizatiilor religioase,3
+1,949,9492,Activitati ale organizatiilor politice,3
+1,949,9499,"Activitati ale altor organizatii n.c.a. 95 Repararea si intretinerea calculatoarelor, a articolelor personale si de uz gospodaresc, a autovehiculelor si motocicletelor",3
+1,951,,Repararea si intretinerea calculatoarelor si a echipamentelor de comunicatii,2
+1,951,9510,Repararea si intretinerea calculatoarelor si a echipamentelor de comunicatii 28 28,3
+1,952,,Repararea si intretinerea articolelor personale si de uz gospodaresc,2
+1,952,9521,Repararea si intretinerea aparatelor electronice de uz casnic,3
+1,952,9522,Repararea si intretinerea dispozitivelor de uz gospodaresc si a echipamentelor pentru casa si gradina,3
+1,952,9523,Repararea si intretinerea incaltamintei si a articolelor din piele,3
+1,952,9524,Repararea si intretinerea mobilei si a furniturilor casnice,3
+1,952,9525,Repararea si intretinerea ceasurilor si a bijuteriilor,3
+1,952,9529,Repararea si intretinerea articolelor de uz personal si gospodaresc n.c.a.,3
+1,953,,Repararea si intretinerea autovehiculelor si motocicletelor,2
+1,953,9531,Repararea si intretinerea autovehiculelor,3
+1,953,9532,Repararea si intretinerea motocicletelor,3
+1,954,,"Servicii de intermediere pentru repararea si intretinerea calculatoarelor, a articolelor personale si de uz gospodaresc, a autovehiculelor si motocicletelor",2
+1,954,9540,"Servicii de intermediere pentru repararea si intretinerea calculatoarelor, a articolelor personale si de uz gospodaresc, a autovehiculelor si motocicletelor 96 Alte activitati de servicii",3
+1,961,,Spalarea si curatarea articolelor textile si a produselor din blana,2
+1,961,9610,Spalarea si curatarea articolelor textile si a produselor din blana,3
+1,962,,"Coafura, activitati de infrumusetare, tratamente spa si alte activitati similare",2
+1,962,9621,Activitati de coafura si frizerie,3
+1,962,9622,Activitati de tratament si infrumusetare,3
+1,962,9623,"Activitati ale centrelor spa, saunelor si bailor de abur",3
+1,963,,Activitati de pompe funebre si similare,2
+1,963,9630,Activitati de pompe funebre si similare,3
+1,964,,Activitati de intermediere pentru servicii personale,2
+1,964,9640,Activitati de intermediere pentru servicii personale,3
+1,969,,Alte servicii personale,2
+1,969,9691,Activitati de servicii personale la domiciliu,3
+1,969,9699,Alte servicii personale n.c.a. SECTIUNEA U – ACTIVITATI ALE GOSPODARIILOR PRIVATE IN CALITATE DE ANGAJATOR DE PERSONAL CASNIC; ACTIVITATI ALE GOSPODARIILOR PRIVATE DE PRODUCERE DE BUNURI SI SERVICII DESTINATE CONSUMULUI PROPRIU 97 Activitati ale gospodariilor private in calitate de angajator de personal casnic,3
+1,970,,Activitati ale gospodariilor private in calitate de angajator de personal casnic,2
+1,970,9700,Activitati ale gospodariilor private in calitate de angajator de personal casnic 98 Activitati ale gospodariilor private de producere de bunuri si servicii destinate consumului propriu Activitati ale gospodariilor private de producere de bunuri destinate consumului,3
+1,981,,propriu 29 29,2
+1,981,9810,Activitati ale gospodariilor private de producere de bunuri destinate consumului propriu,3
+1,982,,Activitati ale gospodariilor private de producere de servicii pentru scopuri proprii,2
+1,982,9820,Activitati ale gospodariilor private de producere de servicii pentru scopuri proprii SECTIUNEA V - ACTIVITATI ALE ORGANIZATIILOR SI ORGANISMELOR EXTRATERITORIALE 99 Activitati ale organizatiilor si organismelor extrateritoriale,3
+1,990,,Activitati ale organizatiilor si organismelor extrateritoriale,2
+1,990,9900,Activitati ale organizatiilor si organismelor extrateritoriale 30 30,3
