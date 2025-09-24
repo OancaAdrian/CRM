@@ -3,103 +3,245 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CRM - Căutare firmă după CUI</title>
+  <title>CRM - Căutare firmă după CUI sau nume</title>
   <style>
-    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#f6f8fa; color:#111; margin:0; padding:32px; }
-    .card { max-width:720px; margin:24px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 6px 18px rgba(15,23,42,0.06); }
-    h1 { margin:0 0 12px 0; font-size:20px; }
+    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background:#f6f8fa; color:#111; margin:0; padding:28px; }
+    .card { max-width:880px; margin:28px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 8px 24px rgba(15,23,42,0.06); }
+    h1 { margin:0 0 12px 0; font-size:22px; }
     label { display:block; margin-bottom:8px; font-weight:600; }
-    input[type="text"] { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #d1d5db; font-size:16px; }
-    button { margin-top:12px; padding:10px 14px; background:#0366d6; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600; }
-    button:disabled { opacity:.6; cursor:default; }
-    pre { background:#0f172a; color:#e6eef8; padding:12px; border-radius:8px; overflow:auto; }
-    .result { margin-top:16px; }
+    input[type="text"] { width:100%; padding:12px 14px; border-radius:8px; border:1px solid #d1d5db; font-size:16px; }
+    .controls { display:flex; gap:12px; margin-top:12px; align-items:center; }
+    button { padding:10px 14px; background:#0366d6; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600; }
     .muted { color:#6b7280; font-size:14px; margin-top:8px; }
+    .result, .detail, .activities { margin-top:16px; }
+    .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .box { border:1px solid #e6eef8; padding:12px; border-radius:8px; background:#fff; }
+    .name { font-weight:700; font-size:16px; cursor:pointer; color:#0b63d6; text-decoration:underline; }
+    pre { background:#0f172a; color:#e6eef8; padding:12px; border-radius:8px; overflow:auto; margin:8px 0 0 0; }
+    .small { font-size:13px; color:#334155; }
   </style>
 </head>
 <body>
   <main class="card" role="main">
-    <h1>Găsește firmă după CUI</h1>
-    <label for="cui">Introduceți CUI</label>
-    <input id="cui" type="text" placeholder="ex: 12818268" inputmode="numeric" />
-    <div>
+    <h1>Găsește firmă după CUI sau nume</h1>
+    <label for="q">Introduceți CUI sau nume (ex: 12818268 sau East Truck)</label>
+    <input id="q" type="text" placeholder="ex: 12818268 sau EAST TRUCK" />
+    <div class="controls">
       <button id="search">Caută</button>
+      <div class="muted">Rezultatele apar mai jos. Click pe nume pentru detalii.</div>
     </div>
-    <div class="muted">Rezultatele apar mai jos. Dacă sunt mai multe, vor fi listate toate.</div>
 
-    <div id="error" class="result" style="color:#b91c1c"></div>
-    <div id="results" class="result" aria-live="polite"></div>
+    <div id="error" class="muted" style="color:#b91c1c"></div>
+
+    <div id="results" class="result"></div>
+
+    <section id="detail" class="detail"></section>
+
+    <section id="activities" class="activities"></section>
   </main>
 
   <script>
     const btn = document.getElementById('search');
-    const input = document.getElementById('cui');
-    const results = document.getElementById('results');
-    const error = document.getElementById('error');
+    const qInput = document.getElementById('q');
+    const resultsEl = document.getElementById('results');
+    const errorEl = document.getElementById('error');
+    const detailEl = document.getElementById('detail');
+    const activitiesEl = document.getElementById('activities');
+
+    async function apiGet(path) {
+      const res = await fetch(path, { headers: { accept: 'application/json' }});
+      if (!res.ok) {
+        let j = null;
+        try { j = await res.json(); } catch(e) {}
+        throw new Error((j && j.detail) ? JSON.stringify(j.detail) : `Server ${res.status}`);
+      }
+      return res.json();
+    }
+
+    function humanNumber(v) {
+      if (!v && v !== 0) return '—';
+      try { return Number(v).toLocaleString(); } catch(e) { return v; }
+    }
 
     async function search() {
-      error.textContent = '';
-      results.innerHTML = '';
-      const q = input.value.trim();
-      if (!q) {
-        error.textContent = 'Introduceți un CUI valid.';
-        return;
-      }
-      btn.disabled = true;
-      btn.textContent = 'Se caută...';
+      errorEl.textContent = '';
+      resultsEl.innerHTML = '';
+      detailEl.innerHTML = '';
+      activitiesEl.innerHTML = '';
+
+      const q = qInput.value.trim();
+      if (!q) { errorEl.textContent = 'Introduceți un CUI sau un nume.'; return; }
+      btn.disabled = true; btn.textContent = 'Se caută...';
 
       try {
-        const res = await fetch(`/firme?q=${encodeURIComponent(q)}&limit=10`, { headers: { accept: 'application/json' } });
-        if (!res.ok) {
-          const j = await res.json().catch(()=>null);
-          error.textContent = (j && j.detail) ? String(j.detail) : `Eroare server: ${res.status}`;
-          return;
-        }
-        const data = await res.json();
+        const data = await apiGet(`/search?q=${encodeURIComponent(q)}&limit=20`);
         if (!Array.isArray(data) || data.length === 0) {
-          results.innerHTML = '<div class="muted">Nu s-au găsit rezultate.</div>';
+          resultsEl.innerHTML = '<div class="muted">Nu s-au găsit rezultate.</div>';
           return;
         }
-
-        // Render list
         const list = document.createElement('div');
         data.forEach(item => {
           const box = document.createElement('div');
-          box.style.padding = '12px';
-          box.style.border = '1px solid #e6eef8';
-          box.style.borderRadius = '8px';
+          box.className = 'box';
           box.style.marginTop = '12px';
-          const title = document.createElement('div');
-          title.style.fontWeight = '700';
-          title.textContent = item.name ?? item.denumire ?? '(nume lipsă)';
+          const name = document.createElement('div');
+          name.className = 'name';
+          name.textContent = item.name || item.denumire || '(nume lipsă)';
+          name.onclick = () => loadDetails(item.cui);
           const meta = document.createElement('div');
-          meta.style.color = '#6b7280';
-          meta.style.marginTop = '6px';
-          meta.textContent = `CUI: ${item.cui ?? item.id ?? '—'}`;
-
-          const pretty = document.createElement('pre');
-          pretty.style.marginTop = '8px';
-          pretty.textContent = JSON.stringify(item, null, 2);
-
-          box.appendChild(title);
+          meta.className = 'small';
+          meta.textContent = `CUI: ${item.cui || '—'} · Județ: ${item.judet || '—'} · Cifra afaceri: ${humanNumber(item.cifra_afaceri)}`;
+          box.appendChild(name);
           box.appendChild(meta);
-          box.appendChild(pretty);
           list.appendChild(box);
         });
-        results.appendChild(list);
+        resultsEl.appendChild(list);
       } catch (err) {
-        error.textContent = 'Eroare rețea: ' + (err && err.message ? err.message : String(err));
+        errorEl.textContent = 'Eroare: ' + err.message;
       } finally {
-        btn.disabled = false;
-        btn.textContent = 'Caută';
+        btn.disabled = false; btn.textContent = 'Caută';
       }
     }
 
-    btn.addEventListener('click', search);
-    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') search(); });
+    async function loadDetails(cui) {
+      errorEl.textContent = '';
+      detailEl.innerHTML = '';
+      activitiesEl.innerHTML = '';
+      btn.disabled = true;
+      try {
+        const d = await apiGet(`/firma/${encodeURIComponent(cui)}/detalii`);
+        const c = document.createElement('div');
+        c.className = 'box';
+        c.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:800;font-size:18px">${d.name || '—'}</div>
+              <div class="small">CUI: ${d.cui || '—'} · Județ: ${d.judet || '—'} · Localitate: ${d.localitate || '—'}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="small">Cifră afaceri: <strong>${humanNumber(d.cifra_afaceri)}</strong></div>
+              <div class="small">Profit net: <strong>${humanNumber(d.profit)}</strong></div>
+              <div class="small">Angajați: <strong>${d.angajati || '—'}</strong></div>
+              <div class="small">Licențe: <strong>${d.licente || '—'}</strong></div>
+            </div>
+          </div>
+          <div style="margin-top:12px">
+            <div class="small">CAEN: <strong>${d.cod_caen || '—'}</strong> — ${d.caen_descriere || '(descriere lipsă)'}</div>
+          </div>
+        `;
+        detailEl.appendChild(c);
 
-    // Optional: auto-focus
-    input.focus();
+        // Activities widget (list + form + CSV upload)
+        renderActivitiesWidget(cui);
+      } catch (err) {
+        errorEl.textContent = 'Eroare la încărcare detalii: ' + err.message;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function renderActivitiesWidget(cui) {
+      activitiesEl.innerHTML = '';
+      const wrapper = document.createElement('div');
+      wrapper.className = 'box';
+      wrapper.style.marginTop = '12px';
+      wrapper.innerHTML = '<div style="font-weight:700">Activități</div><div id="acts-list" style="margin-top:8px"></div>';
+      const listEl = wrapper.querySelector('#acts-list');
+
+      // list existing activities
+      try {
+        const acts = await apiGet(`/activitati/firma/${encodeURIComponent(cui)}`);
+        if (Array.isArray(acts) && acts.length) {
+          acts.forEach(a => {
+            const row = document.createElement('div');
+            row.style.borderTop = '1px solid #eef2ff';
+            row.style.paddingTop = '8px';
+            row.style.marginTop = '8px';
+            row.innerHTML = `<div><strong>${a.type || '—'}</strong> ${a.comment ? '- ' + a.comment : ''}</div>
+                             <div class="small">Scor: ${a.score || '—'} · La: ${a.created_at || '—'}</div>`;
+            listEl.appendChild(row);
+          });
+        } else {
+          listEl.innerHTML = '<div class="muted">Nu există activități.</div>';
+        }
+      } catch (err) {
+        listEl.innerHTML = '<div class="muted">Eroare la încărcare activități.</div>';
+      }
+
+      // Add form
+      const form = document.createElement('div');
+      form.style.marginTop = '12px';
+      form.innerHTML = `
+        <div style="font-weight:700;margin-bottom:8px">Adaugă activitate</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input id="act-type" placeholder="tip" style="padding:8px;border-radius:6px;border:1px solid #d1d5db"/>
+          <input id="act-score" placeholder="scor" type="number" style="padding:8px;border-radius:6px;border:1px solid #d1d5db;width:120px"/>
+        </div>
+        <div style="margin-top:8px">
+          <textarea id="act-comment" placeholder="comentariu" rows="3" style="width:100%;padding:8px;border-radius:6px;border:1px solid #d1d5db"></textarea>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button id="act-create">Adaugă</button>
+          <label style="align-items:center;display:inline-flex;gap:8px">
+            <input id="act-file" type="file" accept=".csv" style="display:inline-block"/>
+            <span class="small">Import CSV</span>
+          </label>
+        </div>
+        <div id="act-msg" class="small" style="margin-top:8px"></div>
+      `;
+      wrapper.appendChild(form);
+      activitiesEl.appendChild(wrapper);
+
+      // handlers
+      form.querySelector('#act-create').onclick = async () => {
+        const type = form.querySelector('#act-type').value.trim();
+        const score = form.querySelector('#act-score').value;
+        const comment = form.querySelector('#act-comment').value.trim();
+        const body = new FormData();
+        if (type) body.append('type_name', type);
+        if (comment) body.append('comment', comment);
+        if (score) body.append('score', score);
+        const msg = form.querySelector('#act-msg');
+        msg.textContent = 'Se creează...';
+        try {
+          const res = await fetch(`/activitati/firma/${encodeURIComponent(cui)}/create`, {
+            method: 'POST',
+            body
+          });
+          if (!res.ok) throw new Error('Server ' + res.status);
+          const j = await res.json();
+          msg.textContent = 'Activitate creată';
+          renderActivitiesWidget(cui); // refresh
+        } catch (err) {
+          msg.textContent = 'Eroare: ' + err.message;
+        }
+      };
+
+      form.querySelector('#act-file').onchange = async (ev) => {
+        const f = ev.target.files[0];
+        if (!f) return;
+        const msg = form.querySelector('#act-msg');
+        msg.textContent = 'Se încarcă CSV...';
+        const fd = new FormData();
+        fd.append('file', f);
+        try {
+          const res = await fetch(`/activitati/firma/${encodeURIComponent(cui)}/import_csv`, {
+            method: 'POST',
+            body: fd
+          });
+          if (!res.ok) throw new Error('Server ' + res.status);
+          const j = await res.json();
+          msg.textContent = `Import: ${j.created} create, ${j.errors.length} errors`;
+          renderActivitiesWidget(cui);
+        } catch (err) {
+          msg.textContent = 'Eroare import: ' + err.message;
+        }
+      };
+    }
+
+    btn.addEventListener('click', search);
+    qInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') search(); });
+    qInput.focus();
   </script>
 </body>
 </html>
