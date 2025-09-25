@@ -3,66 +3,94 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CRM - Căutare firmă după CUI</title>
+  <title>CRM - Căutare firmă și Agenda</title>
   <style>
-    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background:#f6f8fa; color:#111; margin:0; padding:32px; }
-    .card { max-width:920px; margin:24px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 6px 18px rgba(15,23,42,0.06); }
-    h1 { margin:0 0 12px 0; font-size:20px; }
+    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background:#f6f8fa; color:#111; margin:0; padding:24px; }
+    .container { max-width:1100px; margin:20px auto; display:grid; grid-template-columns: 1fr 420px; gap:20px; }
+    .card { background:#fff; padding:16px; border-radius:10px; box-shadow:0 6px 18px rgba(15,23,42,0.06); }
+    h1 { margin:0 0 12px 0; font-size:18px; }
     label { display:block; margin-bottom:8px; font-weight:600; }
-    input[type="text"], textarea, input[type="number"] { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #d1d5db; font-size:16px; }
-    button { margin-top:12px; padding:10px 14px; background:#0366d6; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600; }
+    input[type="text"], textarea, input[type="number"], select { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #d1d5db; font-size:15px; }
+    button { margin-top:8px; padding:8px 12px; background:#0366d6; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600; }
     button.secondary { background:#e5e7eb; color:#111; }
-    button:disabled { opacity:.6; cursor:default; }
-    .result { margin-top:16px; }
-    .muted { color:#6b7280; font-size:14px; margin-top:8px; }
-    .name-button { font-weight:700; background:none; border:none; padding:0; cursor:pointer; color:#0366d6; font-size:16px; text-align:left; }
-    .detail { margin-top:8px; padding:10px; border-radius:8px; background:#f8fafc; border:1px solid #eef2ff; }
-    .flex { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-    .field { margin-top:8px; }
-    .list-item { padding:12px; border:1px solid #e6eef8; border-radius:8px; margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
-    .meta { color:#6b7280; font-size:14px; white-space:nowrap; }
-    .summary { display:flex; flex-direction:column; gap:4px; flex:1 1 auto; }
+    .muted { color:#6b7280; font-size:13px; margin-top:8px; }
+    .list-item { padding:10px; border:1px solid #e6eef8; border-radius:8px; margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .agenda-slot { padding:10px; border-radius:8px; margin-top:8px; background:#f8fafc; border:1px solid #eef2ff; }
+    .overdue { background:#fff4f2; border-color:#ffd6cc; }
+    .small { font-size:13px; color:#6b7280; }
+    .name-button { font-weight:700; background:none; border:none; padding:0; cursor:pointer; color:#0366d6; font-size:15px; text-align:left; }
+    #agenda { max-height:720px; overflow:auto; }
   </style>
 </head>
 <body>
-  <main class="card" role="main">
-    <h1>Găsește firmă după CUI sau nume</h1>
-    <label for="cui">Introduceți CUI sau nume (ex: 12818268 sau East Truck)</label>
-    <input id="cui" type="text" placeholder="ex: 12818268 sau East Truck" inputmode="text" />
-    <div class="flex">
-      <button id="search">Caută</button>
-      <button id="back" class="secondary" style="display:none">Înapoi la rezultate</button>
-      <div class="muted">Rezultatele apar mai jos. Click pe nume pentru detalii.</div>
+  <div class="container">
+    <div class="card" id="search-card">
+      <h1>Găsește firmă după CUI sau nume</h1>
+      <label for="cui">Introduceți CUI sau nume</label>
+      <input id="cui" type="text" placeholder="ex: 12818268 sau East Truck" />
+      <div style="display:flex; gap:8px; align-items:center; margin-top:8px">
+        <button id="search">Caută</button>
+        <button id="back" class="secondary" style="display:none">Înapoi</button>
+        <div class="muted">Rezultatele apar mai jos. Click pe nume pentru detalii.</div>
+      </div>
+
+      <div id="error" class="muted" style="color:#b91c1c; margin-top:8px"></div>
+      <div id="results" style="margin-top:12px"></div>
     </div>
 
-    <div id="error" class="result" style="color:#b91c1c"></div>
-    <div id="results" class="result" aria-live="polite"></div>
-  </main>
+    <div class="card" id="agenda-card">
+      <h1>Agenda zilnică</h1>
+      <div class="small muted" id="agenda-date">Se încarcă...</div>
+      <div style="margin-top:10px; display:flex; gap:8px;">
+        <button id="refresh-agenda" class="secondary">Reîmprospătează</button>
+        <input id="agenda-day" type="date" style="flex:1" />
+      </div>
+      <div id="agenda" style="margin-top:12px"></div>
+    </div>
+  </div>
 
   <template id="detail-template">
-    <div class="detail">
-      <div class="field"><strong>Județ:</strong> <span data-judet>—</span></div>
-      <div class="field"><strong>Localitate:</strong> <span data-localitate>—</span></div>
-      <div class="field"><strong>Cifră afaceri:</strong> <span data-cifra>—</span></div>
-      <div class="field"><strong>Profit net:</strong> <span data-profit>—</span></div>
-      <div class="field"><strong>Angajați:</strong> <span data-angajati>—</span></div>
-      <div class="field"><strong>Licențe:</strong> <span data-licente>—</span></div>
-      <div class="field"><strong>CAEN:</strong> <span data-caen>—</span> <em data-caen-desc style="color:#6b7280"></em></div>
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:700" data-name>—</div>
+          <div class="small" data-meta>—</div>
+        </div>
+      </div>
 
-      <h4>Activități</h4>
-      <div id="activities" style="margin-top:8px">Se încarcă activități…</div>
+      <div style="margin-top:10px">
+        <div class="small"><strong>Județ:</strong> <span data-judet>—</span></div>
+        <div class="small"><strong>Localitate:</strong> <span data-localitate>—</span></div>
+        <div class="small"><strong>Licențe:</strong> <span data-licente>—</span></div>
+      </div>
+
+      <h4 style="margin-top:12px">Activități</h4>
+      <div data-activities style="margin-top:8px">Se încarcă activități…</div>
 
       <h4 style="margin-top:12px">Adaugă activitate</h4>
-      <div class="field">
-        <label for="act-type">Tip activitate</label>
-        <input id="act-type" type="number" value="1" />
+      <div style="margin-top:6px">
+        <label>Tip activitate</label>
+        <select data-act-type>
+          <option value="1">contact</option>
+          <option value="2">oferta</option>
+          <option value="3">contract</option>
+          <option value="4">contact in vederea livrarii</option>
+          <option value="5">livrare</option>
+          <option value="6">feedback livrare</option>
+        </select>
       </div>
-      <div class="field">
-        <label for="act-score">Scor</label>
-        <input id="act-score" type="number" min="0" step="1" />
+      <div style="margin-top:8px">
+        <label>Scor</label>
+        <input data-act-score type="number" min="1" max="20" />
       </div>
-      <div class="field"><label for="act-comment">Comentariu</label><textarea id="act-comment" placeholder="comentariu"></textarea></div>
-      <div class="field"><button id="act-add">Adaugă</button> <span id="act-result" style="margin-left:8px"></span></div>
+      <div style="margin-top:8px">
+        <label>Comentariu</label>
+        <textarea data-act-comment placeholder="comentariu"></textarea>
+      </div>
+      <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
+        <button data-act-add>Adaugă</button>
+        <span data-act-result class="small"></span>
+      </div>
     </div>
   </template>
 
@@ -73,6 +101,11 @@
     const results = document.getElementById('results');
     const error = document.getElementById('error');
     const detailTpl = document.getElementById('detail-template').content;
+
+    const agendaDayInput = document.getElementById('agenda-day');
+    const agendaDateLabel = document.getElementById('agenda-date');
+    const agendaDiv = document.getElementById('agenda');
+    const refreshAgendaBtn = document.getElementById('refresh-agenda');
 
     let _searchLock = false;
     let _lastQuery = "";
@@ -92,7 +125,7 @@
       return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
     }
 
-    async function loadActivities(cui, container) {
+    async function loadActivitiesList(cui, container) {
       container.textContent = 'Se încarcă activități…';
       try {
         const res = await fetch(`/api/firms/${encodeURIComponent(cui)}`, { headers: { accept: 'application/json' } });
@@ -109,12 +142,13 @@
         const list = document.createElement('div');
         acts.forEach(a => {
           const el = document.createElement('div');
-          el.style.padding = '8px';
+          el.className = 'agenda-slot';
           el.style.borderBottom = '1px solid #eef2ff';
-          const when = a.created_at ? a.created_at : '—';
+          const when = a.created_at ? a.created_at.split('T')[0] : '—';
+          const sched = a.scheduled_date ? ` | Programată: ${a.scheduled_date}` : '';
           const score = (a.score !== null && a.score !== undefined) ? ` | Scor: ${a.score}` : '';
-          const type = (a.type_id !== null && a.type_id !== undefined) ? ` | Tip: ${a.type_id}` : '';
-          el.textContent = `${when} — ${a.comment || '(fără comentariu)'}${type}${score}`;
+          const type_text = a.type_id ? ` | Tip: ${a.type_id}` : '';
+          el.textContent = `${when} — ${a.comment || '(fără comentariu)'}${type_text}${score}${sched}`;
           list.appendChild(el);
         });
         container.innerHTML = '';
@@ -145,27 +179,23 @@
         }
 
         const clone = document.importNode(detailTpl, true);
+        clone.querySelector('[data-name]').textContent = json.name || '(nume lipsă)';
+        clone.querySelector('[data-meta]').textContent = `CUI: ${json.cui || '—'} · Județ: ${json.judet || '—'}`;
         clone.querySelector('[data-judet]').textContent = json.judet || '—';
         clone.querySelector('[data-localitate]').textContent = json.localitate || '—';
-        clone.querySelector('[data-cifra]').textContent = (json.cifra_afaceri != null) ? fmtNumber(json.cifra_afaceri) : ((json.cifra_de_afaceri_neta != null) ? fmtNumber(json.cifra_de_afaceri_neta) : '—');
-        clone.querySelector('[data-profit]').textContent = (json.profit_net != null) ? fmtNumber(json.profit_net) : ((json.profitul_net != null) ? fmtNumber(json.profitul_net) : '—');
-        clone.querySelector('[data-angajati]').textContent = json.angajati || json.numar_mediu_de_salariati || '—';
         clone.querySelector('[data-licente]').textContent = json.licente ?? json.numar_licente ?? '—';
-        clone.querySelector('[data-caen]').textContent = json.caen ?? '—';
-        clone.querySelector('[data-caen-desc]').textContent = json.caen_description ? `— ${json.caen_description}` : '';
 
-        const activitiesContainer = clone.querySelector('#activities');
-        await loadActivities(cui, activitiesContainer);
+        const activitiesContainer = clone.querySelector('[data-activities]');
+        await loadActivitiesList(cui, activitiesContainer);
 
-        const addBtn = clone.querySelector('#act-add');
-        const commentInput = clone.querySelector('#act-comment');
+        const addBtn = clone.querySelector('[data-act-add]');
+        const commentInput = clone.querySelector('[data-act-comment]');
+        const typeInput = clone.querySelector('[data-act-type]');
+        const scoreInput = clone.querySelector('[data-act-score]');
+        const actResult = clone.querySelector('[data-act-result]');
         const activitiesContainerRef = activitiesContainer;
 
         addBtn.addEventListener('click', async () => {
-          const typeInput = clone.querySelector('#act-type');
-          const scoreInput = clone.querySelector('#act-score');
-          const actResult = clone.querySelector('#act-result');
-
           actResult.textContent = '';
           const comment = commentInput.value.trim();
           const typeVal = Number(typeInput.value) || 1;
@@ -173,6 +203,7 @@
           const scoreVal = scoreValRaw === '' ? null : Number(scoreValRaw);
 
           if (!comment) { actResult.textContent = 'Comentariu este necesar.'; return; }
+          if (scoreVal !== null && (isNaN(scoreVal) || scoreVal < 1 || scoreVal > 20)) { actResult.textContent = 'Scor invalid (1-20).'; return; }
 
           const payload = {
             firm_id: String(cui),
@@ -189,13 +220,21 @@
               body: JSON.stringify(payload)
             });
             if (res.status === 201) {
-              actResult.textContent = 'Activitate salvată.';
+              const j = await res.json().catch(()=>null);
+              let msg = 'Activitate salvată.';
+              if (j && j.scheduled_date) {
+                msg += ' Programată pentru: ' + j.scheduled_date;
+              } else if (j && j.score === 20) {
+                msg += ' (Nu se reprogramă)';
+              }
+              actResult.textContent = msg;
               actResult.style.color = '#059669';
-              setTimeout(() => { actResult.textContent = ''; }, 1400);
+              setTimeout(() => { actResult.textContent = ''; }, 3000);
               commentInput.value = '';
               scoreInput.value = '';
               typeInput.value = '1';
-              await loadActivities(cui, activitiesContainerRef);
+              await loadActivitiesList(cui, activitiesContainerRef);
+              await loadAgenda(); // refresh agenda so new scheduled shows up
             } else if (res.status === 409) {
               actResult.textContent = 'Activitate deja există.';
             } else {
@@ -258,17 +297,18 @@
           row.dataset.cui = cui;
 
           const summary = document.createElement('div');
-          summary.className = 'summary';
+          summary.style.display = 'flex';
+          summary.style.flexDirection = 'column';
           const titleBtn = document.createElement('button');
           titleBtn.className = 'name-button';
           titleBtn.textContent = item.name ?? '(nume lipsă)';
           summary.appendChild(titleBtn);
 
           const meta = document.createElement('div');
-          meta.className = 'meta';
+          meta.className = 'small';
           const judet = item.judet ?? '—';
           const cifra = item.cifra_afaceri ?? item.cifra_de_afaceri_neta ?? null;
-          meta.textContent = `CUI: ${cui} · Județ: ${judet} · Cifra afaceri: ${cifra ? fmtNumber(cifra) : '—'}`;
+          meta.textContent = `CUI: ${cui} · Județ: ${judet} · Cifră afaceri: ${cifra ? fmtNumber(cifra) : '—'}`;
           summary.appendChild(meta);
 
           row.appendChild(summary);
@@ -283,7 +323,7 @@
             header.style.justifyContent = 'space-between';
             header.style.alignItems = 'center';
             const titleText = document.createElement('div');
-            titleText.innerHTML = `<strong>${item.name}</strong><div class="meta" style="margin-top:6px">CUI: ${cui} · Județ: ${item.judet ?? '—'} · Cifră afaceri: ${cifra ? fmtNumber(cifra) : '—'}</div>`;
+            titleText.innerHTML = `<strong>${item.name}</strong><div class="small" style="margin-top:6px">CUI: ${cui} · Județ: ${item.judet ?? '—'}</div>`;
             header.appendChild(titleText);
             const closeBtn = document.createElement('button');
             closeBtn.textContent = 'Înapoi';
@@ -332,13 +372,14 @@
         row.className = 'list-item';
         row.dataset.cui = cui;
         const summary = document.createElement('div');
-        summary.className = 'summary';
+        summary.style.display = 'flex';
+        summary.style.flexDirection = 'column';
         const titleBtn = document.createElement('button');
         titleBtn.className = 'name-button';
         titleBtn.textContent = item.name ?? '(nume lipsă)';
         summary.appendChild(titleBtn);
         const meta = document.createElement('div');
-        meta.className = 'meta';
+        meta.className = 'small';
         const judet = item.judet ?? '—';
         const cifra = item.cifra_afaceri ?? item.cifra_de_afaceri_neta ?? null;
         meta.textContent = `CUI: ${cui} · Județ: ${judet} · Cifra afaceri: ${cifra ? fmtNumber(cifra) : '—'}`;
@@ -354,7 +395,7 @@
           header.style.justifyContent = 'space-between';
           header.style.alignItems = 'center';
           const titleText = document.createElement('div');
-          titleText.innerHTML = `<strong>${item.name}</strong><div class="meta" style="margin-top:6px">CUI: ${cui} · Județ: ${item.judet ?? '—'} · Cifră afaceri: ${cifra ? fmtNumber(cifra) : '—'}</div>`;
+          titleText.innerHTML = `<strong>${item.name}</strong><div class="small" style="margin-top:6px">CUI: ${cui} · Județ: ${item.judet ?? '—'}</div>`;
           header.appendChild(titleText);
           const closeBtn = document.createElement('button');
           closeBtn.textContent = 'Înapoi';
@@ -377,6 +418,67 @@
       backBtn.style.display = 'none';
     }
 
+    // Agenda functions
+    async function loadAgenda(day = null) {
+      const d = day || agendaDayInput.value || new Date().toISOString().slice(0,10);
+      agendaDateLabel.textContent = `Agenda pentru: ${d}`;
+      try {
+        const res = await fetch(`/api/agenda?day=${d}`, { headers: { accept: 'application/json' } });
+        if (!res.ok) {
+          agendaDiv.innerHTML = '<div class="muted">Eroare la încărcare agenda.</div>';
+          return;
+        }
+        const json = await res.json();
+        const overdue = json.overdue || [];
+        const today = json.today || [];
+
+        agendaDiv.innerHTML = '';
+        // Overdue first (highlighted)
+        if (overdue.length) {
+          const h = document.createElement('div');
+          h.style.fontWeight = '700';
+          h.style.marginTop = '6px';
+          h.textContent = 'Restante';
+          agendaDiv.appendChild(h);
+          overdue.forEach(a => {
+            const el = document.createElement('div');
+            el.className = 'agenda-slot overdue';
+            el.innerHTML = `<div style="font-weight:600">${a.comment}</div><div class="small">Firmă: ${a.cui} | Scor: ${a.score ?? '—'} | Programată: ${a.scheduled_date ?? '—'}</div>`;
+            agendaDiv.appendChild(el);
+          });
+        }
+
+        // Today's scheduled
+        if (today.length) {
+          const h2 = document.createElement('div');
+          h2.style.fontWeight = '700';
+          h2.style.marginTop = '10px';
+          h2.textContent = 'Programate pentru azi';
+          agendaDiv.appendChild(h2);
+          today.forEach(a => {
+            const el = document.createElement('div');
+            el.className = 'agenda-slot';
+            el.innerHTML = `<div style="font-weight:600">${a.comment}</div><div class="small">Firmă: ${a.cui} | Scor: ${a.score ?? '—'} | Programată: ${a.scheduled_date ?? '—'}</div>`;
+            agendaDiv.appendChild(el);
+          });
+        }
+
+        if (!overdue.length && !today.length) {
+          agendaDiv.innerHTML = '<div class="muted">Nicio activitate programată pentru această zi.</div>';
+        }
+      } catch (err) {
+        agendaDiv.innerHTML = '<div class="muted">Eroare la încărcare agenda: ' + (err.message || err) + '</div>';
+      }
+    }
+
+    // init
+    (function init() {
+      const today = new Date().toISOString().slice(0,10);
+      agendaDayInput.value = today;
+      loadAgenda();
+    })();
+
+    refreshAgendaBtn.addEventListener('click', () => loadAgenda(agendaDayInput.value));
     btn.addEventListener('click', () => search());
     input.addEventListener('input', debounce(() => { if (input.value.trim()) search(); }, 350));
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); search(); } });

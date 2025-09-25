@@ -1,8 +1,13 @@
+﻿# Python
 .venv/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+env/
 .env
-.idea/
+# VSCode
 .vscode/
+# OS
+Thumbs.db
 .DS_Store
-*.sqlite3
