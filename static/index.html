@@ -13,9 +13,10 @@
     input[type="text"], textarea, input[type="number"], select { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #d1d5db; font-size:15px; }
     button { margin-top:8px; padding:8px 12px; background:#0366d6; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600; }
     button.secondary { background:#e5e7eb; color:#111; }
+    button:disabled { opacity:.6; cursor:default; }
     .muted { color:#6b7280; font-size:13px; margin-top:8px; }
     .list-item { padding:10px; border:1px solid #e6eef8; border-radius:8px; margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
-    .agenda-slot { padding:10px; border-radius:8px; margin-top:8px; background:#f8fafc; border:1px solid #eef2ff; }
+    .agenda-slot { padding:10px; border-radius:8px; margin-top:8px; background:#f8fafc; border:1px solid #eef2ff; cursor:pointer; }
     .overdue { background:#fff4f2; border-color:#ffd6cc; }
     .small { font-size:13px; color:#6b7280; }
     .name-button { font-weight:700; background:none; border:none; padding:0; cursor:pointer; color:#0366d6; font-size:15px; text-align:left; }
@@ -359,66 +360,40 @@
       }
     }
 
-    function renderResults(data) {
+    async function openFirmFromAgenda(cui) {
+      // same behaviour as clicking a search result: open details pane
       results.innerHTML = '';
-      if (!Array.isArray(data) || data.length === 0) {
-        results.innerHTML = '<div class="muted">Nu s-au găsit rezultate.</div>';
-        return;
-      }
-      const list = document.createElement('div');
-      data.forEach(item => {
-        const cui = item.cui ?? item.id ?? '—';
-        const row = document.createElement('div');
-        row.className = 'list-item';
-        row.dataset.cui = cui;
-        const summary = document.createElement('div');
-        summary.style.display = 'flex';
-        summary.style.flexDirection = 'column';
-        const titleBtn = document.createElement('button');
-        titleBtn.className = 'name-button';
-        titleBtn.textContent = item.name ?? '(nume lipsă)';
-        summary.appendChild(titleBtn);
-        const meta = document.createElement('div');
-        meta.className = 'small';
-        const judet = item.judet ?? '—';
-        const cifra = item.cifra_afaceri ?? item.cifra_de_afaceri_neta ?? null;
-        meta.textContent = `CUI: ${cui} · Județ: ${judet} · Cifra afaceri: ${cifra ? fmtNumber(cifra) : '—'}`;
-        summary.appendChild(meta);
-        row.appendChild(summary);
-        titleBtn.addEventListener('click', async () => {
-          results.innerHTML = '';
-          const single = document.createElement('div');
-          single.className = 'list-item';
-          single.style.flexDirection = 'column';
-          const header = document.createElement('div');
-          header.style.display = 'flex';
-          header.style.justifyContent = 'space-between';
-          header.style.alignItems = 'center';
-          const titleText = document.createElement('div');
-          titleText.innerHTML = `<strong>${item.name}</strong><div class="small" style="margin-top:6px">CUI: ${cui} · Județ: ${item.judet ?? '—'}</div>`;
-          header.appendChild(titleText);
-          const closeBtn = document.createElement('button');
-          closeBtn.textContent = 'Înapoi';
-          closeBtn.className = 'secondary';
-          closeBtn.addEventListener('click', () => {
-            renderResults(_lastResults);
-          });
-          header.appendChild(closeBtn);
-          single.appendChild(header);
-          const detailsHolder = document.createElement('div');
-          detailsHolder.style.marginTop = '12px';
-          single.appendChild(detailsHolder);
-          results.appendChild(single);
-          await fetchDetails(cui, detailsHolder);
-          single.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-        list.appendChild(row);
-      });
-      results.appendChild(list);
-      backBtn.style.display = 'none';
+      const single = document.createElement('div');
+      single.className = 'list-item';
+      single.style.flexDirection = 'column';
+
+      const header = document.createElement('div');
+      header.style.display = 'flex';
+      header.style.justifyContent = 'space-between';
+      header.style.alignItems = 'center';
+
+      const titleText = document.createElement('div');
+      titleText.innerHTML = `<strong>Detalii firmă</strong><div class="small" style="margin-top:6px">CUI: ${cui}</div>`;
+      header.appendChild(titleText);
+
+      const closeBtn = document.createElement('button');
+      closeBtn.textContent = 'Înapoi';
+      closeBtn.className = 'secondary';
+      closeBtn.addEventListener('click', () => { results.innerHTML = ''; });
+      header.appendChild(closeBtn);
+
+      single.appendChild(header);
+
+      const detailsHolder = document.createElement('div');
+      detailsHolder.style.marginTop = '12px';
+      single.appendChild(detailsHolder);
+
+      results.appendChild(single);
+
+      await fetchDetails(cui, detailsHolder);
+      single.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Agenda functions
     async function loadAgenda(day = null) {
       const d = day || agendaDayInput.value || new Date().toISOString().slice(0,10);
       agendaDateLabel.textContent = `Agenda pentru: ${d}`;
@@ -433,7 +408,6 @@
         const today = json.today || [];
 
         agendaDiv.innerHTML = '';
-        // Overdue first (highlighted)
         if (overdue.length) {
           const h = document.createElement('div');
           h.style.fontWeight = '700';
@@ -443,12 +417,23 @@
           overdue.forEach(a => {
             const el = document.createElement('div');
             el.className = 'agenda-slot overdue';
-            el.innerHTML = `<div style="font-weight:600">${a.comment}</div><div class="small">Firmă: ${a.cui} | Scor: ${a.score ?? '—'} | Programată: ${a.scheduled_date ?? '—'}</div>`;
+            const titleBtn = document.createElement('button');
+            titleBtn.className = 'name-button';
+            titleBtn.textContent = a.firm_name || a.comment || a.cui;
+            titleBtn.addEventListener('click', () => {
+              openFirmFromAgenda(a.cui);
+              input.value = a.cui;
+            });
+            const meta = document.createElement('div');
+            meta.className = 'small';
+            meta.style.marginTop = '6px';
+            meta.textContent = `Firmă: ${a.cui} | Scor: ${a.score ?? '—'} | Programată: ${a.scheduled_date ?? '—'}`;
+            el.appendChild(titleBtn);
+            el.appendChild(meta);
             agendaDiv.appendChild(el);
           });
         }
 
-        // Today's scheduled
         if (today.length) {
           const h2 = document.createElement('div');
           h2.style.fontWeight = '700';
@@ -458,7 +443,19 @@
           today.forEach(a => {
             const el = document.createElement('div');
             el.className = 'agenda-slot';
-            el.innerHTML = `<div style="font-weight:600">${a.comment}</div><div class="small">Firmă: ${a.cui} | Scor: ${a.score ?? '—'} | Programată: ${a.scheduled_date ?? '—'}</div>`;
+            const titleBtn = document.createElement('button');
+            titleBtn.className = 'name-button';
+            titleBtn.textContent = a.firm_name || a.comment || a.cui;
+            titleBtn.addEventListener('click', () => {
+              openFirmFromAgenda(a.cui);
+              input.value = a.cui;
+            });
+            const meta = document.createElement('div');
+            meta.className = 'small';
+            meta.style.marginTop = '6px';
+            meta.textContent = `Firmă: ${a.cui} | Scor: ${a.score ?? '—'} | Programată: ${a.scheduled_date ?? '—'}`;
+            el.appendChild(titleBtn);
+            el.appendChild(meta);
             agendaDiv.appendChild(el);
           });
         }
@@ -471,7 +468,6 @@
       }
     }
 
-    // init
     (function init() {
       const today = new Date().toISOString().slice(0,10);
       agendaDayInput.value = today;
