@@ -14,11 +14,11 @@ from sqlalchemy.exc import OperationalError, SQLAlchemyError, IntegrityError
 from sqlalchemy.orm import sessionmaker
 from urllib.parse import urlparse, urlunparse
 
-# ---------- Logging ----------
+# logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("crm-main")
 
-# ---------- Configuration ----------
+# config
 DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("DATABASE_URL_LOCAL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL environment variable is not set")
@@ -31,7 +31,7 @@ if "sslmode=" not in query:
 parsed = parsed._replace(query=query)
 DATABASE_URL = urlunparse(parsed)
 
-# ---------- Engine / Session ----------
+# engine/session
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,
@@ -42,7 +42,7 @@ engine = create_engine(
 )
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
-# ---------- App and static ----------
+# app + static
 app = FastAPI(title="CRM API")
 STATIC_DIR = "static" if os.path.isdir("static") else ("Static" if os.path.isdir("Static") else None)
 if STATIC_DIR:
@@ -56,7 +56,6 @@ def root_index():
     return {"message": "No static site found. Visit /docs for API docs."}
 
 
-# ---------- Startup DB check ----------
 @app.on_event("startup")
 def startup_check_db():
     for attempt in range(3):
@@ -71,7 +70,6 @@ def startup_check_db():
     logger.error("DB unreachable after retries")
 
 
-# ---------- Helpers ----------
 def safe_iso(dt):
     if dt is None:
         return None
@@ -97,7 +95,6 @@ def norm_number(s):
             return None
 
 
-# ---------- Health / test ----------
 @app.get("/health")
 def health():
     try:
@@ -106,41 +103,6 @@ def health():
         return {"status": "ok"}
     except Exception:
         raise HTTPException(status_code=503, detail="unhealthy")
-
-
-# ---------- Search endpoints ----------
-@app.get("/firme")
-def list_firme(q: str = Query(..., description="CUI to look up"), limit: int = Query(50, ge=1, le=500)) -> List[Dict[str, Any]]:
-    if not q:
-        raise HTTPException(status_code=400, detail="Missing query parameter `q`")
-    stmt = text(
-        """
-        SELECT denumire AS name, cui, judet, cifra_de_afaceri_neta
-        FROM firms
-        WHERE cui = :cui
-        LIMIT :limit
-        """
-    )
-    try:
-        with engine.connect() as conn:
-            rows = conn.execute(stmt, {"cui": q, "limit": limit}).mappings().all()
-            results = []
-            for r in rows:
-                rec = dict(r)
-                if "id" not in rec:
-                    rec["id"] = rec.get("cui")
-                rec["cifra_afaceri"] = norm_number(rec.get("cifra_de_afaceri_neta"))
-                rec["profit_net"] = None
-                rec["angajati"] = None
-                rec["licente"] = None
-                results.append(rec)
-            return results
-    except OperationalError as e:
-        logger.exception("OperationalError in /firme")
-        raise HTTPException(status_code=503, detail=str(e))
-    except SQLAlchemyError as e:
-        logger.exception("SQLAlchemyError in /firme")
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/search")
@@ -167,15 +129,12 @@ def search_compat(q: str = Query(..., description="CUI or name to search"), limi
                 rec["licente"] = None
                 results.append(rec)
             return JSONResponse(content=results)
-    except OperationalError as e:
-        logger.exception("OperationalError in /search")
+    except OperationalError:
         raise HTTPException(status_code=503, detail="Database unavailable")
-    except Exception as e:
-        logger.exception("Unexpected error in /search: %s", e)
+    except Exception:
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-# ---------- Firm details ----------
 @app.get("/api/firms/{firm_id}")
 def get_firm(firm_id: str):
     try:
@@ -283,7 +242,6 @@ def get_firm(firm_id: str):
                     "created_at": safe_iso(a.get("created_at")),
                 })
 
-            # optional CAEN description
             caen_desc = None
             try:
                 if firm.get("caen"):
@@ -316,12 +274,6 @@ def get_firm(firm_id: str):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-@app.get("/firma/{firm_id}/detalii")
-def firma_detalii_compat(firm_id: str):
-    return get_firm(firm_id)
-
-
-# ---------- Create activity ----------
 class ActivityIn(BaseModel):
     firm_id: str
     activity_type_id: int | None = None
@@ -338,7 +290,6 @@ def create_activity(payload: ActivityIn):
         raise HTTPException(status_code=400, detail="firm_id and comment required")
 
     def score_to_offset_days(score: int | None) -> int | None:
-        # mapping exact cerut
         if score is None:
             return None
         try:
@@ -364,33 +315,20 @@ def create_activity(payload: ActivityIn):
         if s == 17: return 6 * 365
         if s == 18: return 7 * 365
         if s == 19: return 8 * 365
-        if s == 20: return None  # nu reprograma
+        if s == 20: return None
         return None
 
     try:
         with engine.begin() as conn:
             existing = conn.execute(
                 text(
-                    "SELECT id, cui, activity_type_id, comment, score, scheduled_date, created_at "
-                    "FROM public.activities WHERE cui = :cui AND comment = :comment LIMIT 1"
+                    "SELECT id FROM public.activities WHERE cui = :cui AND comment = :comment LIMIT 1"
                 ),
                 {"cui": cui, "comment": comment},
             ).mappings().first()
             if existing:
-                return JSONResponse(
-                    status_code=409,
-                    content={
-                        "id": existing.get("id"),
-                        "cui": existing.get("cui"),
-                        "activity_type_id": existing.get("activity_type_id"),
-                        "comment": existing.get("comment"),
-                        "score": existing.get("score"),
-                        "scheduled_date": safe_iso(existing.get("scheduled_date")),
-                        "created_at": safe_iso(existing.get("created_at")),
-                    },
-                )
+                raise HTTPException(status_code=409, detail="Activity already exists")
 
-            # decide scheduled_date doar daca nu a fost furnizata
             if payload.scheduled_date:
                 sched_dt = payload.scheduled_date
             else:
@@ -425,14 +363,14 @@ def create_activity(payload: ActivityIn):
                 "created_at": safe_iso(res.get("created_at")),
             }
     except IntegrityError:
-        logger.exception("IntegrityError creating activity")
         raise HTTPException(status_code=409, detail="Activity already exists")
+    except HTTPException:
+        raise
     except Exception:
         logger.exception("Unexpected error creating activity")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-# ---------- Agenda endpoint ----------
 @app.get("/api/agenda")
 def get_agenda(day: str | None = Query(None, description="ISO date YYYY-MM-DD. Defaults to today")):
     try:
@@ -445,20 +383,30 @@ def get_agenda(day: str | None = Query(None, description="ISO date YYYY-MM-DD. D
             target = date.today()
 
         with engine.connect() as conn:
-            # today's scheduled
             today_rows = conn.execute(
                 text(
-                    "SELECT id, cui, activity_type_id, comment, score, scheduled_date, created_at "
-                    "FROM public.activities WHERE scheduled_date = :target ORDER BY scheduled_date, created_at DESC"
+                    """
+                    SELECT a.id, a.cui, a.activity_type_id, a.comment, a.score, a.scheduled_date, a.created_at,
+                           f.denumire AS firm_name
+                    FROM public.activities a
+                    LEFT JOIN public.firms f ON f.cui = a.cui
+                    WHERE a.scheduled_date = :target
+                    ORDER BY a.scheduled_date, a.created_at DESC
+                    """
                 ),
                 {"target": target.isoformat()},
             ).mappings().all()
 
-            # overdue = scheduled_date < target
             overdue_rows = conn.execute(
                 text(
-                    "SELECT id, cui, activity_type_id, comment, score, scheduled_date, created_at "
-                    "FROM public.activities WHERE scheduled_date < :target ORDER BY scheduled_date ASC, created_at DESC"
+                    """
+                    SELECT a.id, a.cui, a.activity_type_id, a.comment, a.score, a.scheduled_date, a.created_at,
+                           f.denumire AS firm_name
+                    FROM public.activities a
+                    LEFT JOIN public.firms f ON f.cui = a.cui
+                    WHERE a.scheduled_date < :target
+                    ORDER BY a.scheduled_date ASC, a.created_at DESC
+                    """
                 ),
                 {"target": target.isoformat()},
             ).mappings().all()
@@ -469,6 +417,7 @@ def get_agenda(day: str | None = Query(None, description="ISO date YYYY-MM-DD. D
                     out.append({
                         "id": r.get("id"),
                         "cui": r.get("cui"),
+                        "firm_name": r.get("firm_name") or None,
                         "type_id": r.get("activity_type_id"),
                         "comment": r.get("comment"),
                         "score": r.get("score"),
@@ -485,8 +434,3 @@ def get_agenda(day: str | None = Query(None, description="ISO date YYYY-MM-DD. D
     except Exception as e:
         logger.exception("get_agenda failed: %s", e)
         raise HTTPException(status_code=500, detail="Internal server error")
-
-
-# ---------- CAEN import & other endpoints remain unchanged ----------
-# (rest of the file unchanged - CAEN import, caen desc and SPA catch-all)
-# you can append the previous CAEN code here exactly as in your original file.
