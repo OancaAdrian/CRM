@@ -5,20 +5,18 @@ from time import sleep
 from typing import List, Dict, Any
 from datetime import date, timedelta, datetime
 
-from fastapi import FastAPI, HTTPException, Query, Request, UploadFile, File
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sqlalchemy import create_engine, text
-from sqlalchemy.exc import OperationalError, SQLAlchemyError, IntegrityError
+from sqlalchemy.exc import OperationalError, IntegrityError
 from sqlalchemy.orm import sessionmaker
 from urllib.parse import urlparse, urlunparse
 
-# logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("crm-main")
 
-# config
 DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("DATABASE_URL_LOCAL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL environment variable is not set")
@@ -31,7 +29,6 @@ if "sslmode=" not in query:
 parsed = parsed._replace(query=query)
 DATABASE_URL = urlunparse(parsed)
 
-# engine/session
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,
@@ -42,7 +39,6 @@ engine = create_engine(
 )
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
-# app + static
 app = FastAPI(title="CRM API")
 STATIC_DIR = "static" if os.path.isdir("static") else ("Static" if os.path.isdir("Static") else None)
 if STATIC_DIR:
@@ -62,6 +58,31 @@ def startup_check_db():
         try:
             with engine.connect() as conn:
                 conn.execute(text("SELECT 1"))
+                # ensure contacts table exists
+                conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS public.contacts (
+                  id serial PRIMARY KEY,
+                  firm_cui varchar NOT NULL,
+                  name text NOT NULL,
+                  phone text,
+                  email text,
+                  role text,
+                  created_at timestamp default now()
+                );
+                """))
+                conn.execute(text("CREATE INDEX IF NOT EXISTS idx_contacts_firm_cui ON public.contacts (firm_cui);"))
+                # ensure activity_types table and seed expected rows
+                conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS public.activity_types (
+                  id integer PRIMARY KEY,
+                  name text
+                );
+                """))
+                conn.execute(text("""
+                INSERT INTO public.activity_types (id, name)
+                VALUES (7, 'vizita'), (8, 'intalnire')
+                ON CONFLICT (id) DO NOTHING;
+                """))
             logger.info("DB reachable at startup")
             return
         except OperationalError as e:
@@ -132,6 +153,7 @@ def search_compat(q: str = Query(..., description="CUI or name to search"), limi
     except OperationalError:
         raise HTTPException(status_code=503, detail="Database unavailable")
     except Exception:
+        logger.exception("search_compat failed")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -164,7 +186,7 @@ def get_firm(firm_id: str):
                       telefon,
                       manager_de_transport,
                       cifra_de_afaceri_neta,
-                      profitul_net,
+                      profitul_brut,
                       numar_mediu_de_salariati,
                       an,
                       actualizat_la
@@ -208,7 +230,7 @@ def get_firm(firm_id: str):
                               telefon,
                               manager_de_transport,
                               cifra_de_afaceri_neta,
-                              profitul_net,
+                              profitul_brut,
                               numar_mediu_de_salariati,
                               an,
                               actualizat_la
@@ -251,6 +273,25 @@ def get_firm(firm_id: str):
             except Exception:
                 caen_desc = None
 
+            # load contacts for this firm
+            contacts = []
+            try:
+                crows = conn.execute(
+                    text("SELECT id, name, phone, email, role, created_at FROM public.contacts WHERE firm_cui = :cui ORDER BY created_at DESC"),
+                    {"cui": firm["cui"]}
+                ).mappings().all()
+                for c in crows:
+                    contacts.append({
+                        "id": c.get("id"),
+                        "name": c.get("name"),
+                        "phone": c.get("phone"),
+                        "email": c.get("email"),
+                        "role": c.get("role"),
+                        "created_at": safe_iso(c.get("created_at")),
+                    })
+            except Exception:
+                contacts = []
+
             resp = {
                 "id": firm.get("cui"),
                 "cui": firm.get("cui"),
@@ -260,18 +301,24 @@ def get_firm(firm_id: str):
                 "caen": firm.get("caen"),
                 "caen_description": caen_desc,
                 "cifra_afaceri": norm_number(firm.get("cifra_de_afaceri_neta")),
-                "profit_net": norm_number(firm.get("profitul_net")),
+                "profit_net": norm_number(firm.get("profitul_brut") or firm.get("profitul_net")),
                 "angajati": norm_number(firm.get("numar_mediu_de_salariati")),
                 "licente": norm_number(firm.get("numar_licente")),
                 "an": firm.get("an"),
                 "actualizat_la": firm.get("actualizat_la"),
                 "raw": dict(firm),
                 "activities": acts,
+                "contacts": contacts,
             }
             return JSONResponse(content=resp)
     except Exception as e:
         logger.exception("get_firm failed for %s: %s", firm_id, e)
         raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.get("/firma/{firm_id}/detalii")
+def firma_detalii_compat(firm_id: str):
+    return get_firm(firm_id)
 
 
 class ActivityIn(BaseModel):
@@ -282,92 +329,232 @@ class ActivityIn(BaseModel):
     scheduled_date: str | None = None
 
 
-@app.post("/api/activities", status_code=201)
-def create_activity(payload: ActivityIn):
+def score_to_offset_days(score: int | None) -> int | None:
+    if score is None:
+        return None
+    try:
+        s = int(score)
+    except Exception:
+        return None
+    mapping = {
+        1: 1, 2: 3, 3: 5, 4: 10, 5: 30,
+        6: 90, 7: 150, 8: 270, 9: 365,
+        10: int(1.5 * 365), 11: 2 * 365, 12: int(2.5 * 365),
+        13: 3 * 365, 14: int(3.5 * 365), 15: 4 * 365,
+        16: 5 * 365, 17: 6 * 365, 18: 7 * 365,
+        19: 8 * 365, 20: None
+    }
+    return mapping.get(s)
+
+
+@app.post("/api/activities")
+def create_or_update_activity(payload: ActivityIn):
     cui = (payload.firm_id or "").strip()
     comment = (payload.comment or "").strip()
     if not cui or not comment:
         raise HTTPException(status_code=400, detail="firm_id and comment required")
 
-    def score_to_offset_days(score: int | None) -> int | None:
-        if score is None:
-            return None
+    target_day_date = None
+    if payload.scheduled_date and payload.scheduled_date.strip():
         try:
-            s = int(score)
+            target_day_date = datetime.strptime(payload.scheduled_date.strip(), "%Y-%m-%d").date()
         except Exception:
-            return None
-        if s == 1: return 1
-        if s == 2: return 3
-        if s == 3: return 5
-        if s == 4: return 10
-        if s == 5: return 30
-        if s == 6: return 90
-        if s == 7: return 150
-        if s == 8: return 270
-        if s == 9: return 365
-        if s == 10: return int(1.5 * 365)
-        if s == 11: return 2 * 365
-        if s == 12: return int(2.5 * 365)
-        if s == 13: return 3 * 365
-        if s == 14: return int(3.5 * 365)
-        if s == 15: return 4 * 365
-        if s == 16: return 5 * 365
-        if s == 17: return 6 * 365
-        if s == 18: return 7 * 365
-        if s == 19: return 8 * 365
-        if s == 20: return None
-        return None
+            raise HTTPException(status_code=400, detail="scheduled_date must be YYYY-MM-DD")
+    else:
+        days = score_to_offset_days(payload.score)
+        if days is not None:
+            target_day_date = (date.today() + timedelta(days=days))
+        else:
+            target_day_date = None
 
     try:
         with engine.begin() as conn:
-            existing = conn.execute(
-                text(
-                    "SELECT id FROM public.activities WHERE cui = :cui AND comment = :comment LIMIT 1"
-                ),
-                {"cui": cui, "comment": comment},
-            ).mappings().first()
-            if existing:
-                raise HTTPException(status_code=409, detail="Activity already exists")
+            if payload.activity_type_id is not None:
+                at_exists = conn.execute(
+                    text("SELECT 1 FROM public.activity_types WHERE id = :id LIMIT 1"),
+                    {"id": payload.activity_type_id}
+                ).scalar_one_or_none()
+                if not at_exists:
+                    try:
+                        conn.execute(text("INSERT INTO public.activity_types (id, name) VALUES (7, 'vizita') ON CONFLICT (id) DO NOTHING"))
+                        conn.execute(text("INSERT INTO public.activity_types (id, name) VALUES (8, 'intalnire') ON CONFLICT (id) DO NOTHING"))
+                    except Exception:
+                        pass
+                    at_exists = conn.execute(
+                        text("SELECT 1 FROM public.activity_types WHERE id = :id LIMIT 1"),
+                        {"id": payload.activity_type_id}
+                    ).scalar_one_or_none()
+                    if not at_exists:
+                        payload.activity_type_id = None
 
-            if payload.scheduled_date:
-                sched_dt = payload.scheduled_date
+            if target_day_date is not None:
+                existing = conn.execute(
+                    text(
+                        """
+                        SELECT id
+                        FROM public.activities
+                        WHERE cui = :cui
+                          AND comment = :comment
+                          AND scheduled_date::date = :target_day
+                        LIMIT 1
+                        """
+                    ),
+                    {"cui": cui, "comment": comment, "target_day": target_day_date},
+                ).mappings().first()
             else:
-                days = score_to_offset_days(payload.score)
-                if days is None:
-                    sched_dt = None
-                else:
-                    sched_date = (date.today() + timedelta(days=days))
-                    sched_dt = sched_date.isoformat()
+                existing = conn.execute(
+                    text(
+                        """
+                        SELECT id
+                        FROM public.activities
+                        WHERE cui = :cui
+                          AND comment = :comment
+                          AND created_at::date = CURRENT_DATE
+                        LIMIT 1
+                        """
+                    ),
+                    {"cui": cui, "comment": comment},
+                ).mappings().first()
+
+            if existing:
+                updated = conn.execute(
+                    text(
+                        """
+                        UPDATE public.activities
+                        SET activity_type_id = :type_id,
+                            score = :score,
+                            scheduled_date = :scheduled_date,
+                            comment = :comment,
+                            created_at = now()
+                        WHERE id = :id
+                        RETURNING id, created_at, scheduled_date
+                        """
+                    ),
+                    {
+                        "id": existing["id"],
+                        "type_id": payload.activity_type_id,
+                        "score": payload.score,
+                        "scheduled_date": target_day_date,
+                        "comment": comment,
+                    },
+                ).mappings().first()
+
+                return JSONResponse(
+                    status_code=200,
+                    content={
+                        "id": updated.get("id"),
+                        "cui": cui,
+                        "activity_type_id": payload.activity_type_id,
+                        "comment": comment,
+                        "score": payload.score,
+                        "scheduled_date": safe_iso(updated.get("scheduled_date")) if updated.get("scheduled_date") else (target_day_date.isoformat() if target_day_date else None),
+                        "created_at": safe_iso(updated.get("created_at")),
+                        "updated": True,
+                    },
+                )
+            else:
+                res = conn.execute(
+                    text(
+                        """
+                        INSERT INTO public.activities (cui, activity_type_id, comment, score, scheduled_date, created_at)
+                        VALUES (:cui, :type_id, :comment, :score, :scheduled_date, now())
+                        RETURNING id, created_at, scheduled_date
+                        """
+                    ),
+                    {
+                        "cui": cui,
+                        "type_id": payload.activity_type_id,
+                        "comment": comment,
+                        "score": payload.score,
+                        "scheduled_date": target_day_date,
+                    },
+                ).mappings().first()
+
+                return JSONResponse(
+                    status_code=201,
+                    content={
+                        "id": res.get("id"),
+                        "cui": cui,
+                        "activity_type_id": payload.activity_type_id,
+                        "comment": comment,
+                        "score": payload.score,
+                        "scheduled_date": safe_iso(res.get("scheduled_date")) if res.get("scheduled_date") else (target_day_date.isoformat() if target_day_date else None),
+                        "created_at": safe_iso(res.get("created_at")),
+                        "updated": False,
+                    },
+                )
+    except IntegrityError as e:
+        logger.exception("create_or_update_activity integrity error: %s", e)
+        raise HTTPException(status_code=400, detail="Database integrity error")
+    except Exception as e:
+        logger.exception("create_or_update_activity failed: %s", e)
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+# contacts endpoints
+class ContactIn(BaseModel):
+    firm_cui: str
+    name: str
+    phone: str | None = None
+    email: str | None = None
+    role: str | None = None
+
+
+@app.post("/api/contacts", status_code=201)
+def create_contact(payload: ContactIn):
+    try:
+        with engine.begin() as conn:
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS public.contacts (
+                  id serial PRIMARY KEY,
+                  firm_cui varchar NOT NULL,
+                  name text NOT NULL,
+                  phone text,
+                  email text,
+                  role text,
+                  created_at timestamp default now()
+                );
+            """))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS idx_contacts_firm_cui ON public.contacts (firm_cui);"))
 
             res = conn.execute(
                 text(
-                    "INSERT INTO public.activities (cui, activity_type_id, comment, score, scheduled_date, created_at) "
-                    "VALUES (:cui, :type_id, :comment, :score, :scheduled_date, now()) RETURNING id, created_at, scheduled_date"
+                    "INSERT INTO public.contacts (firm_cui, name, phone, email, role) "
+                    "VALUES (:cui, :name, :phone, :email, :role) RETURNING id, created_at"
                 ),
                 {
-                    "cui": cui,
-                    "type_id": payload.activity_type_id,
-                    "comment": comment,
-                    "score": payload.score,
-                    "scheduled_date": sched_dt,
+                    "cui": payload.firm_cui,
+                    "name": payload.name,
+                    "phone": payload.phone,
+                    "email": payload.email,
+                    "role": payload.role,
                 },
             ).mappings().first()
-
             return {
-                "id": res.get("id"),
-                "cui": cui,
-                "activity_type_id": payload.activity_type_id,
-                "comment": comment,
-                "score": payload.score,
-                "scheduled_date": safe_iso(res.get("scheduled_date")) if res.get("scheduled_date") else sched_dt,
-                "created_at": safe_iso(res.get("created_at")),
+                "id": res["id"],
+                "firm_cui": payload.firm_cui,
+                "name": payload.name,
+                "phone": payload.phone,
+                "email": payload.email,
+                "role": payload.role,
+                "created_at": safe_iso(res["created_at"]),
             }
-    except IntegrityError:
-        raise HTTPException(status_code=409, detail="Activity already exists")
-    except HTTPException:
-        raise
-    except Exception:
-        logger.exception("Unexpected error creating activity")
+    except Exception as e:
+        logger.exception("create_contact failed: %s", e)
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.get("/api/firms/{firm_id}/contacts")
+def list_contacts(firm_id: str):
+    try:
+        with engine.connect() as conn:
+            rows = conn.execute(
+                text("SELECT id, name, phone, email, role, created_at FROM public.contacts WHERE firm_cui = :cui ORDER BY created_at DESC"),
+                {"cui": firm_id}
+            ).mappings().all()
+            return [dict(r) for r in rows]
+    except Exception as e:
+        logger.exception("list_contacts failed: %s", e)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
