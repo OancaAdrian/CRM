@@ -22,6 +22,7 @@
     .name-button { font-weight:700; background:none; border:none; padding:0; cursor:pointer; color:#0366d6; font-size:15px; text-align:left; }
     #agenda { max-height:720px; overflow:auto; }
     .field { margin-top:8px; }
+    .caen-desc { color:#111; display:block; margin-top:4px; }
   </style>
 </head>
 <body>
@@ -63,6 +64,8 @@
       <div style="margin-top:10px">
         <div class="small"><strong>Județ:</strong> <span data-judet>—</span></div>
         <div class="small"><strong>Localitate:</strong> <span data-localitate>—</span></div>
+        <div class="small"><strong>Cod CAEN:</strong> <span data-caen>—</span></div>
+        <div class="small"><strong>Descriere CAEN:</strong> <span class="caen-desc" data-caen-desc>—</span></div>
         <div class="small"><strong>Licențe:</strong> <span data-licente>—</span></div>
 
         <div class="small" style="margin-top:10px"><strong>Cifră de afaceri:</strong> <span data-cifra>—</span></div>
@@ -212,6 +215,9 @@
           return null;
         }
 
+        // debug: inspect server response
+        console.log('API firm response', json);
+
         const clone = document.importNode(detailTpl, true);
 
         clone.querySelector('[data-name]').textContent = json.name || '(nume lipsă)';
@@ -224,6 +230,11 @@
         clone.querySelector('[data-cifra]').textContent = (json.cifra_afaceri != null) ? fmtNumber(json.cifra_afaceri) : '—';
         clone.querySelector('[data-profit]').textContent = (json.profit_net != null) ? fmtNumber(json.profit_net) : '—';
         clone.querySelector('[data-angajati]').textContent = (json.angajati != null) ? String(json.angajati) : '—';
+
+        // CAEN code + description (trim and safe string)
+        clone.querySelector('[data-caen]').textContent = (json.caen || '').toString().trim() || '—';
+        const desc = (json.caen_description || '').toString().trim();
+        clone.querySelector('[data-caen-desc]').textContent = desc || '—';
 
         const activitiesContainer = clone.querySelector('[data-activities]');
         await loadActivitiesList(cui, activitiesContainer);
