@@ -161,43 +161,45 @@ def search_compat(q: str = Query(..., description="CUI or name to search"), limi
 def get_firm(firm_id: str):
     try:
         with engine.connect() as conn:
-            firm = conn.execute(
-                text(
-                    """
-                    SELECT
-                      denumire AS name,
-                      cui,
-                      cod_inmatriculare,
-                      data_inmatriculare,
-                      euid,
-                      forma_juridica,
-                      tara,
-                      judet,
-                      localitate,
-                      adr_den_strada,
-                      adr_nr_strada,
-                      adr_bloc,
-                      adr_scara,
-                      adr_etaj,
-                      adr_apartament,
-                      adr_cod_postal,
-                      caen,
-                      numar_licente,
-                      telefon,
-                      manager_de_transport,
-                      cifra_de_afaceri_neta,
-                      profitul_brut,
-                      numar_mediu_de_salariati,
-                      an,
-                      actualizat_la
-                    FROM firms
-                    WHERE cui = :cui
-                    LIMIT 1
-                    """
-                ),
-                {"cui": firm_id},
-            ).mappings().first()
+            # Use LEFT JOIN to bring caen description directly, trimming firms.caen on join
+            stmt = text(
+                """
+                SELECT
+                  f.denumire AS name,
+                  f.cui,
+                  f.cod_inmatriculare,
+                  f.data_inmatriculare,
+                  f.euid,
+                  f.forma_juridica,
+                  f.tara,
+                  f.judet,
+                  f.localitate,
+                  f.adr_den_strada,
+                  f.adr_nr_strada,
+                  f.adr_bloc,
+                  f.adr_scara,
+                  f.adr_etaj,
+                  f.adr_apartament,
+                  f.adr_cod_postal,
+                  f.caen,
+                  f.numar_licente,
+                  f.telefon,
+                  f.manager_de_transport,
+                  f.cifra_de_afaceri_neta,
+                  f.profitul_brut,
+                  f.numar_mediu_de_salariati,
+                  f.an,
+                  f.actualizat_la,
+                  c.descriere AS caen_description
+                FROM public.firms f
+                LEFT JOIN public.caen_codes c ON c.clasa = trim(f.caen)
+                WHERE f.cui = :cui
+                LIMIT 1
+                """
+            )
+            firm = conn.execute(stmt, {"cui": firm_id}).mappings().first()
 
+            # fallback: if not found via cui, try id
             if not firm:
                 col_exists = conn.execute(
                     text(
@@ -209,33 +211,35 @@ def get_firm(firm_id: str):
                         text(
                             """
                             SELECT
-                              denumire AS name,
-                              cui,
-                              cod_inmatriculare,
-                              data_inmatriculare,
-                              euid,
-                              forma_juridica,
-                              tara,
-                              judet,
-                              localitate,
-                              adr_den_strada,
-                              adr_nr_strada,
-                              adr_bloc,
-                              adr_scara,
-                              adr_etaj,
-                              adr_apartament,
-                              adr_cod_postal,
-                              caen,
-                              numar_licente,
-                              telefon,
-                              manager_de_transport,
-                              cifra_de_afaceri_neta,
-                              profitul_brut,
-                              numar_mediu_de_salariati,
-                              an,
-                              actualizat_la
-                            FROM firms
-                            WHERE id = :id
+                              f.denumire AS name,
+                              f.cui,
+                              f.cod_inmatriculare,
+                              f.data_inmatriculare,
+                              f.euid,
+                              f.forma_juridica,
+                              f.tara,
+                              f.judet,
+                              f.localitate,
+                              f.adr_den_strada,
+                              f.adr_nr_strada,
+                              f.adr_bloc,
+                              f.adr_scara,
+                              f.adr_etaj,
+                              f.adr_apartament,
+                              f.adr_cod_postal,
+                              f.caen,
+                              f.numar_licente,
+                              f.telefon,
+                              f.manager_de_transport,
+                              f.cifra_de_afaceri_neta,
+                              f.profitul_brut,
+                              f.numar_mediu_de_salariati,
+                              f.an,
+                              f.actualizat_la,
+                              c.descriere AS caen_description
+                            FROM public.firms f
+                            LEFT JOIN public.caen_codes c ON c.clasa = trim(f.caen)
+                            WHERE f.id = :id
                             LIMIT 1
                             """
                         ),
@@ -264,15 +268,6 @@ def get_firm(firm_id: str):
                     "created_at": safe_iso(a.get("created_at")),
                 })
 
-            caen_desc = None
-            try:
-                if firm.get("caen"):
-                    cd = conn.execute(text("SELECT denumire FROM public.caen_codes WHERE clasa = :cl ORDER BY id LIMIT 1"), {"cl": firm["caen"]}).scalar_one_or_none()
-                    if cd:
-                        caen_desc = cd
-            except Exception:
-                caen_desc = None
-
             # load contacts for this firm
             contacts = []
             try:
@@ -291,6 +286,13 @@ def get_firm(firm_id: str):
                     })
             except Exception:
                 contacts = []
+
+            # ensure caen_description is a plain string (normalize)
+            caen_desc = firm.get("caen_description")
+            if isinstance(caen_desc, str):
+                caen_desc = caen_desc.strip()
+            else:
+                caen_desc = caen_desc if caen_desc is not None else None
 
             resp = {
                 "id": firm.get("cui"),
