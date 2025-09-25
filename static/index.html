@@ -21,6 +21,7 @@
     .small { font-size:13px; color:#6b7280; }
     .name-button { font-weight:700; background:none; border:none; padding:0; cursor:pointer; color:#0366d6; font-size:15px; text-align:left; }
     #agenda { max-height:720px; overflow:auto; }
+    .field { margin-top:8px; }
   </style>
 </head>
 <body>
@@ -63,6 +64,10 @@
         <div class="small"><strong>Județ:</strong> <span data-judet>—</span></div>
         <div class="small"><strong>Localitate:</strong> <span data-localitate>—</span></div>
         <div class="small"><strong>Licențe:</strong> <span data-licente>—</span></div>
+
+        <div class="small" style="margin-top:10px"><strong>Cifră de afaceri:</strong> <span data-cifra>—</span></div>
+        <div class="small"><strong>Profit net:</strong> <span data-profit>—</span></div>
+        <div class="small"><strong>Număr angajați:</strong> <span data-angajati>—</span></div>
       </div>
 
       <h4 style="margin-top:12px">Activități</h4>
@@ -78,6 +83,8 @@
           <option value="4">contact in vederea livrarii</option>
           <option value="5">livrare</option>
           <option value="6">feedback livrare</option>
+          <option value="7">vizita</option>
+          <option value="8">intalnire</option>
         </select>
       </div>
       <div style="margin-top:8px">
@@ -91,6 +98,32 @@
       <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
         <button data-act-add>Adaugă</button>
         <span data-act-result class="small"></span>
+      </div>
+
+      <h4 style="margin-top:16px">Persoane de contact</h4>
+      <div data-contacts class="small">Se încarcă...</div>
+
+      <div style="margin-top:8px">
+        <div class="field">
+          <label>Nume</label>
+          <input data-contact-name type="text" />
+        </div>
+        <div class="field">
+          <label>Telefon</label>
+          <input data-contact-phone type="text" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input data-contact-email type="email" />
+        </div>
+        <div class="field">
+          <label>Rol</label>
+          <input data-contact-role type="text" />
+        </div>
+        <div class="field" style="display:flex; gap:8px; align-items:center;">
+          <button data-contact-add>Adaugă persoană</button>
+          <span data-contact-result class="small"></span>
+        </div>
       </div>
     </div>
   </template>
@@ -180,14 +213,95 @@
         }
 
         const clone = document.importNode(detailTpl, true);
+
         clone.querySelector('[data-name]').textContent = json.name || '(nume lipsă)';
         clone.querySelector('[data-meta]').textContent = `CUI: ${json.cui || '—'} · Județ: ${json.judet || '—'}`;
+
         clone.querySelector('[data-judet]').textContent = json.judet || '—';
         clone.querySelector('[data-localitate]').textContent = json.localitate || '—';
-        clone.querySelector('[data-licente]').textContent = json.licente ?? json.numar_licente ?? '—';
+        clone.querySelector('[data-licente]').textContent = (json.licente ?? json.numar_licente) ?? '—';
+
+        clone.querySelector('[data-cifra]').textContent = (json.cifra_afaceri != null) ? fmtNumber(json.cifra_afaceri) : '—';
+        clone.querySelector('[data-profit]').textContent = (json.profit_net != null) ? fmtNumber(json.profit_net) : '—';
+        clone.querySelector('[data-angajati]').textContent = (json.angajati != null) ? String(json.angajati) : '—';
 
         const activitiesContainer = clone.querySelector('[data-activities]');
         await loadActivitiesList(cui, activitiesContainer);
+
+        const contactsContainer = clone.querySelector('[data-contacts]');
+        const contactName = clone.querySelector('[data-contact-name]');
+        const contactPhone = clone.querySelector('[data-contact-phone]');
+        const contactEmail = clone.querySelector('[data-contact-email]');
+        const contactRole = clone.querySelector('[data-contact-role]');
+        const contactAddBtn = clone.querySelector('[data-contact-add]');
+        const contactResult = clone.querySelector('[data-contact-result]');
+
+        async function loadContacts() {
+          contactsContainer.textContent = 'Se încarcă...';
+          try {
+            const res = await fetch(`/api/firms/${encodeURIComponent(cui)}/contacts`, { headers: { accept: 'application/json' } });
+            if (!res.ok) {
+              contactsContainer.textContent = 'Eroare la încărcare contacte.';
+              return;
+            }
+            const list = await res.json();
+            if (!Array.isArray(list) || list.length === 0) {
+              contactsContainer.innerHTML = '<div class="muted">Nicio persoană de contact.</div>';
+              return;
+            }
+            const holder = document.createElement('div');
+            list.forEach(c => {
+              const row = document.createElement('div');
+              row.className = 'small';
+              row.textContent = `${c.name} (${c.role || '—'}) | Tel: ${c.phone || '—'} | Email: ${c.email || '—'}`;
+              holder.appendChild(row);
+            });
+            contactsContainer.innerHTML = '';
+            contactsContainer.appendChild(holder);
+          } catch (e) {
+            contactsContainer.textContent = 'Eroare la încărcare contacte: ' + (e.message || e);
+          }
+        }
+        await loadContacts();
+
+        contactAddBtn.addEventListener('click', async () => {
+          contactResult.textContent = '';
+          const payload = {
+            firm_cui: String(cui),
+            name: contactName.value.trim(),
+            phone: contactPhone.value.trim() || null,
+            email: contactEmail.value.trim() || null,
+            role: contactRole.value.trim() || null
+          };
+          if (!payload.name) { contactResult.textContent = 'Numele este necesar.'; return; }
+          try {
+            contactAddBtn.disabled = true;
+            const res = await fetch('/api/contacts', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            if (res.status === 201) {
+              contactResult.textContent = 'Persoana a fost adăugată.';
+              contactResult.style.color = '#059669';
+              contactName.value = '';
+              contactPhone.value = '';
+              contactEmail.value = '';
+              contactRole.value = '';
+              await loadContacts();
+            } else {
+              const j = await res.json().catch(()=>null);
+              contactResult.textContent = 'Eroare: ' + res.status + (j && j.detail ? ' - ' + j.detail : '');
+              contactResult.style.color = '#b91c1c';
+            }
+          } catch (e) {
+            contactResult.textContent = 'Eroare rețea: ' + (e.message || e);
+            contactResult.style.color = '#b91c1c';
+          } finally {
+            contactAddBtn.disabled = false;
+            setTimeout(() => { contactResult.textContent = ''; }, 3000);
+          }
+        });
 
         const addBtn = clone.querySelector('[data-act-add]');
         const commentInput = clone.querySelector('[data-act-comment]');
@@ -220,14 +334,11 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(payload)
             });
-            if (res.status === 201) {
+            if (res.status === 201 || res.status === 200) {
               const j = await res.json().catch(()=>null);
               let msg = 'Activitate salvată.';
-              if (j && j.scheduled_date) {
-                msg += ' Programată pentru: ' + j.scheduled_date;
-              } else if (j && j.score === 20) {
-                msg += ' (Nu se reprogramă)';
-              }
+              if (j && j.scheduled_date) msg += ' Programată pentru: ' + j.scheduled_date;
+              if (res.status === 200) msg = 'Activitate actualizată.';
               actResult.textContent = msg;
               actResult.style.color = '#059669';
               setTimeout(() => { actResult.textContent = ''; }, 3000);
@@ -235,9 +346,7 @@
               scoreInput.value = '';
               typeInput.value = '1';
               await loadActivitiesList(cui, activitiesContainerRef);
-              await loadAgenda(); // refresh agenda so new scheduled shows up
-            } else if (res.status === 409) {
-              actResult.textContent = 'Activitate deja există.';
+              await loadAgenda();
             } else {
               const j = await res.json().catch(()=>null);
               actResult.textContent = 'Eroare server: ' + res.status + (j && j.detail ? ' - ' + j.detail : '');
@@ -286,7 +395,7 @@
           return;
         }
 
-        _lastResults = data; // keep for back navigation
+        _lastResults = data;
 
         const list = document.createElement('div');
         list.id = 'results-list';
@@ -360,8 +469,66 @@
       }
     }
 
+    function renderResults(data) {
+      results.innerHTML = '';
+      if (!Array.isArray(data) || data.length === 0) {
+        results.innerHTML = '<div class="muted">Nu s-au găsit rezultate.</div>';
+        return;
+      }
+      const list = document.createElement('div');
+      data.forEach(item => {
+        const cui = item.cui ?? item.id ?? '—';
+        const row = document.createElement('div');
+        row.className = 'list-item';
+        row.dataset.cui = cui;
+        const summary = document.createElement('div');
+        summary.style.display = 'flex';
+        summary.style.flexDirection = 'column';
+        const titleBtn = document.createElement('button');
+        titleBtn.className = 'name-button';
+        titleBtn.textContent = item.name ?? '(nume lipsă)';
+        summary.appendChild(titleBtn);
+        const meta = document.createElement('div');
+        meta.className = 'small';
+        const judet = item.judet ?? '—';
+        const cifra = item.cifra_afaceri ?? item.cifra_de_afaceri_neta ?? null;
+        meta.textContent = `CUI: ${cui} · Județ: ${judet} · Cifră afaceri: ${cifra ? fmtNumber(cifra) : '—'}`;
+        summary.appendChild(meta);
+        row.appendChild(summary);
+        titleBtn.addEventListener('click', async () => {
+          results.innerHTML = '';
+          const single = document.createElement('div');
+          single.className = 'list-item';
+          single.style.flexDirection = 'column';
+          const header = document.createElement('div');
+          header.style.display = 'flex';
+          header.style.justifyContent = 'space-between';
+          header.style.alignItems = 'center';
+          const titleText = document.createElement('div');
+          titleText.innerHTML = `<strong>${item.name}</strong><div class="small" style="margin-top:6px">CUI: ${cui} · Județ: ${item.judet ?? '—'}</div>`;
+          header.appendChild(titleText);
+          const closeBtn = document.createElement('button');
+          closeBtn.textContent = 'Înapoi';
+          closeBtn.className = 'secondary';
+          closeBtn.addEventListener('click', () => {
+            renderResults(_lastResults);
+          });
+          header.appendChild(closeBtn);
+          single.appendChild(header);
+          const detailsHolder = document.createElement('div');
+          detailsHolder.style.marginTop = '12px';
+          single.appendChild(detailsHolder);
+          results.appendChild(single);
+          await fetchDetails(cui, detailsHolder);
+          single.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        list.appendChild(row);
+      });
+      results.appendChild(list);
+      backBtn.style.display = 'none';
+    }
+
     async function openFirmFromAgenda(cui) {
-      // same behaviour as clicking a search result: open details pane
       results.innerHTML = '';
       const single = document.createElement('div');
       single.className = 'list-item';
