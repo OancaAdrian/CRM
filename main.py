@@ -2,7 +2,6 @@
 import os
 import logging
 from time import sleep
-from typing import List, Dict, Any
 from datetime import date, timedelta, datetime
 
 from fastapi import FastAPI, HTTPException, Query
@@ -58,7 +57,7 @@ def startup_check_db():
         try:
             with engine.connect() as conn:
                 conn.execute(text("SELECT 1"))
-                # ensure contacts table exists
+                # helper tables (non-destructive)
                 conn.execute(text("""
                 CREATE TABLE IF NOT EXISTS public.contacts (
                   id serial PRIMARY KEY,
@@ -71,7 +70,6 @@ def startup_check_db():
                 );
                 """))
                 conn.execute(text("CREATE INDEX IF NOT EXISTS idx_contacts_firm_cui ON public.contacts (firm_cui);"))
-                # ensure activity_types table and seed expected rows
                 conn.execute(text("""
                 CREATE TABLE IF NOT EXISTS public.activity_types (
                   id integer PRIMARY KEY,
@@ -80,8 +78,37 @@ def startup_check_db():
                 """))
                 conn.execute(text("""
                 INSERT INTO public.activity_types (id, name)
-                VALUES (7, 'vizita'), (8, 'intalnire')
+                VALUES (1,'contact'),(2,'oferta'),(3,'contract'),(4,'contact in vederea livrarii'),
+                       (5,'livrare'),(6,'feedback livrare'),(7,'vizita'),(8,'intalnire')
                 ON CONFLICT (id) DO NOTHING;
+                """))
+                conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS public.activities (
+                  id serial PRIMARY KEY,
+                  cui varchar NOT NULL,
+                  activity_type_id integer,
+                  comment text,
+                  score integer,
+                  scheduled_date date,
+                  created_at timestamp default now()
+                );
+                """))
+                conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS public.caen_codes (
+                  id serial PRIMARY KEY,
+                  sectiune text,
+                  diviziune text,
+                  grupa text,
+                  clasa text,
+                  descriere text,
+                  created_at timestamp
+                );
+                """))
+                conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS public.licente (
+                  cui text PRIMARY KEY,
+                  licente integer
+                );
                 """))
             logger.info("DB reachable at startup")
             return
@@ -116,6 +143,45 @@ def norm_number(s):
             return None
 
 
+# tolerant helpers for licente table column names (each uses its own connection)
+def detect_licente_columns():
+    try:
+        with engine.connect() as conn:
+            cols = conn.execute(text(
+                "SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='licente'"
+            )).scalars().all()
+    except Exception:
+        return {"cui": None, "licente": None}
+    colmap = {"cui": None, "licente": None}
+    for c in cols:
+        low = c.lower()
+        if "cui" in low and colmap["cui"] is None:
+            colmap["cui"] = c
+        if "licen" in low and colmap["licente"] is None:
+            colmap["licente"] = c
+    return colmap
+
+
+def get_licente_for_cui(cui, colmap):
+    if not colmap:
+        return None
+    cui_col = colmap.get("cui")
+    lic_col = colmap.get("licente")
+    try:
+        with engine.connect() as conn:
+            if cui_col and lic_col:
+                stmt = text(f"SELECT {lic_col} FROM public.licente WHERE trim({cui_col}::text) = trim(:cui) LIMIT 1")
+                row = conn.execute(stmt, {"cui": cui}).first()
+                return row[0] if row else None
+            if lic_col:
+                stmt = text(f"SELECT {lic_col} FROM public.licente LIMIT 1")
+                row = conn.execute(stmt).first()
+                return row[0] if row else None
+    except Exception:
+        return None
+    return None
+
+
 @app.get("/health")
 def health():
     try:
@@ -128,199 +194,315 @@ def health():
 
 @app.get("/search")
 def search_compat(q: str = Query(..., description="CUI or name to search"), limit: int = Query(20, ge=1, le=500)):
-    stmt = text(
-        """
-        SELECT denumire AS name, cui, judet, cifra_de_afaceri_neta
-        FROM firms
-        WHERE cui = :cui OR denumire ILIKE :like
-        LIMIT :limit
-        """
-    )
+    q_like = f"%{q}%"
+    stmt = text("SELECT f.* FROM public.firms f WHERE f.cui = :cui OR f.denumire ILIKE :like LIMIT :limit")
     try:
         with engine.connect() as conn:
-            rows = conn.execute(stmt, {"cui": q, "like": f"%{q}%", "limit": limit}).mappings().all()
-            results = []
-            for r in rows:
-                rec = dict(r)
-                if "id" not in rec:
-                    rec["id"] = rec.get("cui")
-                rec["cifra_afaceri"] = norm_number(rec.get("cifra_de_afaceri_neta"))
-                rec["profit_net"] = None
-                rec["angajati"] = None
-                rec["licente"] = None
-                results.append(rec)
-            return JSONResponse(content=results)
+            rows = conn.execute(stmt, {"cui": q, "like": q_like, "limit": limit}).mappings().all()
     except OperationalError:
         raise HTTPException(status_code=503, detail="Database unavailable")
     except Exception:
-        logger.exception("search_compat failed")
+        logger.exception("search_compat query failed")
         raise HTTPException(status_code=500, detail="Internal server error")
+
+    colmap = detect_licente_columns()
+    results = []
+    for r in rows:
+        rec = dict(r)
+        result = {}
+        result["id"] = rec.get("cui") or rec.get("id")
+        result["cui"] = rec.get("cui") or rec.get("id")
+        result["name"] = rec.get("denumire") or rec.get("name") or None
+        result["judet"] = rec.get("judet") or None
+        result["localitate"] = rec.get("localitate") or None
+        result["caen"] = rec.get("caen") or rec.get("cod_caen") or None
+        cifra = rec.get("cifra_de_afaceri_neta") or rec.get("cifra_de_afaceri") or rec.get("cifra_afaceri")
+        result["cifra_afaceri"] = norm_number(cifra)
+        lic_val = rec.get("numar_licente") or rec.get("licente")
+        if (lic_val is None or lic_val == "") and colmap.get("cui") and colmap.get("licente"):
+            lic_val = get_licente_for_cui(result["cui"], colmap)
+        result["licente"] = norm_number(lic_val)
+        result["profit"] = norm_number(rec.get("profitul_brut") or rec.get("profit_net") or rec.get("profit"))
+        result["angajati"] = norm_number(rec.get("numar_mediu_de_salariati") or rec.get("angajati"))
+        result["raw"] = rec
+        results.append(result)
+    return JSONResponse(content=results)
 
 
 @app.get("/api/firms/{firm_id}")
 def get_firm(firm_id: str):
+    # 1) fetch firm row (separate connection)
     try:
         with engine.connect() as conn:
-            # Use LEFT JOIN to bring caen description directly, trimming firms.caen on join
-            stmt = text(
-                """
-                SELECT
-                  f.denumire AS name,
-                  f.cui,
-                  f.cod_inmatriculare,
-                  f.data_inmatriculare,
-                  f.euid,
-                  f.forma_juridica,
-                  f.tara,
-                  f.judet,
-                  f.localitate,
-                  f.adr_den_strada,
-                  f.adr_nr_strada,
-                  f.adr_bloc,
-                  f.adr_scara,
-                  f.adr_etaj,
-                  f.adr_apartament,
-                  f.adr_cod_postal,
-                  f.caen,
-                  f.numar_licente,
-                  f.telefon,
-                  f.manager_de_transport,
-                  f.cifra_de_afaceri_neta,
-                  f.profitul_brut,
-                  f.numar_mediu_de_salariati,
-                  f.an,
-                  f.actualizat_la,
-                  c.descriere AS caen_description
-                FROM public.firms f
-                LEFT JOIN public.caen_codes c ON c.clasa = trim(f.caen)
-                WHERE f.cui = :cui
-                LIMIT 1
-                """
-            )
-            firm = conn.execute(stmt, {"cui": firm_id}).mappings().first()
-
-            # fallback: if not found via cui, try id
-            if not firm:
-                col_exists = conn.execute(
-                    text(
-                        "SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='firms' AND column_name='id' LIMIT 1"
-                    )
-                ).first()
-                if col_exists and firm_id.isdigit():
-                    firm = conn.execute(
-                        text(
-                            """
-                            SELECT
-                              f.denumire AS name,
-                              f.cui,
-                              f.cod_inmatriculare,
-                              f.data_inmatriculare,
-                              f.euid,
-                              f.forma_juridica,
-                              f.tara,
-                              f.judet,
-                              f.localitate,
-                              f.adr_den_strada,
-                              f.adr_nr_strada,
-                              f.adr_bloc,
-                              f.adr_scara,
-                              f.adr_etaj,
-                              f.adr_apartament,
-                              f.adr_cod_postal,
-                              f.caen,
-                              f.numar_licente,
-                              f.telefon,
-                              f.manager_de_transport,
-                              f.cifra_de_afaceri_neta,
-                              f.profitul_brut,
-                              f.numar_mediu_de_salariati,
-                              f.an,
-                              f.actualizat_la,
-                              c.descriere AS caen_description
-                            FROM public.firms f
-                            LEFT JOIN public.caen_codes c ON c.clasa = trim(f.caen)
-                            WHERE f.id = :id
-                            LIMIT 1
-                            """
-                        ),
-                        {"id": int(firm_id)},
-                    ).mappings().first()
-
-            if not firm:
-                raise HTTPException(status_code=404, detail="Firm not found")
-
-            activities = conn.execute(
-                text(
-                    "SELECT id, activity_type_id, comment, score, scheduled_date, created_at "
-                    "FROM public.activities WHERE cui = :cui ORDER BY created_at DESC LIMIT 200"
-                ),
-                {"cui": firm["cui"]},
-            ).mappings().all()
-
-            acts = []
-            for a in activities:
-                acts.append({
-                    "id": a.get("id"),
-                    "type_id": a.get("activity_type_id"),
-                    "comment": a.get("comment"),
-                    "score": a.get("score"),
-                    "scheduled_date": safe_iso(a.get("scheduled_date")),
-                    "created_at": safe_iso(a.get("created_at")),
-                })
-
-            # load contacts for this firm
-            contacts = []
-            try:
-                crows = conn.execute(
-                    text("SELECT id, name, phone, email, role, created_at FROM public.contacts WHERE firm_cui = :cui ORDER BY created_at DESC"),
-                    {"cui": firm["cui"]}
-                ).mappings().all()
-                for c in crows:
-                    contacts.append({
-                        "id": c.get("id"),
-                        "name": c.get("name"),
-                        "phone": c.get("phone"),
-                        "email": c.get("email"),
-                        "role": c.get("role"),
-                        "created_at": safe_iso(c.get("created_at")),
-                    })
-            except Exception:
-                contacts = []
-
-            # ensure caen_description is a plain string (normalize)
-            caen_desc = firm.get("caen_description")
-            if isinstance(caen_desc, str):
-                caen_desc = caen_desc.strip()
-            else:
-                caen_desc = caen_desc if caen_desc is not None else None
-
-            resp = {
-                "id": firm.get("cui"),
-                "cui": firm.get("cui"),
-                "name": firm.get("name"),
-                "judet": firm.get("judet"),
-                "localitate": firm.get("localitate"),
-                "caen": firm.get("caen"),
-                "caen_description": caen_desc,
-                "cifra_afaceri": norm_number(firm.get("cifra_de_afaceri_neta")),
-                "profit_net": norm_number(firm.get("profitul_brut") or firm.get("profitul_net")),
-                "angajati": norm_number(firm.get("numar_mediu_de_salariati")),
-                "licente": norm_number(firm.get("numar_licente")),
-                "an": firm.get("an"),
-                "actualizat_la": firm.get("actualizat_la"),
-                "raw": dict(firm),
-                "activities": acts,
-                "contacts": contacts,
-            }
-            return JSONResponse(content=resp)
-    except Exception as e:
-        logger.exception("get_firm failed for %s: %s", firm_id, e)
+            firm_row = conn.execute(text("SELECT f.* FROM public.firms f WHERE f.cui = :cui LIMIT 1"), {"cui": firm_id}).mappings().first()
+    except Exception:
+        logger.exception("get_firm: error fetching firm row")
         raise HTTPException(status_code=500, detail="Internal server error")
+
+    # fallback by numeric id if present (separate conn)
+    if not firm_row:
+        try:
+            with engine.connect() as conn:
+                col_exists = conn.execute(text(
+                    "SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='firms' AND column_name='id' LIMIT 1"
+                )).first()
+            if col_exists and firm_id.isdigit():
+                with engine.connect() as conn:
+                    firm_row = conn.execute(text("SELECT f.* FROM public.firms f WHERE f.id = :id LIMIT 1"), {"id": int(firm_id)}).mappings().first()
+        except Exception:
+            logger.exception("get_firm: fallback id lookup failed")
+            firm_row = None
+
+    if not firm_row:
+        raise HTTPException(status_code=404, detail="Firm not found")
+
+    firm = dict(firm_row)
+
+    # 2) caen_description lookup (separate connection)
+    caen_val = firm.get("caen") or firm.get("cod_caen")
+    caen_desc = None
+    if caen_val:
+        try:
+            with engine.connect() as conn:
+                cd = conn.execute(text("SELECT descriere FROM public.caen_codes WHERE clasa = trim(:caen) LIMIT 1"), {"caen": str(caen_val)}).scalar_one_or_none()
+                if cd:
+                    caen_desc = cd.strip() if isinstance(cd, str) else cd
+        except Exception:
+            caen_desc = None
+
+    # 3) licente (detect + lookup, separate connection inside helper)
+    colmap = detect_licente_columns()
+    lic_val = firm.get("numar_licente") or firm.get("licente")
+    if (lic_val is None or lic_val == "") and colmap.get("cui") and colmap.get("licente"):
+        lic_val = get_licente_for_cui(firm.get("cui") or firm.get("id"), colmap)
+
+    # 4) activities (separate connection)
+    acts = []
+    try:
+        with engine.connect() as conn:
+            activities = conn.execute(
+                text("SELECT id, activity_type_id, comment, score, scheduled_date, created_at FROM public.activities WHERE cui = :cui ORDER BY created_at DESC LIMIT 200"),
+                {"cui": firm.get("cui") or firm.get("id")},
+            ).mappings().all()
+        for a in activities:
+            acts.append({
+                "id": a.get("id"),
+                "type_id": a.get("activity_type_id"),
+                "comment": a.get("comment"),
+                "score": a.get("score"),
+                "scheduled_date": safe_iso(a.get("scheduled_date")),
+                "created_at": safe_iso(a.get("created_at")),
+            })
+    except Exception:
+        logger.exception("get_firm: activities lookup failed")
+        acts = []
+
+    # 5) contacts (separate connection)
+    contacts = []
+    try:
+        with engine.connect() as conn:
+            crows = conn.execute(
+                text("SELECT id, name, phone, email, role, created_at FROM public.contacts WHERE firm_cui = :cui ORDER BY created_at DESC"),
+                {"cui": firm.get("cui") or firm.get("id")}
+            ).mappings().all()
+        for c in crows:
+            contacts.append({
+                "id": c.get("id"),
+                "name": c.get("name"),
+                "phone": c.get("phone"),
+                "email": c.get("email"),
+                "role": c.get("role"),
+                "created_at": safe_iso(c.get("created_at")),
+            })
+    except Exception:
+        logger.exception("get_firm: contacts lookup failed")
+        contacts = []
+
+    resp = {
+        "id": firm.get("cui") or firm.get("id"),
+        "cui": firm.get("cui") or firm.get("id"),
+        "name": firm.get("denumire") or firm.get("name"),
+        "judet": firm.get("judet"),
+        "localitate": firm.get("localitate"),
+        "caen": caen_val,
+        "caen_description": caen_desc,
+        "cifra_afaceri": norm_number(firm.get("cifra_de_afaceri_neta") or firm.get("cifra_de_afaceri") or firm.get("cifra_afaceri")),
+        "profit": norm_number(firm.get("profitul_brut") or firm.get("profit_net") or firm.get("profit")),
+        "angajati": norm_number(firm.get("numar_mediu_de_salariati") or firm.get("angajati")),
+        "licente": norm_number(lic_val),
+        "an": firm.get("an"),
+        "actualizat_la": firm.get("actualizat_la"),
+        "raw": firm,
+        "activities": acts,
+        "contacts": contacts,
+    }
+    resp["profit_net"] = resp.get("profit")
+
+    return JSONResponse(content=resp)
+
+
+class ContactIn(BaseModel):
+    firm_cui: str
+    name: str
+    phone: str | None = None
+    email: str | None = None
+    role: str | None = None
+
+@app.post("/api/contacts", status_code=201)
+def create_contact(payload: ContactIn):
+    try:
+        with engine.begin() as conn:
+            # asigurăm existența tabelei (no-op dacă există)
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS public.contacts (
+                  id serial PRIMARY KEY,
+                  firm_cui varchar NOT NULL,
+                  name text NOT NULL,
+                  phone text,
+                  email text,
+                  role text,
+                  created_at timestamp default now()
+                );
+            """))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS idx_contacts_firm_cui ON public.contacts (firm_cui);"))
+
+            res = conn.execute(
+                text(
+                    "INSERT INTO public.contacts (firm_cui, name, phone, email, role) "
+                    "VALUES (:cui, :name, :phone, :email, :role) RETURNING id, created_at"
+                ),
+                {
+                    "cui": payload.firm_cui,
+                    "name": payload.name,
+                    "phone": payload.phone,
+                    "email": payload.email,
+                    "role": payload.role,
+                },
+            ).mappings().first()
+
+            return {
+                "id": res["id"],
+                "firm_cui": payload.firm_cui,
+                "name": payload.name,
+                "phone": payload.phone,
+                "email": payload.email,
+                "role": payload.role,
+                "created_at": safe_iso(res["created_at"]),
+            }
+    except Exception as e:
+        logger.exception("create_contact failed: %s", e)
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 
 
 @app.get("/firma/{firm_id}/detalii")
 def firma_detalii_compat(firm_id: str):
     return get_firm(firm_id)
+
+
+@app.get("/api/firms/{firm_id}/contacts")
+def list_contacts(firm_id: str):
+    try:
+        with engine.connect() as conn:
+            rows = conn.execute(
+                text("SELECT id, name, phone, email, role, created_at FROM public.contacts WHERE firm_cui = :cui ORDER BY created_at DESC"),
+                {"cui": firm_id}
+            ).mappings().all()
+            return [dict(r) for r in rows]
+    except Exception as e:
+        logger.exception("list_contacts failed: %s", e)
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.get("/api/agenda")
+def get_agenda(day: str | None = Query(None, description="ISO date YYYY-MM-DD. Defaults to today")):
+    try:
+        if day:
+            try:
+                target = datetime.strptime(day, "%Y-%m-%d").date()
+            except Exception:
+                raise HTTPException(status_code=400, detail="Invalid date format, expected YYYY-MM-DD")
+        else:
+            target = date.today()
+
+        # detect available name column on firms table
+        firm_name_cols = []
+        try:
+            with engine.connect() as conn:
+                cols = conn.execute(text(
+                    "SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='firms'"
+                )).scalars().all()
+            for c in cols:
+                low = c.lower()
+                if low in ("denumire", "name", "denumire_firma", "company", "firm_name"):
+                    firm_name_cols.append(c)
+            # fallback: if no known column found, try first textual column candidate
+            if not firm_name_cols:
+                for c in cols:
+                    low = c.lower()
+                    if "name" in low or "denum" in low or "denumire" in low:
+                        firm_name_cols.append(c)
+                        break
+        except Exception:
+            firm_name_cols = []
+
+        # choose the SQL expression for firm name safely
+        if firm_name_cols:
+            # use first detected column, coalesce just in case
+            fn = firm_name_cols[0]
+            firm_name_expr = f"COALESCE(f.{fn})"
+        else:
+            # no firm name column detected — return NULL as firm_name
+            firm_name_expr = "NULL AS firm_name"
+
+        # join clause: join on cui only (safe)
+        join_clause = "LEFT JOIN public.firms f ON f.cui = a.cui"
+
+        qry_today = f"""
+            SELECT a.id, a.cui, a.activity_type_id, a.comment, a.score, a.scheduled_date, a.created_at,
+                   {firm_name_expr} AS firm_name
+            FROM public.activities a
+            {join_clause}
+            WHERE a.scheduled_date = :target
+            ORDER BY a.scheduled_date, a.created_at DESC
+        """
+
+        qry_overdue = f"""
+            SELECT a.id, a.cui, a.activity_type_id, a.comment, a.score, a.scheduled_date, a.created_at,
+                   {firm_name_expr} AS firm_name
+            FROM public.activities a
+            {join_clause}
+            WHERE a.scheduled_date < :target
+            ORDER BY a.scheduled_date ASC, a.created_at DESC
+        """
+
+        with engine.connect() as conn:
+            today_rows = conn.execute(text(qry_today), {"target": target.isoformat()}).mappings().all()
+            overdue_rows = conn.execute(text(qry_overdue), {"target": target.isoformat()}).mappings().all()
+
+        def normalize(rows):
+            out = []
+            for r in rows:
+                out.append({
+                    "id": r.get("id"),
+                    "cui": r.get("cui"),
+                    "firm_name": r.get("firm_name") or None,
+                    "type_id": r.get("activity_type_id"),
+                    "comment": r.get("comment"),
+                    "score": r.get("score"),
+                    "scheduled_date": safe_iso(r.get("scheduled_date")),
+                    "created_at": safe_iso(r.get("created_at")),
+                })
+            return out
+
+        return JSONResponse(content={
+            "date": target.isoformat(),
+            "today": normalize(today_rows),
+            "overdue": normalize(overdue_rows),
+        })
+    except Exception as e:
+        logger.exception("get_agenda failed: %s", e)
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 class ActivityIn(BaseModel):
@@ -390,236 +572,54 @@ def create_or_update_activity(payload: ActivityIn):
                         payload.activity_type_id = None
 
             if target_day_date is not None:
-                existing = conn.execute(
-                    text(
-                        """
-                        SELECT id
-                        FROM public.activities
-                        WHERE cui = :cui
-                          AND comment = :comment
-                          AND scheduled_date::date = :target_day
-                        LIMIT 1
-                        """
-                    ),
-                    {"cui": cui, "comment": comment, "target_day": target_day_date},
-                ).mappings().first()
+                existing = conn.execute(text("""
+                    SELECT id FROM public.activities
+                    WHERE cui = :cui AND comment = :comment AND scheduled_date::date = :target_day LIMIT 1
+                """), {"cui": cui, "comment": comment, "target_day": target_day_date}).mappings().first()
             else:
-                existing = conn.execute(
-                    text(
-                        """
-                        SELECT id
-                        FROM public.activities
-                        WHERE cui = :cui
-                          AND comment = :comment
-                          AND created_at::date = CURRENT_DATE
-                        LIMIT 1
-                        """
-                    ),
-                    {"cui": cui, "comment": comment},
-                ).mappings().first()
+                existing = conn.execute(text("""
+                    SELECT id FROM public.activities
+                    WHERE cui = :cui AND comment = :comment AND created_at::date = CURRENT_DATE LIMIT 1
+                """), {"cui": cui, "comment": comment}).mappings().first()
 
             if existing:
-                updated = conn.execute(
-                    text(
-                        """
-                        UPDATE public.activities
-                        SET activity_type_id = :type_id,
-                            score = :score,
-                            scheduled_date = :scheduled_date,
-                            comment = :comment,
-                            created_at = now()
-                        WHERE id = :id
-                        RETURNING id, created_at, scheduled_date
-                        """
-                    ),
-                    {
-                        "id": existing["id"],
-                        "type_id": payload.activity_type_id,
-                        "score": payload.score,
-                        "scheduled_date": target_day_date,
-                        "comment": comment,
-                    },
-                ).mappings().first()
+                updated = conn.execute(text("""
+                    UPDATE public.activities
+                    SET activity_type_id = :type_id, score = :score, scheduled_date = :scheduled_date, comment = :comment, created_at = now()
+                    WHERE id = :id
+                    RETURNING id, created_at, scheduled_date
+                """), {"id": existing["id"], "type_id": payload.activity_type_id, "score": payload.score, "scheduled_date": target_day_date, "comment": comment}).mappings().first()
 
-                return JSONResponse(
-                    status_code=200,
-                    content={
-                        "id": updated.get("id"),
-                        "cui": cui,
-                        "activity_type_id": payload.activity_type_id,
-                        "comment": comment,
-                        "score": payload.score,
-                        "scheduled_date": safe_iso(updated.get("scheduled_date")) if updated.get("scheduled_date") else (target_day_date.isoformat() if target_day_date else None),
-                        "created_at": safe_iso(updated.get("created_at")),
-                        "updated": True,
-                    },
-                )
+                return JSONResponse(status_code=200, content={
+                    "id": updated.get("id"),
+                    "cui": cui,
+                    "activity_type_id": payload.activity_type_id,
+                    "comment": comment,
+                    "score": payload.score,
+                    "scheduled_date": safe_iso(updated.get("scheduled_date")) if updated.get("scheduled_date") else (target_day_date.isoformat() if target_day_date else None),
+                    "created_at": safe_iso(updated.get("created_at")),
+                    "updated": True,
+                })
             else:
-                res = conn.execute(
-                    text(
-                        """
-                        INSERT INTO public.activities (cui, activity_type_id, comment, score, scheduled_date, created_at)
-                        VALUES (:cui, :type_id, :comment, :score, :scheduled_date, now())
-                        RETURNING id, created_at, scheduled_date
-                        """
-                    ),
-                    {
-                        "cui": cui,
-                        "type_id": payload.activity_type_id,
-                        "comment": comment,
-                        "score": payload.score,
-                        "scheduled_date": target_day_date,
-                    },
-                ).mappings().first()
+                res = conn.execute(text("""
+                    INSERT INTO public.activities (cui, activity_type_id, comment, score, scheduled_date, created_at)
+                    VALUES (:cui, :type_id, :comment, :score, :scheduled_date, now())
+                    RETURNING id, created_at, scheduled_date
+                """), {"cui": cui, "type_id": payload.activity_type_id, "comment": comment, "score": payload.score, "scheduled_date": target_day_date}).mappings().first()
 
-                return JSONResponse(
-                    status_code=201,
-                    content={
-                        "id": res.get("id"),
-                        "cui": cui,
-                        "activity_type_id": payload.activity_type_id,
-                        "comment": comment,
-                        "score": payload.score,
-                        "scheduled_date": safe_iso(res.get("scheduled_date")) if res.get("scheduled_date") else (target_day_date.isoformat() if target_day_date else None),
-                        "created_at": safe_iso(res.get("created_at")),
-                        "updated": False,
-                    },
-                )
+                return JSONResponse(status_code=201, content={
+                    "id": res.get("id"),
+                    "cui": cui,
+                    "activity_type_id": payload.activity_type_id,
+                    "comment": comment,
+                    "score": payload.score,
+                    "scheduled_date": safe_iso(res.get("scheduled_date")) if res.get("scheduled_date") else (target_day_date.isoformat() if target_day_date else None),
+                    "created_at": safe_iso(res.get("created_at")),
+                    "updated": False,
+                })
     except IntegrityError as e:
         logger.exception("create_or_update_activity integrity error: %s", e)
         raise HTTPException(status_code=400, detail="Database integrity error")
     except Exception as e:
         logger.exception("create_or_update_activity failed: %s", e)
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-
-# contacts endpoints
-class ContactIn(BaseModel):
-    firm_cui: str
-    name: str
-    phone: str | None = None
-    email: str | None = None
-    role: str | None = None
-
-
-@app.post("/api/contacts", status_code=201)
-def create_contact(payload: ContactIn):
-    try:
-        with engine.begin() as conn:
-            conn.execute(text("""
-                CREATE TABLE IF NOT EXISTS public.contacts (
-                  id serial PRIMARY KEY,
-                  firm_cui varchar NOT NULL,
-                  name text NOT NULL,
-                  phone text,
-                  email text,
-                  role text,
-                  created_at timestamp default now()
-                );
-            """))
-            conn.execute(text("CREATE INDEX IF NOT EXISTS idx_contacts_firm_cui ON public.contacts (firm_cui);"))
-
-            res = conn.execute(
-                text(
-                    "INSERT INTO public.contacts (firm_cui, name, phone, email, role) "
-                    "VALUES (:cui, :name, :phone, :email, :role) RETURNING id, created_at"
-                ),
-                {
-                    "cui": payload.firm_cui,
-                    "name": payload.name,
-                    "phone": payload.phone,
-                    "email": payload.email,
-                    "role": payload.role,
-                },
-            ).mappings().first()
-            return {
-                "id": res["id"],
-                "firm_cui": payload.firm_cui,
-                "name": payload.name,
-                "phone": payload.phone,
-                "email": payload.email,
-                "role": payload.role,
-                "created_at": safe_iso(res["created_at"]),
-            }
-    except Exception as e:
-        logger.exception("create_contact failed: %s", e)
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-
-@app.get("/api/firms/{firm_id}/contacts")
-def list_contacts(firm_id: str):
-    try:
-        with engine.connect() as conn:
-            rows = conn.execute(
-                text("SELECT id, name, phone, email, role, created_at FROM public.contacts WHERE firm_cui = :cui ORDER BY created_at DESC"),
-                {"cui": firm_id}
-            ).mappings().all()
-            return [dict(r) for r in rows]
-    except Exception as e:
-        logger.exception("list_contacts failed: %s", e)
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-
-@app.get("/api/agenda")
-def get_agenda(day: str | None = Query(None, description="ISO date YYYY-MM-DD. Defaults to today")):
-    try:
-        if day:
-            try:
-                target = datetime.strptime(day, "%Y-%m-%d").date()
-            except Exception:
-                raise HTTPException(status_code=400, detail="Invalid date format, expected YYYY-MM-DD")
-        else:
-            target = date.today()
-
-        with engine.connect() as conn:
-            today_rows = conn.execute(
-                text(
-                    """
-                    SELECT a.id, a.cui, a.activity_type_id, a.comment, a.score, a.scheduled_date, a.created_at,
-                           f.denumire AS firm_name
-                    FROM public.activities a
-                    LEFT JOIN public.firms f ON f.cui = a.cui
-                    WHERE a.scheduled_date = :target
-                    ORDER BY a.scheduled_date, a.created_at DESC
-                    """
-                ),
-                {"target": target.isoformat()},
-            ).mappings().all()
-
-            overdue_rows = conn.execute(
-                text(
-                    """
-                    SELECT a.id, a.cui, a.activity_type_id, a.comment, a.score, a.scheduled_date, a.created_at,
-                           f.denumire AS firm_name
-                    FROM public.activities a
-                    LEFT JOIN public.firms f ON f.cui = a.cui
-                    WHERE a.scheduled_date < :target
-                    ORDER BY a.scheduled_date ASC, a.created_at DESC
-                    """
-                ),
-                {"target": target.isoformat()},
-            ).mappings().all()
-
-            def normalize(rows):
-                out = []
-                for r in rows:
-                    out.append({
-                        "id": r.get("id"),
-                        "cui": r.get("cui"),
-                        "firm_name": r.get("firm_name") or None,
-                        "type_id": r.get("activity_type_id"),
-                        "comment": r.get("comment"),
-                        "score": r.get("score"),
-                        "scheduled_date": safe_iso(r.get("scheduled_date")),
-                        "created_at": safe_iso(r.get("created_at")),
-                    })
-                return out
-
-            return JSONResponse(content={
-                "date": target.isoformat(),
-                "today": normalize(today_rows),
-                "overdue": normalize(overdue_rows),
-            })
-    except Exception as e:
-        logger.exception("get_agenda failed: %s", e)
         raise HTTPException(status_code=500, detail="Internal server error")
