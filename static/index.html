@@ -22,7 +22,7 @@
     .name-button { font-weight:700; background:none; border:none; padding:0; cursor:pointer; color:#0366d6; font-size:15px; text-align:left; }
     #agenda { max-height:720px; overflow:auto; }
     .field { margin-top:8px; }
-    .caen-desc { color:#111; display:block; margin-top:4px; }
+    .caen-desc { color:#111; display:block; margin-top:4px; white-space:pre-wrap; }
   </style>
 </head>
 <body>
@@ -69,7 +69,7 @@
         <div class="small"><strong>Licențe:</strong> <span data-licente>—</span></div>
 
         <div class="small" style="margin-top:10px"><strong>Cifră de afaceri:</strong> <span data-cifra>—</span></div>
-        <div class="small"><strong>Profit net:</strong> <span data-profit>—</span></div>
+        <div class="small"><strong>Profit:</strong> <span data-profit>—</span></div>
         <div class="small"><strong>Număr angajați:</strong> <span data-angajati>—</span></div>
       </div>
 
@@ -215,7 +215,6 @@
           return null;
         }
 
-        // debug: inspect server response
         console.log('API firm response', json);
 
         const clone = document.importNode(detailTpl, true);
@@ -231,10 +230,11 @@
         clone.querySelector('[data-profit]').textContent = (json.profit_net != null) ? fmtNumber(json.profit_net) : '—';
         clone.querySelector('[data-angajati]').textContent = (json.angajati != null) ? String(json.angajati) : '—';
 
-        // CAEN code + description (trim and safe string)
         clone.querySelector('[data-caen]').textContent = (json.caen || '').toString().trim() || '—';
-        const desc = (json.caen_description || '').toString().trim();
-        clone.querySelector('[data-caen-desc]').textContent = desc || '—';
+        const rawDesc = (json.caen_description || '').toString();
+        const decodedDesc = (function(s){ try{ const t=document.createElement('textarea'); t.innerHTML=s; return t.value; }catch(e){return s;} })(rawDesc);
+        const cleanDesc = decodedDesc.replace(/\u00A0/g,' ').replace(/\s+/g,' ').trim();
+        clone.querySelector('[data-caen-desc]').textContent = cleanDesc || '—';
 
         const activitiesContainer = clone.querySelector('[data-activities]');
         await loadActivitiesList(cui, activitiesContainer);
@@ -429,7 +429,8 @@
           meta.className = 'small';
           const judet = item.judet ?? '—';
           const cifra = item.cifra_afaceri ?? item.cifra_de_afaceri_neta ?? null;
-          meta.textContent = `CUI: ${cui} · Județ: ${judet} · Cifră afaceri: ${cifra ? fmtNumber(cifra) : '—'}`;
+          const lic = item.licente ?? item.numar_licente ?? '—';
+          meta.textContent = `CUI: ${cui} · Județ: ${judet} · Cifră afaceri: ${cifra ? fmtNumber(cifra) : '—'} · Licențe: ${lic}`;
           summary.appendChild(meta);
 
           row.appendChild(summary);
@@ -503,7 +504,8 @@
         meta.className = 'small';
         const judet = item.judet ?? '—';
         const cifra = item.cifra_afaceri ?? item.cifra_de_afaceri_neta ?? null;
-        meta.textContent = `CUI: ${cui} · Județ: ${judet} · Cifră afaceri: ${cifra ? fmtNumber(cifra) : '—'}`;
+        const lic = item.licente ?? item.numar_licente ?? '—';
+        meta.textContent = `CUI: ${cui} · Județ: ${judet} · Cifră afaceri: ${cifra ? fmtNumber(cifra) : '—'} · Licențe: ${lic}`;
         summary.appendChild(meta);
         row.appendChild(summary);
         titleBtn.addEventListener('click', async () => {
