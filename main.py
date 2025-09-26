@@ -4,14 +4,19 @@ import logging
 from time import sleep
 from datetime import date, timedelta, datetime
 
+from datetime import date, timedelta, datetime
+from urllib.parse import urlparse, urlunparse
+
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
+
 from pydantic import BaseModel
+
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError, IntegrityError
 from sqlalchemy.orm import sessionmaker
-from urllib.parse import urlparse, urlunparse
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("crm-main")
@@ -190,6 +195,28 @@ def get_licente_for_cui(cui, colmap):
     except Exception:
         return None
 
+@app.get("/api/_debug_detect_cols")
+def _debug_detect_cols():
+    try:
+        with engine.connect() as conn:
+            firms = conn.execute(text(
+                "SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='firms' ORDER BY ordinal_position"
+            )).scalars().all()
+            lic = conn.execute(text(
+                "SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='licente' ORDER BY ordinal_position"
+            )).scalars().all()
+            # quick counts to see if tables are populated
+            firms_count = conn.execute(text("SELECT count(*) FROM public.firms")).scalar()
+            lic_count = conn.execute(text("SELECT count(*) FROM public.licente")).scalar()
+        return JSONResponse(content={
+            "firms_columns": firms,
+            "licente_columns": lic,
+            "firms_count": firms_count,
+            "licente_count": lic_count
+        })
+    except Exception as e:
+        logger.exception("debug_detect_cols failed: %s", e)
+        raise HTTPException(status_code=500, detail=f"debug_detect_cols failure: {e}")
 
 @app.get("/health")
 def health():
@@ -512,6 +539,147 @@ def get_agenda(day: str | None = Query(None, description="ISO date YYYY-MM-DD. D
     except Exception as e:
         logger.exception("get_agenda failed: %s", e)
         raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/api/suggest_contacts", status_code=201)
+def suggest_contacts_for_tomorrow(limit: int = 5):
+    from datetime import date, timedelta
+
+    today = date.today()
+    target = (today + timedelta(days=1)).isoformat()
+
+    # detect columns in firms
+    with engine.connect() as conn:
+        cols = conn.execute(text(
+            "SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='firms' ORDER BY ordinal_position"
+        )).scalars().all()
+
+    # detect cifra de afaceri column
+    ca_cols = [c for c in cols if any(x in c.lower() for x in (
+        "cifra", "cifra_de_afaceri", "cifra_afaceri", "cifra_de_afaceri_neta", "cifra_de_afaceri_net"))]
+    ca_col = ca_cols[0] if ca_cols else None
+
+    # detect licente source table/cols
+    licemap = detect_licente_columns()  # returns {"cui": colname, "licente": colname} or None
+    lic_col = licemap.get("licente") if licemap else None
+    lic_cui_col = licemap.get("cui") if licemap else None
+
+    if not lic_col and not ca_col:
+        logger.error("suggest_contacts: no ca_col and no lic_col detected; firms columns: %s; licente cols: %s", cols, licemap)
+        raise HTTPException(status_code=500, detail="Could not detect cifra_afaceri or licente columns in DB. Check DB schema.")
+
+    # detect firm name column (fallback to denumire or first textual candidate)
+    fn = None
+    for c in cols:
+        low = c.lower()
+        if low in ("denumire", "name", "denumire_firma", "company", "firm_name"):
+            fn = c
+            break
+    if not fn:
+        for c in cols:
+            low = c.lower()
+            if "name" in low or "denum" in low or "denumire" in low:
+                fn = c
+                break
+
+    # safe selectors for numeric casting (or defaults)
+    ca_sel = f'COALESCE(NULLIF(trim("{ca_col}"::text), \'\'), \'0\')::numeric' if ca_col else '0'
+    # lic_sel will come from aggregated licente table, so we prepare join expression
+    name_select = f'COALESCE(filtered."{fn}") AS denumire' if fn else "NULL AS denumire"
+
+    # Build query: left join aggregate of licente (group by cui) to firms
+    lic_agg_join = ""
+    if lic_col and lic_cui_col:
+        lic_agg_join = f"""
+        LEFT JOIN (
+          SELECT "{lic_cui_col}"::text AS lic_cui, SUM(COALESCE(NULLIF(trim("{lic_col}"::text), ''), '0')::int) AS lic_count
+          FROM public.licente
+          GROUP BY "{lic_cui_col}"::text
+        ) l ON l.lic_cui = f.cui::text
+        """
+        lic_count_expr = "COALESCE(l.lic_count, 0)"
+    else:
+        lic_count_expr = "0"
+
+    # Exclude firms from judet Constanta (case-insensitive)
+    qry = f"""
+    WITH candidate_firms AS (
+      SELECT f.*, {lic_count_expr} AS lic_count, {ca_sel} AS cifra_val
+      FROM public.firms f
+      {lic_agg_join}
+    ),
+    filtered AS (
+      SELECT cf.*
+      FROM candidate_firms cf
+      WHERE NOT EXISTS (
+        SELECT 1 FROM public.activities a
+        WHERE a.cui = cf.cui
+          AND a.scheduled_date >= :today
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM public.activities a2
+        WHERE a2.cui = cf.cui
+          AND a2.score = 20
+      )
+      AND lower(coalesce(cf.judet::text, '')) != 'constanta'
+    )
+    SELECT filtered.cui, {name_select}, filtered.lic_count, filtered.cifra_val
+    FROM filtered
+    ORDER BY filtered.lic_count DESC, filtered.cifra_val DESC
+    LIMIT :limit
+    """
+
+    with engine.begin() as conn:
+        rows = conn.execute(text(qry), {"today": today.isoformat(), "limit": limit}).mappings().all()
+
+        inserted = []
+        for r in rows:
+            cui = r.get("cui")
+            # final defensive check: exclude if any score=20 or scheduled >= today (race-safe) or judet Constanta
+            exists_block = conn.execute(text(
+                "SELECT 1 FROM public.activities WHERE cui = :cui AND (scheduled_date >= :today OR score = 20) LIMIT 1"
+            ), {"cui": cui, "today": today.isoformat()}).first()
+            if exists_block:
+                continue
+            # extra runtime check for judet just in case
+            if str(r.get("cifra_val")) is None:
+                pass
+            judet_val = None
+            try:
+                # try to fetch judet for the cui to be extra-safe
+                j = conn.execute(text("SELECT judet FROM public.firms WHERE cui = :cui LIMIT 1"), {"cui": cui}).scalar()
+                judet_val = (j or "").lower()
+            except Exception:
+                judet_val = None
+            if judet_val == "constanta":
+                continue
+
+            ins = conn.execute(text(
+                "INSERT INTO public.activities (cui, activity_type_id, comment, score, scheduled_date, created_at) "
+                "VALUES (:cui, :atype, :comment, :score, :scheduled, now()) RETURNING id, scheduled_date"
+            ), {
+                "cui": cui,
+                "atype": 1,
+                "comment": "Auto-suggest",
+                "score": 1,
+                "scheduled": target,
+            }).mappings().first()
+
+            inserted.append({
+                "id": ins["id"],
+                "cui": cui,
+                "scheduled_date": safe_iso(ins["scheduled_date"]),
+                "name": r.get("denumire"),
+                "licente": int(r.get("lic_count") or 0),
+                "cifra_afaceri": int(r.get("cifra_val") or 0),
+            })
+
+    return JSONResponse(content={
+        "date": target,
+        "created": inserted,
+        "requested_limit": limit,
+        "candidates_checked": len(rows),
+    })
+
 
 
 class ActivityIn(BaseModel):
