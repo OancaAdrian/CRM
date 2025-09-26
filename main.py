@@ -155,11 +155,12 @@ def detect_licente_columns():
     colmap = {"cui": None, "licente": None}
     for c in cols:
         low = c.lower()
-        if "cui" in low and colmap["cui"] is None:
+        if any(x in low for x in ("cui", "codcui", "cod_cui", "cod fiscal", "codfiscal")) and colmap["cui"] is None:
             colmap["cui"] = c
-        if "licen" in low and colmap["licente"] is None:
+        if any(x in low for x in ("licen", "license", "licente", "nr_licente", "numar_licente")) and colmap["licente"] is None:
             colmap["licente"] = c
     return colmap
+
 
 
 def get_licente_for_cui(cui, colmap):
@@ -167,19 +168,27 @@ def get_licente_for_cui(cui, colmap):
         return None
     cui_col = colmap.get("cui")
     lic_col = colmap.get("licente")
+    if not lic_col:
+        return None
     try:
         with engine.connect() as conn:
-            if cui_col and lic_col:
-                stmt = text(f"SELECT {lic_col} FROM public.licente WHERE trim({cui_col}::text) = trim(:cui) LIMIT 1")
+            if cui_col:
+                # exact match, case/space tolerant
+                stmt = text(f'SELECT "{lic_col}" FROM public.licente WHERE trim(lower("{cui_col}"::text)) = trim(lower(:cui)) LIMIT 1')
                 row = conn.execute(stmt, {"cui": cui}).first()
-                return row[0] if row else None
-            if lic_col:
-                stmt = text(f"SELECT {lic_col} FROM public.licente LIMIT 1")
-                row = conn.execute(stmt).first()
-                return row[0] if row else None
+                if row and row[0] is not None:
+                    return row[0]
+                # fallback: partial match
+                stmt2 = text(f'SELECT "{lic_col}" FROM public.licente WHERE "{cui_col}"::text ILIKE :like LIMIT 1')
+                row2 = conn.execute(stmt2, {"like": f"%{cui}%"}).first()
+                return row2[0] if row2 else None
+            else:
+                # no cui column, return first lic value if any
+                stmt3 = text(f'SELECT "{lic_col}" FROM public.licente LIMIT 1')
+                r3 = conn.execute(stmt3).first()
+                return r3[0] if r3 else None
     except Exception:
         return None
-    return None
 
 
 @app.get("/health")
