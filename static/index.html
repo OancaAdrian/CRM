@@ -10,19 +10,21 @@
     .card { background:#fff; padding:16px; border-radius:10px; box-shadow:0 6px 18px rgba(15,23,42,0.06); }
     h1 { margin:0 0 12px 0; font-size:18px; }
     label { display:block; margin-bottom:8px; font-weight:600; }
-    input[type="text"], textarea, input[type="number"], select { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #d1d5db; font-size:15px; }
+    input[type="text"], textarea, input[type="number"], select, input[type="date"] { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #d1d5db; font-size:15px; }
     button { margin-top:8px; padding:8px 12px; background:#0366d6; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600; }
     button.secondary { background:#e5e7eb; color:#111; }
-    button:disabled { opacity:.6; cursor:default; }
     .muted { color:#6b7280; font-size:13px; margin-top:8px; }
     .list-item { padding:10px; border:1px solid #e6eef8; border-radius:8px; margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
-    .agenda-slot { padding:10px; border-radius:8px; margin-top:8px; background:#f8fafc; border:1px solid #eef2ff; cursor:pointer; }
+    .agenda-slot { padding:10px; border-radius:8px; margin-top:8px; background:#f8fafc; border:1px solid #eef2ff; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:12px; }
     .overdue { background:#fff4f2; border-color:#ffd6cc; }
     .small { font-size:13px; color:#6b7280; }
     .name-button { font-weight:700; background:none; border:none; padding:0; cursor:pointer; color:#0366d6; font-size:15px; text-align:left; }
     #agenda { max-height:720px; overflow:auto; }
     .field { margin-top:8px; }
     .caen-desc { color:#111; display:block; margin-top:4px; white-space:pre-wrap; }
+    .suggested { margin-top:6px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .btn-link { background:transparent;border:1px solid #e5e7eb;color:#111;padding:6px 8px;border-radius:6px;cursor:pointer }
+    #error-notice { color:#b91c1c; margin-top:8px; min-height:18px; }
   </style>
 </head>
 <body>
@@ -37,13 +39,16 @@
         <div class="muted">Rezultatele apar mai jos. Click pe nume pentru detalii.</div>
       </div>
 
-      <div id="error" class="muted" style="color:#b91c1c; margin-top:8px"></div>
+      <div id="error-notice" class="muted"></div>
       <div id="results" style="margin-top:12px"></div>
     </div>
 
     <div class="card" id="agenda-card">
       <h1>Agenda zilnică</h1>
-      <div class="small muted" id="agenda-date">Se încarcă...</div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div class="small muted" id="agenda-date">Se încarcă...</div>
+        <div style="flex:1"></div>
+      </div>
       <div style="margin-top:10px; display:flex; gap:8px;">
         <button id="refresh-agenda" class="secondary">Reîmprospătează</button>
         <input id="agenda-day" type="date" style="flex:1" />
@@ -136,7 +141,7 @@
     const backBtn = document.getElementById('back');
     const input = document.getElementById('cui');
     const results = document.getElementById('results');
-    const error = document.getElementById('error');
+    const errorNotice = document.getElementById('error-notice');
     const detailTpl = document.getElementById('detail-template').content;
 
     const agendaDayInput = document.getElementById('agenda-day');
@@ -162,6 +167,27 @@
       return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
     }
 
+    window.addEventListener('error', (ev) => {
+      console.warn('Non-critical error captured:', ev.message || ev);
+      if (errorNotice) errorNotice.textContent = 'Unele funcționalități auxiliare nu funcționează; aplicația principală este activă.';
+      return true;
+    });
+    window.addEventListener('unhandledrejection', (ev) => {
+      console.warn('Unhandled rejection (non-fatal):', ev.reason);
+      if (errorNotice) errorNotice.textContent = 'Unele operații au eșuat; vezi consola pentru detalii.';
+    });
+
+    async function safeFetchJson(url, opts) {
+      try {
+        const r = await fetch(url, opts);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return await r.json();
+      } catch (e) {
+        console.warn('safeFetchJson failed', url, e);
+        throw e;
+      }
+    }
+
     async function loadActivitiesList(cui, container) {
       container.textContent = 'Se încarcă activități…';
       try {
@@ -184,7 +210,7 @@
           const when = a.created_at ? a.created_at.split('T')[0] : '—';
           const sched = a.scheduled_date ? ` | Programată: ${a.scheduled_date}` : '';
           const score = (a.score !== null && a.score !== undefined) ? ` | Scor: ${a.score}` : '';
-          const type_text = a.type_id ? ` | Tip: ${a.type_id}` : '';
+          const type_text = a.type_name ? ` | Tip: ${a.type_name}` : (a.type_id ? ` | Tip: ${a.type_id}` : '');
           el.textContent = `${when} — ${a.comment || '(fără comentariu)'}${type_text}${score}${sched}`;
           list.appendChild(el);
         });
@@ -195,30 +221,64 @@
       }
     }
 
+    async function loadContactsForUI(cui, contactsContainer) {
+      contactsContainer.textContent = 'Se încarcă...';
+      try {
+        const res = await fetch(`/api/firms/${encodeURIComponent(cui)}/contacts`, { headers: { accept: 'application/json' } });
+        if (!res.ok) {
+          let txt = null;
+          try { txt = await res.text(); } catch(e) {}
+          contactsContainer.textContent = `Eroare la încărcare contacte: ${res.status}` + (txt ? ` — ${txt}` : '');
+          console.warn('contacts load failed', res.status, txt);
+          return;
+        }
+        let list;
+        try { list = await res.json(); } catch (e) {
+          contactsContainer.textContent = 'Eroare parsare contacte';
+          console.warn('contacts json parse failed', e);
+          return;
+        }
+        if (!Array.isArray(list) || list.length === 0) {
+          contactsContainer.innerHTML = '<div class="muted">Nicio persoană de contact.</div>';
+          return;
+        }
+        const holder = document.createElement('div');
+        list.forEach(c => {
+          const row = document.createElement('div');
+          row.className = 'small';
+          row.textContent = `${c.name} (${c.role || '—'}) | Tel: ${c.phone || '—'} | Email: ${c.email || '—'}`;
+          holder.appendChild(row);
+        });
+        contactsContainer.innerHTML = '';
+        contactsContainer.appendChild(holder);
+      } catch (e) {
+        contactsContainer.textContent = 'Eroare la încărcare contacte: ' + (e.message || e);
+        console.warn('loadContacts exception', e);
+      }
+    }
+
     async function fetchDetails(cui, container) {
       container.textContent = 'Se încarcă detalii…';
       try {
         const paths = [
-          `/firma/${encodeURIComponent(cui)}/detalii`,
           `/api/firms/${encodeURIComponent(cui)}`
         ];
         let json = null;
         for (const p of paths) {
-          const r = await fetch(p, { headers: { accept: 'application/json' } });
-          if (r.ok) {
-            json = await r.json().catch(()=>null);
-            if (json) break;
-          }
+          try {
+            const r = await fetch(p, { headers: { accept: 'application/json' } });
+            if (r.ok) {
+              json = await r.json().catch(()=>null);
+              if (json) break;
+            }
+          } catch(e) { /* ignore */ }
         }
         if (!json) {
           container.textContent = 'Detalii indisponibile.';
           return null;
         }
 
-        console.log('API firm response', json);
-
         const clone = document.importNode(detailTpl, true);
-
         clone.querySelector('[data-name]').textContent = json.name || '(nume lipsă)';
         clone.querySelector('[data-meta]').textContent = `CUI: ${json.cui || '—'} · Județ: ${json.judet || '—'}`;
 
@@ -240,6 +300,8 @@
         await loadActivitiesList(cui, activitiesContainer);
 
         const contactsContainer = clone.querySelector('[data-contacts]');
+        await loadContactsForUI(cui, contactsContainer);
+
         const contactName = clone.querySelector('[data-contact-name]');
         const contactPhone = clone.querySelector('[data-contact-phone]');
         const contactEmail = clone.querySelector('[data-contact-email]');
@@ -247,33 +309,7 @@
         const contactAddBtn = clone.querySelector('[data-contact-add]');
         const contactResult = clone.querySelector('[data-contact-result]');
 
-        async function loadContacts() {
-          contactsContainer.textContent = 'Se încarcă...';
-          try {
-            const res = await fetch(`/api/firms/${encodeURIComponent(cui)}/contacts`, { headers: { accept: 'application/json' } });
-            if (!res.ok) {
-              contactsContainer.textContent = 'Eroare la încărcare contacte.';
-              return;
-            }
-            const list = await res.json();
-            if (!Array.isArray(list) || list.length === 0) {
-              contactsContainer.innerHTML = '<div class="muted">Nicio persoană de contact.</div>';
-              return;
-            }
-            const holder = document.createElement('div');
-            list.forEach(c => {
-              const row = document.createElement('div');
-              row.className = 'small';
-              row.textContent = `${c.name} (${c.role || '—'}) | Tel: ${c.phone || '—'} | Email: ${c.email || '—'}`;
-              holder.appendChild(row);
-            });
-            contactsContainer.innerHTML = '';
-            contactsContainer.appendChild(holder);
-          } catch (e) {
-            contactsContainer.textContent = 'Eroare la încărcare contacte: ' + (e.message || e);
-          }
-        }
-        await loadContacts();
+        async function reloadContacts() { await loadContactsForUI(cui, contactsContainer); }
 
         contactAddBtn.addEventListener('click', async () => {
           contactResult.textContent = '';
@@ -299,7 +335,7 @@
               contactPhone.value = '';
               contactEmail.value = '';
               contactRole.value = '';
-              await loadContacts();
+              await reloadContacts();
             } else {
               const j = await res.json().catch(()=>null);
               contactResult.textContent = 'Eroare: ' + res.status + (j && j.detail ? ' - ' + j.detail : '');
@@ -314,6 +350,7 @@
           }
         });
 
+        // activity add
         const addBtn = clone.querySelector('[data-act-add]');
         const commentInput = clone.querySelector('[data-act-comment]');
         const typeInput = clone.querySelector('[data-act-type]');
@@ -357,7 +394,7 @@
               scoreInput.value = '';
               typeInput.value = '1';
               await loadActivitiesList(cui, activitiesContainerRef);
-              await loadAgenda();
+              await safeLoadAgenda();
             } else {
               const j = await res.json().catch(()=>null);
               actResult.textContent = 'Eroare server: ' + res.status + (j && j.detail ? ' - ' + j.detail : '');
@@ -381,14 +418,14 @@
     async function search() {
       const q = input.value.trim();
       if (!q) {
-        error.textContent = 'Introduceți un CUI sau un nume valid.';
+        errorNotice.textContent = 'Introduceți un CUI sau un nume valid.';
         return;
       }
       if (_searchLock || q === _lastQuery) return;
       _searchLock = true;
       _lastQuery = q;
 
-      error.textContent = '';
+      errorNotice.textContent = '';
       results.innerHTML = '';
 
       btn.disabled = true;
@@ -397,7 +434,7 @@
         const res = await fetch(`/search?q=${encodeURIComponent(q)}&limit=10`, { headers: { accept: 'application/json' } });
         if (!res.ok) {
           const j = await res.json().catch(()=>null);
-          error.textContent = (j && j.detail) ? String(j.detail) : `Eroare server: ${res.status}`;
+          errorNotice.textContent = (j && j.detail) ? String(j.detail) : `Eroare server: ${res.status}`;
           return;
         }
         const data = await res.json();
@@ -473,7 +510,7 @@
         results.appendChild(list);
         backBtn.style.display = 'none';
       } catch (err) {
-        error.textContent = 'Eroare rețea: ' + (err && err.message ? err.message : String(err));
+        errorNotice.textContent = 'Eroare rețea: ' + (err && err.message ? err.message : String(err));
       } finally {
         _searchLock = false;
         btn.disabled = false;
@@ -574,6 +611,7 @@
       single.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    // ---- loadAgenda (scheduled + overdue + nearby + suggested) ----
     async function loadAgenda(day = null) {
       const d = day || agendaDayInput.value || new Date().toISOString().slice(0,10);
       agendaDateLabel.textContent = `Agenda pentru: ${d}`;
@@ -584,77 +622,173 @@
           return;
         }
         const json = await res.json();
+        const scheduled = json.scheduled || [];
         const overdue = json.overdue || [];
-        const today = json.today || [];
+        const nearby = json.nearby || [];
+        const suggested = json.suggested || [];
 
         agendaDiv.innerHTML = '';
+
+        // Scheduled section
+        const hScheduled = document.createElement('div'); hScheduled.style.fontWeight = '700'; hScheduled.style.marginTop = '6px'; hScheduled.textContent = 'Activități programate';
+        agendaDiv.appendChild(hScheduled);
+        if (scheduled.length === 0) {
+          const empty = document.createElement('div'); empty.className='muted'; empty.textContent = 'Nicio activitate programată pentru această zi.';
+          agendaDiv.appendChild(empty);
+        } else {
+          scheduled.forEach(a => {
+            const el = document.createElement('div'); el.className = 'agenda-slot';
+            const left = document.createElement('div');
+            left.style.display = 'flex'; left.style.flexDirection='column'; left.style.gap='6px';
+            const topRow = document.createElement('div'); topRow.style.display='flex'; topRow.style.justifyContent='space-between'; topRow.style.alignItems='center';
+            const titleBtn = document.createElement('button'); titleBtn.className='name-button';
+            titleBtn.textContent = a.firm_name || a.comment || a.cui;
+            titleBtn.addEventListener('click', ()=>{ openFirmFromAgenda(a.cui); input.value = a.cui; });
+            topRow.appendChild(titleBtn);
+
+            const actions = document.createElement('div');
+            actions.style.display='flex'; actions.style.gap='8px';
+            const completeBtn = document.createElement('button');
+            completeBtn.textContent = 'Marchează finalizată';
+            completeBtn.className = 'btn-link';
+            completeBtn.addEventListener('click', async () => {
+              completeBtn.disabled = true;
+              await markActivityComplete(a.id);
+              await safeLoadAgenda(d);
+            });
+            actions.appendChild(completeBtn);
+            topRow.appendChild(actions);
+
+            const meta = document.createElement('div'); meta.className='small';
+            meta.textContent = `Firmă: ${a.cui} | Scor: ${a.score ?? '—'} | Programată: ${a.scheduled_date ?? '—'}`;
+
+            left.appendChild(topRow);
+            left.appendChild(meta);
+
+            el.appendChild(left);
+            agendaDiv.appendChild(el);
+          });
+        }
+
+        // Overdue
         if (overdue.length) {
-          const h = document.createElement('div');
-          h.style.fontWeight = '700';
-          h.style.marginTop = '6px';
-          h.textContent = 'Restante';
+          const h = document.createElement('div'); h.style.fontWeight='700'; h.style.marginTop='12px'; h.textContent='Restanțe';
           agendaDiv.appendChild(h);
           overdue.forEach(a => {
-            const el = document.createElement('div');
-            el.className = 'agenda-slot overdue';
-            const titleBtn = document.createElement('button');
-            titleBtn.className = 'name-button';
+            const el = document.createElement('div'); el.className='agenda-slot overdue';
+            const titleBtn = document.createElement('button'); titleBtn.className='name-button';
             titleBtn.textContent = a.firm_name || a.comment || a.cui;
-            titleBtn.addEventListener('click', () => {
-              openFirmFromAgenda(a.cui);
-              input.value = a.cui;
-            });
-            const meta = document.createElement('div');
-            meta.className = 'small';
-            meta.style.marginTop = '6px';
+            titleBtn.addEventListener('click', ()=>{ openFirmFromAgenda(a.cui); input.value = a.cui; });
+            const meta = document.createElement('div'); meta.className='small'; meta.style.marginTop='6px';
             meta.textContent = `Firmă: ${a.cui} | Scor: ${a.score ?? '—'} | Programată: ${a.scheduled_date ?? '—'}`;
-            el.appendChild(titleBtn);
-            el.appendChild(meta);
-            agendaDiv.appendChild(el);
+            el.appendChild(titleBtn); el.appendChild(meta); agendaDiv.appendChild(el);
           });
         }
 
-        if (today.length) {
-          const h2 = document.createElement('div');
-          h2.style.fontWeight = '700';
-          h2.style.marginTop = '10px';
-          h2.textContent = 'Programate pentru azi';
+        // Nearby
+        if (nearby.length) {
+          const h2 = document.createElement('div'); h2.style.fontWeight='700'; h2.style.marginTop='12px'; h2.textContent='Programate în zilele următoare';
           agendaDiv.appendChild(h2);
-          today.forEach(a => {
-            const el = document.createElement('div');
-            el.className = 'agenda-slot';
-            const titleBtn = document.createElement('button');
-            titleBtn.className = 'name-button';
+          nearby.forEach(a => {
+            const el = document.createElement('div'); el.className='agenda-slot';
+            const titleBtn = document.createElement('button'); titleBtn.className='name-button';
             titleBtn.textContent = a.firm_name || a.comment || a.cui;
-            titleBtn.addEventListener('click', () => {
-              openFirmFromAgenda(a.cui);
-              input.value = a.cui;
-            });
-            const meta = document.createElement('div');
-            meta.className = 'small';
-            meta.style.marginTop = '6px';
+            titleBtn.addEventListener('click', ()=>{ openFirmFromAgenda(a.cui); input.value = a.cui; });
+            const meta = document.createElement('div'); meta.className='small'; meta.style.marginTop='6px';
             meta.textContent = `Firmă: ${a.cui} | Scor: ${a.score ?? '—'} | Programată: ${a.scheduled_date ?? '—'}`;
-            el.appendChild(titleBtn);
-            el.appendChild(meta);
-            agendaDiv.appendChild(el);
+            el.appendChild(titleBtn); el.appendChild(meta); agendaDiv.appendChild(el);
           });
         }
 
-        if (!overdue.length && !today.length) {
-          agendaDiv.innerHTML = '<div class="muted">Nicio activitate programată pentru această zi.</div>';
+        // Suggested section (top5)
+        const hSug = document.createElement('div'); hSug.style.fontWeight='700'; hSug.style.marginTop='16px'; hSug.textContent='Activități sugerate';
+        agendaDiv.appendChild(hSug);
+        if (!Array.isArray(suggested) || suggested.length === 0) {
+          const emptyS = document.createElement('div'); emptyS.className='muted'; emptyS.textContent='Nicio sugestie momentan.';
+          agendaDiv.appendChild(emptyS);
+        } else {
+          suggested.forEach(s => {
+            const item = document.createElement('div'); item.className='agenda-slot suggested';
+            const left = document.createElement('div'); left.style.display='flex'; left.style.flexDirection='column'; left.style.gap='6px';
+            const top = document.createElement('div'); top.style.display='flex'; top.style.justifyContent='space-between'; top.style.alignItems='center';
+            const name = document.createElement('div'); name.style.fontWeight='700'; name.textContent = `${s.rank}. ${s.denumire || s.cui}`;
+            top.appendChild(name);
+            const btns = document.createElement('div'); btns.style.display='flex'; btns.style.gap='8px';
+            const openBtn = document.createElement('button'); openBtn.className='btn-link'; openBtn.textContent='Deschide';
+            openBtn.addEventListener('click', ()=>{ openFirmFromAgenda(s.cui); input.value = s.cui; });
+            const markBtn = document.createElement('button'); markBtn.className='btn-link'; markBtn.textContent='Am contactat';
+            markBtn.addEventListener('click', async () => {
+              markBtn.disabled = true;
+              await markSuggestedUsed([s.cui]);
+              await safeLoadAgenda(d);
+            });
+            btns.appendChild(openBtn); btns.appendChild(markBtn);
+            top.appendChild(btns);
+            const meta = document.createElement('div'); meta.className='small';
+            meta.textContent = `Licențe: ${s.licente ?? '—'} · CA: ${s.cifra_afaceri ? fmtNumber(s.cifra_afaceri) : '—'}`;
+            left.appendChild(top); left.appendChild(meta);
+            item.appendChild(left); agendaDiv.appendChild(item);
+          });
         }
+
       } catch (err) {
         agendaDiv.innerHTML = '<div class="muted">Eroare la încărcare agenda: ' + (err.message || err) + '</div>';
       }
     }
 
-    (function init() {
-      const today = new Date().toISOString().slice(0,10);
-      agendaDayInput.value = today;
-      loadAgenda();
-    })();
+    // helpers to mark suggestion used and activity complete
+    async function markSuggestedUsed(cuis) {
+      try {
+        const res = await fetch('/api/suggested_mark_used', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cuis)
+        });
+        if (!res.ok) {
+          console.warn('markSuggestedUsed failed', res.status, await res.text().catch(()=>null));
+          return false;
+        }
+        return true;
+      } catch (e) {
+        console.warn('markSuggestedUsed exception', e);
+        return false;
+      }
+    }
 
-    refreshAgendaBtn.addEventListener('click', () => loadAgenda(agendaDayInput.value));
+    async function markActivityComplete(activityId) {
+      try {
+        const res = await fetch(`/api/activities/${activityId}/complete`, { method: 'POST' });
+        if (!res.ok) {
+          console.warn('markActivityComplete failed', res.status, await res.text().catch(()=>null));
+          return false;
+        }
+        return true;
+      } catch (e) {
+        console.warn('markActivityComplete exception', e);
+        return false;
+      }
+    }
+
+    async function safeLoadAgenda(day = null) {
+      try { await loadAgenda(day); } catch (e) { console.warn('safeLoadAgenda failed', e); if (errorNotice) errorNotice.textContent = 'Eroare încărcare agenda (non-fatal).'; }
+    }
+
+    async function safeFetchDetails(cui, container) {
+      try { return await fetchDetails(cui, container); } catch (e) { console.warn('safeFetchDetails failed', e); container.textContent = 'Detalii indisponibile.'; return null; }
+    }
+
+    setTimeout(() => {
+      try {
+        const today = new Date().toISOString().slice(0,10);
+        agendaDayInput.value = today;
+        safeLoadAgenda();
+      } catch (e) {
+        console.error('UI init failed', e);
+        if (errorNotice) errorNotice.textContent = 'Eroare la inițializare interfață.';
+      }
+    }, 50);
+
+    refreshAgendaBtn.addEventListener('click', () => safeLoadAgenda(agendaDayInput.value));
     btn.addEventListener('click', () => search());
     input.addEventListener('input', debounce(() => { if (input.value.trim()) search(); }, 350));
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); search(); } });
