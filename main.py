@@ -207,14 +207,11 @@ def rebuild_top20(limit=20):
 
     with engine.begin() as conn:
         rows = conn.execute(text(qry), {"limit": limit}).mappings().all()
-        # refresh suggested_top
         conn.execute(text("TRUNCATE public.suggested_top RESTART IDENTITY;"))
         rank = 1
         for r in rows:
             raw_name = r.get("denumire") or ""
-            # remove trailing patterns like "· Județ: Constanta" or "| Județ: Constanta" or ", Județ: Constanta"
             denumire_clean = re.sub(r'\s*[·\|\-,]\s*Județ\s*:.*$', '', raw_name, flags=re.IGNORECASE).strip()
-            # additional trim: remove trailing comma/pipe/dot fragments
             denumire_clean = re.sub(r'[\|\-:,\.]+\s*$', '', denumire_clean).strip()
             if not denumire_clean:
                 denumire_clean = r.get("cui") or ""
@@ -314,7 +311,6 @@ def startup_check_db():
             sleep(2)
     logger.error("DB unreachable after retries")
 
-# SPA root
 @app.get("/", include_in_schema=False)
 def root_index():
     index_path = os.path.join(STATIC_DIR or "", "index.html") if STATIC_DIR else None
@@ -322,7 +318,6 @@ def root_index():
         return FileResponse(index_path, media_type="text/html")
     return HTMLResponse(content="<!doctype html><html><body><h2>Frontend not found</h2><p>Place build in web/dist or static.</p></body></html>", status_code=200)
 
-# health
 @app.get("/health")
 def health():
     try:
@@ -433,7 +428,104 @@ def api_agenda(day: str = Query(None), cui: str = Query(None)):
         logger.exception("api_agenda failed")
         raise HTTPException(status_code=500, detail="internal error")
 
-# suggested API
+# simple search endpoint expected by frontend
+@app.get("/search")
+def api_search(q: str = Query(...), limit: int = Query(10, ge=1, le=100)):
+    try:
+        like = f"%{q.strip()}%"
+
+        # detect licente columns
+        try:
+            with engine.connect() as conn:
+                lic_cols = conn.execute(text(
+                    "SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='licente'"
+                )).scalars().all()
+        except Exception:
+            lic_cols = []
+
+        lic_cui_col = next((c for c in lic_cols if any(x in c.lower() for x in ("cui", "codcui", "cod_cui", "firm_cui"))), None)
+        lic_count_col = next((c for c in lic_cols if any(x in c.lower() for x in ("licen", "license", "licente", "nr_licente", "numar_licente"))), None)
+
+        if lic_cui_col and lic_count_col:
+            lic_sub = (
+                f'LEFT JOIN ('
+                f'  SELECT "{lic_cui_col}"::text AS lic_cui, '
+                f'         SUM(COALESCE(NULLIF(trim("{lic_count_col}"::text), \'\'), \'0\')::int) AS lic_count '
+                f'  FROM public.licente '
+                f'  GROUP BY "{lic_cui_col}"::text'
+                f') l ON l.lic_cui = f.cui::text'
+            )
+        else:
+            lic_sub = "LEFT JOIN (SELECT ''::text AS lic_cui, 0 AS lic_count LIMIT 0) l ON false"
+
+        # detect firms columns
+        try:
+            with engine.connect() as conn:
+                fcols = conn.execute(text(
+                    "SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='firms'"
+                )).scalars().all()
+        except Exception:
+            fcols = []
+
+        firm_name_col = None
+        for c in fcols:
+            low = c.lower()
+            if low in ("denumire", "name", "denumire_firma", "company", "firm_name"):
+                firm_name_col = c; break
+        if not firm_name_col:
+            for c in fcols:
+                low = c.lower()
+                if "name" in low or "denum" in low or "denumire" in low:
+                    firm_name_col = c; break
+
+        ca_col = None
+        for c in fcols:
+            low = c.lower()
+            if any(x in low for x in ("cifra", "cifra_de_afaceri", "cifra_afaceri", "cifra_de_afaceri_neta")):
+                ca_col = c; break
+
+        if firm_name_col:
+            name_expr = f'COALESCE(NULLIF(f."{firm_name_col}", \'\'), f.cui::text)'
+            name_filter = f'COALESCE(f."{firm_name_col}", \'\') ILIKE :like'
+        else:
+            name_expr = "f.cui::text"
+            name_filter = "false"
+
+        if ca_col:
+            ca_expr = f'COALESCE(NULLIF(f."{ca_col}"::text, \'\'), \'\')'
+        else:
+            ca_expr = "''"
+
+        sql = (
+            "SELECT f.cui, "
+            f"       {name_expr} AS name, "
+            "       COALESCE(f.judet, '') AS judet, "
+            f"       {ca_expr} AS cifra_afaceri_raw, "
+            "       COALESCE(l.lic_count, 0) AS licente "
+            "FROM public.firms f "
+            + lic_sub + " "
+            "WHERE (f.cui::text ILIKE :like OR COALESCE(f.denumire,'') ILIKE :like OR " + name_filter + ") "
+            "LIMIT :limit"
+        )
+
+        with engine.connect() as conn:
+            rows = conn.execute(text(sql), {"like": like, "limit": limit}).mappings().all()
+
+        out = []
+        for r in rows:
+            out.append({
+                "cui": r.get("cui"),
+                "name": (r.get("name") or '').strip(),
+                "judet": r.get("judet"),
+                "cifra_afaceri": norm_number(r.get("cifra_afaceri_raw")),
+                "licente": int(r.get("licente") or 0)
+            })
+        return JSONResponse(content=out)
+    except Exception:
+        logger.exception("api_search failed")
+        raise HTTPException(status_code=500, detail="search failed")
+
+
 @app.get("/api/suggested_next")
 def api_suggested_next(n: int = Query(5, ge=1, le=20)):
     try:
@@ -450,7 +542,6 @@ def api_suggested_mark_used(cuis: list[str] = Body(...)):
         logger.exception("api_suggested_mark_used failed")
         raise HTTPException(status_code=500, detail="failed")
 
-# admin
 @app.post("/admin/rebuild_top20")
 def admin_rebuild(limit: int = 20):
     try:
@@ -459,7 +550,6 @@ def admin_rebuild(limit: int = 20):
         logger.exception("admin rebuild failed")
         raise HTTPException(status_code=500, detail="rebuild failed")
 
-# firms
 @app.get("/api/firms/{firm_id}")
 def get_firm(firm_id: str):
     try:
