@@ -96,8 +96,10 @@
         </select>
       </div>
       <div style="margin-top:8px">
-        <label>Scor</label>
-        <input data-act-score type="number" min="1" max="20" />
+        <label>Programează</label>
+        <select data-act-programare>
+          <option value="">-- selectează --</option>
+        </select>
       </div>
       <div style="margin-top:8px">
         <label>Comentariu</label>
@@ -167,27 +169,6 @@
       return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
     }
 
-    window.addEventListener('error', (ev) => {
-      console.warn('Non-critical error captured:', ev.message || ev);
-      if (errorNotice) errorNotice.textContent = 'Unele funcționalități auxiliare nu funcționează; aplicația principală este activă.';
-      return true;
-    });
-    window.addEventListener('unhandledrejection', (ev) => {
-      console.warn('Unhandled rejection (non-fatal):', ev.reason);
-      if (errorNotice) errorNotice.textContent = 'Unele operații au eșuat; vezi consola pentru detalii.';
-    });
-
-    async function safeFetchJson(url, opts) {
-      try {
-        const r = await fetch(url, opts);
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return await r.json();
-      } catch (e) {
-        console.warn('safeFetchJson failed', url, e);
-        throw e;
-      }
-    }
-
     async function loadActivitiesList(cui, container) {
       container.textContent = 'Se încarcă activități…';
       try {
@@ -209,9 +190,9 @@
           el.style.borderBottom = '1px solid #eef2ff';
           const when = a.created_at ? a.created_at.split('T')[0] : '—';
           const sched = a.scheduled_date ? ` | Programată: ${a.scheduled_date}` : '';
-          const score = (a.score !== null && a.score !== undefined) ? ` | Scor: ${a.score}` : '';
+          const prog = (a.programare_label !== null && a.programare_label !== undefined) ? ` | Progr: ${a.programare_label}` : '';
           const type_text = a.type_name ? ` | Tip: ${a.type_name}` : (a.type_id ? ` | Tip: ${a.type_id}` : '');
-          el.textContent = `${when} — ${a.comment || '(fără comentariu)'}${type_text}${score}${sched}`;
+          el.textContent = `${when} — ${a.comment || '(fără comentariu)'}${type_text}${prog}${sched}`;
           list.appendChild(el);
         });
         container.innerHTML = '';
@@ -229,13 +210,11 @@
           let txt = null;
           try { txt = await res.text(); } catch(e) {}
           contactsContainer.textContent = `Eroare la încărcare contacte: ${res.status}` + (txt ? ` — ${txt}` : '');
-          console.warn('contacts load failed', res.status, txt);
           return;
         }
         let list;
         try { list = await res.json(); } catch (e) {
           contactsContainer.textContent = 'Eroare parsare contacte';
-          console.warn('contacts json parse failed', e);
           return;
         }
         if (!Array.isArray(list) || list.length === 0) {
@@ -253,30 +232,18 @@
         contactsContainer.appendChild(holder);
       } catch (e) {
         contactsContainer.textContent = 'Eroare la încărcare contacte: ' + (e.message || e);
-        console.warn('loadContacts exception', e);
       }
     }
 
     async function fetchDetails(cui, container) {
       container.textContent = 'Se încarcă detalii…';
       try {
-        const paths = [
-          `/api/firms/${encodeURIComponent(cui)}`
-        ];
-        let json = null;
-        for (const p of paths) {
-          try {
-            const r = await fetch(p, { headers: { accept: 'application/json' } });
-            if (r.ok) {
-              json = await r.json().catch(()=>null);
-              if (json) break;
-            }
-          } catch(e) { /* ignore */ }
-        }
-        if (!json) {
+        const r = await fetch(`/api/firms/${encodeURIComponent(cui)}`, { headers: { accept: 'application/json' } });
+        if (!r.ok) {
           container.textContent = 'Detalii indisponibile.';
           return null;
         }
+        const json = await r.json();
 
         const clone = document.importNode(detailTpl, true);
         clone.querySelector('[data-name]').textContent = json.name || '(nume lipsă)';
@@ -301,6 +268,24 @@
 
         const contactsContainer = clone.querySelector('[data-contacts]');
         await loadContactsForUI(cui, contactsContainer);
+
+        // populate programare select
+        const programareSelect = clone.querySelector('[data-act-programare]');
+        (async function populateProgramare() {
+          try {
+            const rr = await fetch('/api/reprogram_options', { headers: { accept: 'application/json' } });
+            if (!rr.ok) return;
+            const opts = await rr.json();
+            opts.forEach(opt => {
+              const o = document.createElement('option');
+              o.value = opt.id;
+              o.textContent = opt.label;
+              programareSelect.appendChild(o);
+            });
+          } catch (e) {
+            console.warn('Failed to load reprogram_options', e);
+          }
+        })();
 
         const contactName = clone.querySelector('[data-contact-name]');
         const contactPhone = clone.querySelector('[data-contact-phone]');
@@ -354,7 +339,6 @@
         const addBtn = clone.querySelector('[data-act-add]');
         const commentInput = clone.querySelector('[data-act-comment]');
         const typeInput = clone.querySelector('[data-act-type]');
-        const scoreInput = clone.querySelector('[data-act-score]');
         const actResult = clone.querySelector('[data-act-result]');
         const activitiesContainerRef = activitiesContainer;
 
@@ -362,17 +346,16 @@
           actResult.textContent = '';
           const comment = commentInput.value.trim();
           const typeVal = Number(typeInput.value) || 1;
-          const scoreValRaw = scoreInput.value;
-          const scoreVal = scoreValRaw === '' ? null : Number(scoreValRaw);
+          const progRaw = programareSelect.value;
+          const progId = progRaw === '' ? null : Number(progRaw);
 
           if (!comment) { actResult.textContent = 'Comentariu este necesar.'; return; }
-          if (scoreVal !== null && (isNaN(scoreVal) || scoreVal < 1 || scoreVal > 20)) { actResult.textContent = 'Scor invalid (1-20).'; return; }
 
           const payload = {
             firm_id: String(cui),
             activity_type_id: typeVal,
             comment: comment,
-            score: scoreVal,
+            programare_id: progId,
             scheduled_date: null
           };
           try {
@@ -391,7 +374,7 @@
               actResult.style.color = '#059669';
               setTimeout(() => { actResult.textContent = ''; }, 3000);
               commentInput.value = '';
-              scoreInput.value = '';
+              programareSelect.value = '';
               typeInput.value = '1';
               await loadActivitiesList(cui, activitiesContainerRef);
               await safeLoadAgenda();
@@ -518,66 +501,6 @@
       }
     }
 
-    function renderResults(data) {
-      results.innerHTML = '';
-      if (!Array.isArray(data) || data.length === 0) {
-        results.innerHTML = '<div class="muted">Nu s-au găsit rezultate.</div>';
-        return;
-      }
-      const list = document.createElement('div');
-      data.forEach(item => {
-        const cui = item.cui ?? item.id ?? '—';
-        const row = document.createElement('div');
-        row.className = 'list-item';
-        row.dataset.cui = cui;
-        const summary = document.createElement('div');
-        summary.style.display = 'flex';
-        summary.style.flexDirection = 'column';
-        const titleBtn = document.createElement('button');
-        titleBtn.className = 'name-button';
-        titleBtn.textContent = item.name ?? '(nume lipsă)';
-        summary.appendChild(titleBtn);
-        const meta = document.createElement('div');
-        meta.className = 'small';
-        const judet = item.judet ?? '—';
-        const cifra = item.cifra_afaceri ?? item.cifra_de_afaceri_neta ?? null;
-        const lic = item.licente ?? item.numar_licente ?? '—';
-        meta.textContent = `CUI: ${cui} · Județ: ${judet} · Cifră afaceri: ${cifra ? fmtNumber(cifra) : '—'} · Licențe: ${lic}`;
-        summary.appendChild(meta);
-        row.appendChild(summary);
-        titleBtn.addEventListener('click', async () => {
-          results.innerHTML = '';
-          const single = document.createElement('div');
-          single.className = 'list-item';
-          single.style.flexDirection = 'column';
-          const header = document.createElement('div');
-          header.style.display = 'flex';
-          header.style.justifyContent = 'space-between';
-          header.style.alignItems = 'center';
-          const titleText = document.createElement('div');
-          titleText.innerHTML = `<strong>${item.name}</strong><div class="small" style="margin-top:6px">CUI: ${cui} · Județ: ${item.judet ?? '—'}</div>`;
-          header.appendChild(titleText);
-          const closeBtn = document.createElement('button');
-          closeBtn.textContent = 'Înapoi';
-          closeBtn.className = 'secondary';
-          closeBtn.addEventListener('click', () => {
-            renderResults(_lastResults);
-          });
-          header.appendChild(closeBtn);
-          single.appendChild(header);
-          const detailsHolder = document.createElement('div');
-          detailsHolder.style.marginTop = '12px';
-          single.appendChild(detailsHolder);
-          results.appendChild(single);
-          await fetchDetails(cui, detailsHolder);
-          single.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-        list.appendChild(row);
-      });
-      results.appendChild(list);
-      backBtn.style.display = 'none';
-    }
-
     async function openFirmFromAgenda(cui) {
       results.innerHTML = '';
       const single = document.createElement('div');
@@ -610,6 +533,8 @@
       await fetchDetails(cui, detailsHolder);
       single.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+    // expose globally so handlers can call it
+    window.openFirmFromAgenda = openFirmFromAgenda;
 
     // ---- loadAgenda (scheduled + overdue + nearby + suggested) ----
     async function loadAgenda(day = null) {
@@ -643,7 +568,13 @@
             const topRow = document.createElement('div'); topRow.style.display='flex'; topRow.style.justifyContent='space-between'; topRow.style.alignItems='center';
             const titleBtn = document.createElement('button'); titleBtn.className='name-button';
             titleBtn.textContent = a.firm_name || a.comment || a.cui;
-            titleBtn.addEventListener('click', ()=>{ openFirmFromAgenda(a.cui); input.value = a.cui; });
+            titleBtn.dataset.cui = String(a.cui ?? '');
+            titleBtn.addEventListener('click', (ev) => {
+              const cui = ev.currentTarget.dataset.cui;
+              if (!cui) return;
+              input.value = cui;
+              if (typeof window.openFirmFromAgenda === 'function') window.openFirmFromAgenda(cui);
+            });
             topRow.appendChild(titleBtn);
 
             const actions = document.createElement('div');
@@ -651,7 +582,8 @@
             const completeBtn = document.createElement('button');
             completeBtn.textContent = 'Marchează finalizată';
             completeBtn.className = 'btn-link';
-            completeBtn.addEventListener('click', async () => {
+            completeBtn.addEventListener('click', async (ev) => {
+              ev.stopPropagation();
               completeBtn.disabled = true;
               await markActivityComplete(a.id);
               await safeLoadAgenda(d);
@@ -660,7 +592,7 @@
             topRow.appendChild(actions);
 
             const meta = document.createElement('div'); meta.className='small';
-            meta.textContent = `Firmă: ${a.cui} | Scor: ${a.score ?? '—'} | Programată: ${a.scheduled_date ?? '—'}`;
+            meta.textContent = `Firmă: ${a.cui} | Programare: ${a.programare_label ?? '—'} | Programată: ${a.scheduled_date ?? '—'}`;
 
             left.appendChild(topRow);
             left.appendChild(meta);
@@ -678,9 +610,15 @@
             const el = document.createElement('div'); el.className='agenda-slot overdue';
             const titleBtn = document.createElement('button'); titleBtn.className='name-button';
             titleBtn.textContent = a.firm_name || a.comment || a.cui;
-            titleBtn.addEventListener('click', ()=>{ openFirmFromAgenda(a.cui); input.value = a.cui; });
+            titleBtn.dataset.cui = String(a.cui ?? '');
+            titleBtn.addEventListener('click', (ev) => {
+              const cui = ev.currentTarget.dataset.cui;
+              if (!cui) return;
+              input.value = cui;
+              if (typeof window.openFirmFromAgenda === 'function') window.openFirmFromAgenda(cui);
+            });
             const meta = document.createElement('div'); meta.className='small'; meta.style.marginTop='6px';
-            meta.textContent = `Firmă: ${a.cui} | Scor: ${a.score ?? '—'} | Programată: ${a.scheduled_date ?? '—'}`;
+            meta.textContent = `Firmă: ${a.cui} | Programare: ${a.programare_label ?? '—'} | Programată: ${a.scheduled_date ?? '—'}`;
             el.appendChild(titleBtn); el.appendChild(meta); agendaDiv.appendChild(el);
           });
         }
@@ -693,14 +631,20 @@
             const el = document.createElement('div'); el.className='agenda-slot';
             const titleBtn = document.createElement('button'); titleBtn.className='name-button';
             titleBtn.textContent = a.firm_name || a.comment || a.cui;
-            titleBtn.addEventListener('click', ()=>{ openFirmFromAgenda(a.cui); input.value = a.cui; });
+            titleBtn.dataset.cui = String(a.cui ?? '');
+            titleBtn.addEventListener('click', (ev) => {
+              const cui = ev.currentTarget.dataset.cui;
+              if (!cui) return;
+              input.value = cui;
+              if (typeof window.openFirmFromAgenda === 'function') window.openFirmFromAgenda(cui);
+            });
             const meta = document.createElement('div'); meta.className='small'; meta.style.marginTop='6px';
-            meta.textContent = `Firmă: ${a.cui} | Scor: ${a.score ?? '—'} | Programată: ${a.scheduled_date ?? '—'}`;
+            meta.textContent = `Firmă: ${a.cui} | Programare: ${a.programare_label ?? '—'} | Programată: ${a.scheduled_date ?? '—'}`;
             el.appendChild(titleBtn); el.appendChild(meta); agendaDiv.appendChild(el);
           });
         }
 
-        // Suggested section (top5)
+        // Suggested section (top5) — names clickable, no extra buttons
         const hSug = document.createElement('div'); hSug.style.fontWeight='700'; hSug.style.marginTop='16px'; hSug.textContent='Activități sugerate';
         agendaDiv.appendChild(hSug);
         if (!Array.isArray(suggested) || suggested.length === 0) {
@@ -711,19 +655,16 @@
             const item = document.createElement('div'); item.className='agenda-slot suggested';
             const left = document.createElement('div'); left.style.display='flex'; left.style.flexDirection='column'; left.style.gap='6px';
             const top = document.createElement('div'); top.style.display='flex'; top.style.justifyContent='space-between'; top.style.alignItems='center';
-            const name = document.createElement('div'); name.style.fontWeight='700'; name.textContent = `${s.rank}. ${s.denumire || s.cui}`;
-            top.appendChild(name);
-            const btns = document.createElement('div'); btns.style.display='flex'; btns.style.gap='8px';
-            const openBtn = document.createElement('button'); openBtn.className='btn-link'; openBtn.textContent='Deschide';
-            openBtn.addEventListener('click', ()=>{ openFirmFromAgenda(s.cui); input.value = s.cui; });
-            const markBtn = document.createElement('button'); markBtn.className='btn-link'; markBtn.textContent='Am contactat';
-            markBtn.addEventListener('click', async () => {
-              markBtn.disabled = true;
-              await markSuggestedUsed([s.cui]);
-              await safeLoadAgenda(d);
+            const nameBtn = document.createElement('button'); nameBtn.className='name-button';
+            nameBtn.textContent = `${s.rank}. ${s.denumire || s.cui}`;
+            nameBtn.dataset.cui = String(s.cui ?? '');
+            nameBtn.addEventListener('click', (ev) => {
+              const cui = ev.currentTarget.dataset.cui;
+              if (!cui) return;
+              input.value = cui;
+              if (typeof window.openFirmFromAgenda === 'function') window.openFirmFromAgenda(cui);
             });
-            btns.appendChild(openBtn); btns.appendChild(markBtn);
-            top.appendChild(btns);
+            top.appendChild(nameBtn);
             const meta = document.createElement('div'); meta.className='small';
             meta.textContent = `Licențe: ${s.licente ?? '—'} · CA: ${s.cifra_afaceri ? fmtNumber(s.cifra_afaceri) : '—'}`;
             left.appendChild(top); left.appendChild(meta);
@@ -736,7 +677,6 @@
       }
     }
 
-    // helpers to mark suggestion used and activity complete
     async function markSuggestedUsed(cuis) {
       try {
         const res = await fetch('/api/suggested_mark_used', {
@@ -744,13 +684,9 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(cuis)
         });
-        if (!res.ok) {
-          console.warn('markSuggestedUsed failed', res.status, await res.text().catch(()=>null));
-          return false;
-        }
+        if (!res.ok) return false;
         return true;
       } catch (e) {
-        console.warn('markSuggestedUsed exception', e);
         return false;
       }
     }
@@ -758,13 +694,9 @@
     async function markActivityComplete(activityId) {
       try {
         const res = await fetch(`/api/activities/${activityId}/complete`, { method: 'POST' });
-        if (!res.ok) {
-          console.warn('markActivityComplete failed', res.status, await res.text().catch(()=>null));
-          return false;
-        }
+        if (!res.ok) return false;
         return true;
       } catch (e) {
-        console.warn('markActivityComplete exception', e);
         return false;
       }
     }
@@ -783,7 +715,6 @@
         agendaDayInput.value = today;
         safeLoadAgenda();
       } catch (e) {
-        console.error('UI init failed', e);
         if (errorNotice) errorNotice.textContent = 'Eroare la inițializare interfață.';
       }
     }, 50);
