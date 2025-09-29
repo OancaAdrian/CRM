@@ -20,6 +20,10 @@ from decimal import Decimal
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("crm-main")
 
+from dotenv import load_dotenv
+load_dotenv()
+
+
 # ---------- DATABASE URL ----------
 DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("DATABASE_URL_LOCAL")
 if not DATABASE_URL:
@@ -123,8 +127,8 @@ def get_licente_for_cui(cui, colmap):
     except Exception:
         return None
 
-# suggested_top management
-def ensure_suggested_tables():
+# suggested_top and reprogram options management
+def ensure_suggested_and_reprogram_tables():
     with engine.begin() as conn:
         conn.execute(text("""
         CREATE TABLE IF NOT EXISTS public.suggested_top (
@@ -141,6 +145,27 @@ def ensure_suggested_tables():
         conn.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS idx_suggested_top_cui ON public.suggested_top(cui);"))
         conn.execute(text("CREATE INDEX IF NOT EXISTS idx_suggested_top_used_rank ON public.suggested_top(used, rank);"))
 
+        conn.execute(text("""
+        CREATE TABLE IF NOT EXISTS public.reprogram_options (
+          id serial PRIMARY KEY,
+          label text NOT NULL,
+          days integer NULL
+        );
+        """))
+        # populate default options if empty
+        existing = conn.execute(text("SELECT 1 FROM public.reprogram_options LIMIT 1")).first()
+        if not existing:
+            opts = [
+                ("1 zi", 1), ("2 zile", 2), ("3 zile", 3), ("4 zile", 4), ("5 zile", 5),
+                ("1 saptamana", 7), ("2 saptamani", 14), ("3 saptamani", 21),
+                ("1 luna", 30), ("2 luni", 60), ("3 luni", 90), ("6 luni", 180),
+                ("9 luni", 270), ("1 an", 365), ("1 an si jumatate", 548),
+                ("2 ani", 730), ("3 ani", 1095), ("4 ani", 1460), ("5 ani", 1825),
+                ("Nu programa", None)
+            ]
+            for label, days in opts:
+                conn.execute(text("INSERT INTO public.reprogram_options (label, days) VALUES (:label, :days)"), {"label": label, "days": days})
+
 def rebuild_top20(limit=20):
     """
     Build top20 of candidate firms into public.suggested_top.
@@ -148,7 +173,7 @@ def rebuild_top20(limit=20):
     Exclude firms that have any activity (ever) and exclude firms from judet Constanta.
     Clean denumire field to remove trailing județ and normalize name.
     """
-    ensure_suggested_tables()
+    ensure_suggested_and_reprogram_tables()
     try:
         with engine.connect() as conn:
             cols = conn.execute(text(
@@ -207,11 +232,14 @@ def rebuild_top20(limit=20):
 
     with engine.begin() as conn:
         rows = conn.execute(text(qry), {"limit": limit}).mappings().all()
+        # refresh suggested_top
         conn.execute(text("TRUNCATE public.suggested_top RESTART IDENTITY;"))
         rank = 1
         for r in rows:
             raw_name = r.get("denumire") or ""
+            # remove trailing patterns like "· Județ: Constanta" or "| Județ: Constanta" or ", Județ: Constanta"
             denumire_clean = re.sub(r'\s*[·\|\-,]\s*Județ\s*:.*$', '', raw_name, flags=re.IGNORECASE).strip()
+            # additional trim: remove trailing comma/pipe/dot fragments
             denumire_clean = re.sub(r'[\|\-:,\.]+\s*$', '', denumire_clean).strip()
             if not denumire_clean:
                 denumire_clean = r.get("cui") or ""
@@ -272,7 +300,10 @@ def startup_check_db():
                 ON CONFLICT (id) DO NOTHING;
                 """))
 
-                # activities (ensure completed column exists)
+                # ensure suggested + reprogram tables and populate options
+                ensure_suggested_and_reprogram_tables()
+
+                # activities table: keep score for compatibility, add reprogram fields (nullable)
                 conn.execute(text("""
                 CREATE TABLE IF NOT EXISTS public.activities (
                   id serial PRIMARY KEY,
@@ -280,6 +311,9 @@ def startup_check_db():
                   activity_type_id integer,
                   comment text,
                   score integer,
+                  reprogram_id integer NULL,
+                  reprogram_label text NULL,
+                  reprogram_days integer NULL,
                   scheduled_date date,
                   completed boolean DEFAULT false,
                   created_at timestamp default now()
@@ -311,6 +345,7 @@ def startup_check_db():
             sleep(2)
     logger.error("DB unreachable after retries")
 
+# SPA root
 @app.get("/", include_in_schema=False)
 def root_index():
     index_path = os.path.join(STATIC_DIR or "", "index.html") if STATIC_DIR else None
@@ -318,6 +353,7 @@ def root_index():
         return FileResponse(index_path, media_type="text/html")
     return HTMLResponse(content="<!doctype html><html><body><h2>Frontend not found</h2><p>Place build in web/dist or static.</p></body></html>", status_code=200)
 
+# health
 @app.get("/health")
 def health():
     try:
@@ -369,7 +405,7 @@ def api_agenda(day: str = Query(None), cui: str = Query(None)):
 
             # scheduled: exclude completed activities; include only scheduled_date == target
             scheduled_q = text(f"""
-                SELECT a.id, a.cui, a.activity_type_id, a.comment, a.score, a.scheduled_date, a.created_at,
+                SELECT a.id, a.cui, a.activity_type_id, a.comment, a.score, a.reprogram_id, a.reprogram_label, a.reprogram_days, a.scheduled_date, a.completed, a.created_at,
                        {firm_name_expr}
                 FROM public.activities a
                 LEFT JOIN public.firms f ON f.cui::text = a.cui::text
@@ -380,7 +416,7 @@ def api_agenda(day: str = Query(None), cui: str = Query(None)):
 
             # overdue: scheduled_date < target and not completed
             overdue_q = text(f"""
-                SELECT a.id, a.cui, a.activity_type_id, a.comment, a.score, a.scheduled_date, a.created_at,
+                SELECT a.id, a.cui, a.activity_type_id, a.comment, a.score, a.reprogram_id, a.reprogram_label, a.reprogram_days, a.scheduled_date, a.completed, a.created_at,
                        {firm_name_expr}
                 FROM public.activities a
                 LEFT JOIN public.firms f ON f.cui::text = a.cui::text
@@ -393,7 +429,7 @@ def api_agenda(day: str = Query(None), cui: str = Query(None)):
             params_nb = {"day": target, "day_end": target + timedelta(days=7)}
             if cui: params_nb["cui"] = cui
             nearby_q = text(f"""
-                SELECT a.id, a.cui, a.activity_type_id, a.comment, a.score, a.scheduled_date, a.created_at,
+                SELECT a.id, a.cui, a.activity_type_id, a.comment, a.score, a.reprogram_id, a.reprogram_label, a.reprogram_days, a.scheduled_date, a.completed, a.created_at,
                        {firm_name_expr}
                 FROM public.activities a
                 LEFT JOIN public.firms f ON f.cui::text = a.cui::text
@@ -410,8 +446,12 @@ def api_agenda(day: str = Query(None), cui: str = Query(None)):
                 "firm_name": r.get("firm_name") if r.get("firm_name") is not None else r.get("cui"),
                 "type_id": r.get("activity_type_id"),
                 "comment": r.get("comment"),
-                "score": r.get("score"),
+                "programare_id": r.get("reprogram_id"),
+                "programare_label": r.get("reprogram_label"),
+                "programare_days": r.get("reprogram_days"),
+                "score": r.get("score"),  # kept for compatibility
                 "scheduled_date": sd.isoformat() if sd is not None else None,
+                "completed": bool(r.get("completed")),
                 "created_at": ca.isoformat() if ca is not None else None,
             }
 
@@ -428,7 +468,21 @@ def api_agenda(day: str = Query(None), cui: str = Query(None)):
         logger.exception("api_agenda failed")
         raise HTTPException(status_code=500, detail="internal error")
 
-# simple search endpoint expected by frontend
+# expose reprogram options to frontend
+@app.get("/api/reprogram_options")
+def api_reprogram_options():
+    try:
+        with engine.connect() as conn:
+            rows = conn.execute(text("SELECT id, label, days FROM public.reprogram_options ORDER BY id")).mappings().all()
+        out = []
+        for r in rows:
+            out.append({"id": r.get("id"), "label": r.get("label"), "days": r.get("days")})
+        return JSONResponse(content=out)
+    except Exception:
+        logger.exception("api_reprogram_options failed")
+        return JSONResponse(content=[])
+
+# search kept as previously implemented (defensive)
 @app.get("/search")
 def api_search(q: str = Query(...), limit: int = Query(10, ge=1, le=100)):
     try:
@@ -525,7 +579,6 @@ def api_search(q: str = Query(...), limit: int = Query(10, ge=1, le=100)):
         logger.exception("api_search failed")
         raise HTTPException(status_code=500, detail="search failed")
 
-
 @app.get("/api/suggested_next")
 def api_suggested_next(n: int = Query(5, ge=1, le=20)):
     try:
@@ -564,10 +617,22 @@ def get_firm(firm_id: str):
     acts = []; contacts = []
     try:
         with engine.connect() as conn:
-            activities = conn.execute(text("SELECT id, activity_type_id, comment, score, scheduled_date, completed, created_at FROM public.activities WHERE cui = :cui ORDER BY created_at DESC LIMIT 200"), {"cui": firm.get("cui")}).mappings().all()
+            activities = conn.execute(text("SELECT id, activity_type_id, comment, score, reprogram_id, reprogram_label, reprogram_days, scheduled_date, completed, created_at FROM public.activities WHERE cui = :cui ORDER BY created_at DESC LIMIT 200"), {"cui": firm.get("cui")}).mappings().all()
             types = {r["id"]: r["name"] for r in conn.execute(text("SELECT id, name FROM public.activity_types")).mappings().all()}
         for a in activities:
-            acts.append({"id": a.get("id"), "type_id": a.get("activity_type_id"), "type_name": types.get(a.get("activity_type_id")), "comment": a.get("comment"), "score": a.get("score"), "scheduled_date": safe_iso(a.get("scheduled_date")), "completed": bool(a.get("completed")), "created_at": safe_iso(a.get("created_at"))})
+            acts.append({
+                "id": a.get("id"),
+                "type_id": a.get("activity_type_id"),
+                "type_name": types.get(a.get("activity_type_id")),
+                "comment": a.get("comment"),
+                "programare_id": a.get("reprogram_id"),
+                "programare_label": a.get("reprogram_label"),
+                "programare_days": a.get("reprogram_days"),
+                "score": a.get("score"),
+                "scheduled_date": safe_iso(a.get("scheduled_date")),
+                "completed": bool(a.get("completed")),
+                "created_at": safe_iso(a.get("created_at"))
+            })
     except Exception:
         acts = []
     try:
@@ -628,9 +693,19 @@ class ActivityIn(BaseModel):
     firm_id: str
     activity_type_id: int | None = None
     comment: str
+    # keep score for backwards compatibility; prefer programare_id
     score: int | None = None
+    programare_id: int | None = None
     scheduled_date: str | None = None
     completed: bool | None = None
+
+def _lookup_reprogram_option(conn, reprogram_id):
+    if reprogram_id is None:
+        return None, None
+    row = conn.execute(text("SELECT id, label, days FROM public.reprogram_options WHERE id = :id LIMIT 1"), {"id": reprogram_id}).mappings().first()
+    if not row:
+        return None, None
+    return row.get("label"), row.get("days")
 
 @app.post("/api/activities")
 def create_or_update_activity(payload: ActivityIn = Body(...)):
@@ -639,11 +714,33 @@ def create_or_update_activity(payload: ActivityIn = Body(...)):
     if not cui or not comment: raise HTTPException(status_code=400, detail="firm_id and comment required")
     try:
         with engine.begin() as conn:
+            # resolve programare if provided
+            prog_label, prog_days = _lookup_reprogram_option(conn, payload.programare_id)
+            scheduled = None
+            if prog_days is not None:
+                scheduled = (datetime.utcnow().date() + timedelta(days=int(prog_days)))
+            # if client provided explicit scheduled_date, prefer that (but programare will override)
+            if payload.scheduled_date and scheduled is None:
+                try:
+                    scheduled = datetime.fromisoformat(payload.scheduled_date).date()
+                except Exception:
+                    scheduled = None
+
             res = conn.execute(text("""
-                INSERT INTO public.activities (cui, activity_type_id, comment, score, scheduled_date, completed, created_at)
-                VALUES (:cui, :atype, :comment, :score, :sdate, :completed, now())
+                INSERT INTO public.activities (cui, activity_type_id, comment, score, reprogram_id, reprogram_label, reprogram_days, scheduled_date, completed, created_at)
+                VALUES (:cui, :atype, :comment, :score, :rid, :rlabel, :rdays, :sdate, :completed, now())
                 RETURNING id, created_at, scheduled_date
-            """), {"cui": cui, "atype": payload.activity_type_id, "comment": comment, "score": payload.score or 1, "sdate": payload.scheduled_date, "completed": payload.completed or False}).mappings().first()
+            """), {
+                "cui": cui,
+                "atype": payload.activity_type_id,
+                "comment": comment,
+                "score": payload.score or None,
+                "rid": payload.programare_id,
+                "rlabel": prog_label,
+                "rdays": prog_days,
+                "sdate": scheduled,
+                "completed": payload.completed or False
+            }).mappings().first()
             # mark suggested entry used when creating an activity for that firm
             conn.execute(text("UPDATE public.suggested_top SET used = true WHERE cui = :cui"), {"cui": cui})
         rebuild_top20(20)
