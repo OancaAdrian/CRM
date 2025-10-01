@@ -127,7 +127,7 @@ def get_licente_for_cui(cui, colmap):
     except Exception:
         return None
 
-# suggested_top and reprogram options management
+# suggested_top and reprogram options management (extended to include suggested_by_caen)
 def ensure_suggested_and_reprogram_tables():
     with engine.begin() as conn:
         conn.execute(text("""
@@ -165,6 +165,24 @@ def ensure_suggested_and_reprogram_tables():
             ]
             for label, days in opts:
                 conn.execute(text("INSERT INTO public.reprogram_options (label, days) VALUES (:label, :days)"), {"label": label, "days": days})
+
+    # ensure suggested_by_caen table exists
+    with engine.begin() as conn:
+        conn.execute(text("""
+        CREATE TABLE IF NOT EXISTS public.suggested_by_caen (
+          id serial PRIMARY KEY,
+          rank integer,
+          cui text,
+          denumire text,
+          caen varchar,
+          cifra_de_afaceri numeric DEFAULT 0,
+          numar_licente integer DEFAULT 0,
+          source text DEFAULT 'caen',
+          created_at timestamptz default now()
+        );
+        """))
+        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_suggested_by_caen_cui ON public.suggested_by_caen(cui);"))
+        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_suggested_by_caen_caen ON public.suggested_by_caen(caen);"))
 
 def rebuild_top20(limit=20):
     """
@@ -256,6 +274,115 @@ def rebuild_top20(limit=20):
             rank += 1
     return {"inserted": len(rows)}
 
+def rebuild_top20_caen(limit=20):
+    """
+    Rebuild suggested_by_caen restricted to target counties and deduplicated by CUI.
+    Counties: Galati, Braila, Tulcea, Vaslui, Vrancea, Ialomita.
+    """
+    ensure_suggested_and_reprogram_tables()
+
+    target_judete = ["galati","brăila","braila","tulcea","vaslui","vrancea","ialomiţa","ialomita"]
+    # detect columns
+    try:
+        with engine.connect() as conn:
+            fcols = conn.execute(text(
+                "SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='firms' ORDER BY ordinal_position"
+            )).scalars().all()
+    except Exception:
+        fcols = []
+
+    ca_col = next((c for c in fcols if any(x in c.lower() for x in ("cifra","cifra_de_afaceri","cifra_afaceri","cifra_de_afaceri_neta"))), None)
+    name_col = next((c for c in fcols if c.lower() in ("denumire","name","denumire_firma","company","firm_name")), None)
+    judet_col = next((c for c in fcols if "judet" in c.lower() or "județ" in c.lower() or "jud." in c.lower()), "judet")
+    lic_col = next((c for c in fcols if any(x in c.lower() for x in ("numar_licente","numar_licen","licente","nr_licente"))), None)
+
+    name_select = f'COALESCE(f."{name_col}", \'\') AS denumire_src' if name_col else "'' AS denumire_src"
+    cifra_select = f'COALESCE(NULLIF(trim(f."{ca_col}"::text), \'\'), \'0\')::numeric AS cifra_val' if ca_col else "0 AS cifra_val"
+    # safe join to relevant_caen but restrict by judet values (normalized)
+    candidates_q = f"""
+    WITH raw_candidates AS (
+      SELECT DISTINCT f.cui::text AS cui, {name_select}, {cifra_select}, COALESCE(lower(trim(f."{judet_col}"::text)), '') AS judet_norm
+      FROM public.firms f
+      JOIN public.relevant_caen r ON trim(f.caen::text) = trim(r.caen_code)
+      WHERE NOT EXISTS (SELECT 1 FROM public.activities a WHERE a.cui::text = f.cui::text)
+    )
+    SELECT cui, COALESCE(NULLIF(denumire_src,''), '') AS denumire, cifra_val, judet_norm
+    FROM raw_candidates
+    WHERE judet_norm IN ({', '.join([':j' + str(i) for i in range(len(target_judete))])})
+    ORDER BY cifra_val DESC
+    LIMIT :limit
+    """
+
+    params = {f"j{i}": target_judete[i] for i in range(len(target_judete))}
+    params["limit"] = limit
+
+    with engine.begin() as conn:
+        rows = conn.execute(text(candidates_q), params).mappings().all()
+        # refresh target table
+        conn.execute(text("TRUNCATE public.suggested_by_caen RESTART IDENTITY;"))
+
+        rank = 1
+        seen = set()
+        for r in rows:
+            cui = r.get("cui")
+            if not cui or cui in seen:
+                continue
+            seen.add(cui)
+
+            raw_name = r.get("denumire") or ""
+            denumire_clean = re.sub(r'\s*[·\|\-,]\s*Județ\s*:.*$', '', raw_name, flags=re.IGNORECASE).strip()
+            denumire_clean = re.sub(r'[\|\-:,\.]+\s*$', '', denumire_clean).strip()
+            if not denumire_clean:
+                denumire_clean = cui
+
+            # defensive per-row select for caen, cifra and licente
+            select_fields = ["f.cui::text as cui", "f.caen::text as caen"]
+            if ca_col:
+                select_fields.append(f'COALESCE(NULLIF(trim(f."{ca_col}"::text), \'\'), \'0\')::numeric as cifra_de_afaceri')
+            else:
+                select_fields.append("0 as cifra_de_afaceri")
+            if lic_col:
+                select_fields.append(f'COALESCE(NULLIF(trim(f.\"{lic_col}\"::text), \'\'), \'0\')::int as numar_licente')
+            else:
+                select_fields.append("0 as numar_licente")
+
+            select_sql = "SELECT " + ", ".join(select_fields) + " FROM public.firms f WHERE f.cui::text = :cui LIMIT 1"
+
+            try:
+                firm_vals = conn.execute(text(select_sql), {"cui": cui}).mappings().first()
+            except Exception:
+                firm_vals = None
+
+            caen_val = firm_vals.get("caen") if firm_vals else None
+            cifra_val = firm_vals.get("cifra_de_afaceri") if firm_vals else 0
+            lic_val = firm_vals.get("numar_licente") if firm_vals else 0
+
+            try:
+                conn.execute(text("""
+                    INSERT INTO public.suggested_by_caen (rank, cui, denumire, caen, cifra_de_afaceri, numar_licente, source, created_at)
+                    VALUES (:rank, :cui, :denumire, :caen, :cifra, :lic, 'caen', now())
+                """), {
+                    "rank": rank,
+                    "cui": cui,
+                    "denumire": denumire_clean,
+                    "caen": caen_val,
+                    "cifra": cifra_val,
+                    "lic": int(lic_val or 0)
+                })
+            except Exception:
+                logger.exception("insert suggested_by_caen failed for %s", cui)
+                # try minimal insert to keep pipeline moving
+                try:
+                    conn.execute(text("""
+                        INSERT INTO public.suggested_by_caen (rank, cui, denumire, source, created_at)
+                        VALUES (:rank, :cui, :denumire, 'caen', now())
+                    """), {"rank": rank, "cui": cui, "denumire": denumire_clean})
+                except Exception:
+                    logger.exception("fallback insert also failed for %s", cui)
+            rank += 1
+
+    return {"inserted": len(seen)}
+
 def take_next_suggestions(n=5):
     with engine.connect() as conn:
         rows = conn.execute(text(
@@ -271,11 +398,34 @@ def take_next_suggestions(n=5):
         out.append(item)
     return out
 
+def take_top_caen(n=5):
+    with engine.connect() as conn:
+        rows = conn.execute(text(
+            "SELECT rank, cui, denumire, caen, cifra_de_afaceri, numar_licente FROM public.suggested_by_caen ORDER BY rank LIMIT :n"
+        ), {"n": n}).mappings().all()
+    out = []
+    for r in rows:
+        item = dict(r)
+        ca = item.get("cifra_de_afaceri")
+        if ca is not None:
+            try: item["cifra_de_afaceri"] = float(ca)
+            except Exception: item["cifra_de_afaceri"] = str(ca)
+        out.append(item)
+    return out
+
 def mark_suggestions_used(cuis):
     if not cuis: return {"marked": 0}
     with engine.begin() as conn:
         conn.execute(text("UPDATE public.suggested_top SET used = true WHERE cui = ANY(:arr)"), {"arr": cuis})
-    rebuild_top20(20)
+    # rebuild both tops after marking used to keep consistency
+    try:
+        rebuild_top20(20)
+    except Exception:
+        logger.exception("rebuild_top20 failed after mark_suggestions_used")
+    try:
+        rebuild_top20_caen(20)
+    except Exception:
+        logger.exception("rebuild_top20_caen failed after mark_suggestions_used")
     return {"marked": len(cuis)}
 
 # startup
@@ -335,9 +485,10 @@ def startup_check_db():
             logger.info("DB reachable at startup")
             try:
                 rebuild_top20(20)
-                logger.info("rebuild_top20 executed at startup")
+                rebuild_top20_caen(20)
+                logger.info("rebuild_top20 and rebuild_top20_caen executed at startup")
             except Exception:
-                logger.exception("rebuild_top20 failed during startup")
+                logger.exception("rebuilds failed during startup")
             sleep(0.1)
             return
         except OperationalError as e:
@@ -363,7 +514,7 @@ def health():
     except Exception:
         raise HTTPException(status_code=503, detail="unhealthy")
 
-# AGENDA: scheduled (exclude completed) + suggested (top5 from suggested_top)
+# AGENDA: scheduled (exclude completed) + suggested (combined top5 from suggested_top and top5 from suggested_by_caen)
 @app.get("/api/agenda")
 def api_agenda(day: str = Query(None), cui: str = Query(None)):
     try:
@@ -456,13 +607,39 @@ def api_agenda(day: str = Query(None), cui: str = Query(None)):
             }
 
         suggested = take_next_suggestions(5)
+        suggested_caen = take_top_caen(5)
+
+        # combine suggested lists into single suggested array (first licenses-based then caen-based, dedup by cui)
+        combined = []
+        seen = set()
+        for s in suggested:
+            cui = s.get("cui")
+            if cui and cui not in seen:
+                seen.add(cui)
+                entry = {"source": "licenses", **s}
+                combined.append(entry)
+        for s in suggested_caen:
+            cui = s.get("cui")
+            if cui and cui not in seen:
+                seen.add(cui)
+                # adapt field names to match existing suggested structure
+                entry = {
+                    "source": "caen",
+                    "rank": s.get("rank"),
+                    "cui": s.get("cui"),
+                    "denumire": s.get("denumire"),
+                    "licente": s.get("numar_licente") if s.get("numar_licente") is not None else 0,
+                    "cifra_afaceri": s.get("cifra_de_afaceri")
+                }
+                combined.append(entry)
 
         return JSONResponse(content={
             "date": target.isoformat(),
             "scheduled": [row_to_obj(r) for r in scheduled_rows],
             "overdue": [row_to_obj(r) for r in overdue_rows],
             "nearby": [row_to_obj(r) for r in nearby_rows],
-            "suggested": suggested
+            "suggested": combined,              # up to 10 (5+5) combined and deduped
+            "suggested_caen": suggested_caen   # separate list if frontend prefers it
         })
     except Exception:
         logger.exception("api_agenda failed")
@@ -474,9 +651,7 @@ def api_reprogram_options():
     try:
         with engine.connect() as conn:
             rows = conn.execute(text("SELECT id, label, days FROM public.reprogram_options ORDER BY id")).mappings().all()
-        out = []
-        for r in rows:
-            out.append({"id": r.get("id"), "label": r.get("label"), "days": r.get("days")})
+        out = [{"id": r.get("id"), "label": r.get("label"), "days": r.get("days")} for r in rows]
         return JSONResponse(content=out)
     except Exception:
         logger.exception("api_reprogram_options failed")
@@ -708,23 +883,59 @@ def _lookup_reprogram_option(conn, reprogram_id):
     return row.get("label"), row.get("days")
 
 @app.post("/api/activities")
-def create_or_update_activity(payload: ActivityIn = Body(...)):
-    cui = (payload.firm_id or "").strip()
-    comment = (payload.comment or "").strip()
-    if not cui or not comment: raise HTTPException(status_code=400, detail="firm_id and comment required")
+def create_or_update_activity(payload: dict = Body(...)):
+    try:
+        if not isinstance(payload, dict):
+            payload = payload.dict()
+    except Exception:
+        payload = dict(payload)
+
+    cui = (payload.get("firm_id") or payload.get("firmId") or "").strip()
+    comment = (payload.get("comment") or "").strip()
+    if not cui or not comment:
+        raise HTTPException(status_code=400, detail="firm_id and comment required")
+
+    prog_id = payload.get("programare_id") or payload.get("programareId") or payload.get("programare")
+    prog_days_override = payload.get("programare_days") or payload.get("programareDays") or payload.get("days")
+
     try:
         with engine.begin() as conn:
-            # resolve programare if provided
-            prog_label, prog_days = _lookup_reprogram_option(conn, payload.programare_id)
+            prog_label = None
+            prog_days = None
+
+            if prog_days_override is not None:
+                try:
+                    prog_days = int(prog_days_override)
+                    prog_label = f"manual ({prog_days})"
+                except Exception:
+                    prog_days = None
+            elif prog_id is not None:
+                try:
+                    pid = int(prog_id)
+                    plabel, pdays = _lookup_reprogram_option(conn, pid)
+                    prog_label, prog_days = plabel, pdays
+                except Exception:
+                    prog_label, prog_days = None, None
+
             scheduled = None
             if prog_days is not None:
-                scheduled = (datetime.utcnow().date() + timedelta(days=int(prog_days)))
-            # if client provided explicit scheduled_date, prefer that (but programare will override)
-            if payload.scheduled_date and scheduled is None:
                 try:
-                    scheduled = datetime.fromisoformat(payload.scheduled_date).date()
+                    scheduled = (datetime.utcnow().date() + timedelta(days=int(prog_days)))
                 except Exception:
                     scheduled = None
+
+            sdate_from_client = payload.get("scheduled_date")
+            if sdate_from_client and scheduled is None:
+                try:
+                    scheduled = datetime.fromisoformat(sdate_from_client).date()
+                except Exception:
+                    scheduled = None
+
+            reprogram_id_to_store = None
+            try:
+                reprogram_id_to_store = int(prog_id) if prog_id not in (None, "") else None
+            except Exception:
+                reprogram_id_to_store = None
 
             res = conn.execute(text("""
                 INSERT INTO public.activities (cui, activity_type_id, comment, score, reprogram_id, reprogram_label, reprogram_days, scheduled_date, completed, created_at)
@@ -732,19 +943,28 @@ def create_or_update_activity(payload: ActivityIn = Body(...)):
                 RETURNING id, created_at, scheduled_date
             """), {
                 "cui": cui,
-                "atype": payload.activity_type_id,
+                "atype": payload.get("activity_type_id") or payload.get("activityTypeId") or None,
                 "comment": comment,
-                "score": payload.score or None,
-                "rid": payload.programare_id,
+                "score": payload.get("score") or None,
+                "rid": reprogram_id_to_store,
                 "rlabel": prog_label,
                 "rdays": prog_days,
                 "sdate": scheduled,
-                "completed": payload.completed or False
+                "completed": bool(payload.get("completed", False))
             }).mappings().first()
-            # mark suggested entry used when creating an activity for that firm
+
             conn.execute(text("UPDATE public.suggested_top SET used = true WHERE cui = :cui"), {"cui": cui})
+
         rebuild_top20(20)
-        return JSONResponse(status_code=201, content={"id": res.get("id"), "cui": cui, "scheduled_date": safe_iso(res.get("scheduled_date")), "created_at": safe_iso(res.get("created_at"))})
+        rebuild_top20_caen(20)
+
+        return JSONResponse(status_code=201, content={
+            "id": res.get("id"),
+            "cui": cui,
+            "scheduled_date": safe_iso(res.get("scheduled_date")),
+            "created_at": safe_iso(res.get("created_at"))
+        })
+
     except IntegrityError:
         raise HTTPException(status_code=400, detail="Database integrity error")
     except Exception:
