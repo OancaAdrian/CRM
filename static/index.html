@@ -3,49 +3,64 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CRM</title>
+  <title>CRM - Interfaţă</title>
 
+  <!-- TEMPORAR: setare parolă aici doar pentru test. În producție nu publica parola -->
   <meta name="app-password" content="5864">
 
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; margin: 16px; }
-    .row { display:flex; gap:8px; align-items:center; margin-bottom:8px }
-    label { min-width:120px; }
-    input[type="text"], input[type="date"]{ padding:8px; width:300px; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; margin: 16px; }
+    .row { display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap }
+    label { min-width:140px; }
+    input[type="text"], input[type="date"]{ padding:8px; width:320px; max-width:60vw; }
     button{ padding:8px 12px; }
     #results, #agenda { margin-top:12px; border:1px solid #ddd; padding:12px; border-radius:6px; background:#fafafa; }
-    .error { color:#900; font-weight:600; }
-    pre { white-space:pre-wrap; word-break:break-word; }
+    .error { color:#900; font-weight:700; }
+    pre { white-space:pre-wrap; word-break:break-word; background:#fff; padding:8px; border-radius:4px; border:1px solid #eee; }
+    small.meta { color:#666; }
   </style>
 
   <script>
+    // Resolve API base from current origin; prevents hardcoded/broken hostnames
     window.__API_BASE__ = (function(){ try { return window.location.origin; } catch(e) { return ''; } })();
 
+    // Read app password from meta (for tests only)
     (function(){
-      const origFetch = window.fetch.bind(window);
       const APP_PW_META = document.querySelector('meta[name="app-password"]');
-      const APP_PASSWORD = APP_PW_META ? (APP_PW_META.getAttribute('content') || '') : '';
-      window.__APP_PASSWORD__ = APP_PASSWORD;
+      window.__APP_PASSWORD__ = APP_PW_META ? (APP_PW_META.getAttribute('content') || '') : '';
+    })();
 
-      window.fetch = function(input, init){
+    // global fetch wrapper: prefix relative /api and /admin calls with correct origin,
+    // fix known bad hosts, and inject x-app-password header if available
+    (function(){
+      const originalFetch = window.fetch.bind(window);
+      window.fetch = async function(input, init){
         init = init || {};
         init.headers = new Headers(init.headers || {});
+        let url = typeof input === 'string' ? input : (input && input.url) || '';
         try {
-          let url = typeof input === 'string' ? input : (input && input.url) || '';
+          // fix common build-time typos (onender/openender) -> current host
+          url = url.replace('onender.com', window.location.hostname).replace('openender.com', window.location.hostname);
+
+          // if relative path to api/admin, prefix with current origin
           if (url.startsWith('/api') || url.startsWith('/admin')) {
             url = window.__API_BASE__ + url;
-          } else {
-            url = url.replace('onender.com', window.location.hostname).replace('openender.com', window.location.hostname);
           }
-          if (url.includes('/api/') || url.includes('/admin/')) {
-            if (!init.headers.get('x-app-password') && APP_PASSWORD) init.headers.set('x-app-password', APP_PASSWORD);
-            if (!init.headers.get('Content-Type') && (init.body && typeof init.body === 'object')) {
-              init.headers.set('Content-Type', 'application/json');
-            }
+
+          // inject app password for protected endpoints if present in meta
+          if ((url.includes('/api/') || url.includes('/admin/')) && window.__APP_PASSWORD__) {
+            if (!init.headers.get('x-app-password')) init.headers.set('x-app-password', window.__APP_PASSWORD__);
           }
-          input = url;
-        } catch(e){ console.error('fetch wrapper error', e); }
-        return origFetch(input, init);
+
+          // ensure JSON content-type when body is plain object
+          if (init.body && typeof init.body === 'object' && !init.headers.get('Content-Type')) {
+            init.headers.set('Content-Type', 'application/json');
+            init.body = JSON.stringify(init.body);
+          }
+        } catch(e){
+          console.error('fetch wrapper error', e);
+        }
+        return originalFetch(url, init);
       };
     })();
   </script>
@@ -58,21 +73,21 @@
       <label for="q">Găsește firmă după CUI sau nume</label>
       <input id="q" type="text" placeholder="Introduceți CUI sau nume" />
       <button id="btnSearch">Caută</button>
-      <span id="searchStatus"></span>
+      <span id="searchStatus" class="meta"></span>
     </div>
 
     <div id="results">
-      Rezultatele apar mai jos. Click pe nume pentru detalii.
-      <div id="resultsList"></div>
+      <div>Rezultatele apar mai jos. Click pe nume pentru detalii.</div>
+      <div id="resultsList" style="margin-top:8px"></div>
     </div>
   </section>
 
   <section style="margin-top:18px;">
     <div class="row">
-      <label for="agendaDay">Agenda pentru:</label>
+      <label for="agendaDay">Agenda pentru</label>
       <input id="agendaDay" type="date" />
       <button id="btnAgenda">Reîmprospătează</button>
-      <span id="agendaStatus"></span>
+      <span id="agendaStatus" class="meta"></span>
     </div>
 
     <div id="agenda">
@@ -84,10 +99,11 @@
     <h3>Debug</h3>
     <div>API base: <code id="apiBase"></code></div>
     <div>App password (meta): <code id="appPw"></code></div>
-    <div id="debug"></div>
+    <div id="debug" style="margin-top:8px"><pre id="debugPre"></pre></div>
   </section>
 
   <script>
+    // UI refs
     document.getElementById('apiBase').textContent = window.__API_BASE__ || '<unknown>';
     document.getElementById('appPw').textContent = window.__APP_PASSWORD__ ? '*** (set)' : '<not set>';
 
@@ -99,10 +115,17 @@
     const agendaContent = document.getElementById('agendaContent');
     const agendaStatus = document.getElementById('agendaStatus');
 
+    const debugPre = document.getElementById('debugPre');
+
+    // default date
     (function setDefaultDay(){
       const d = new Date();
       dayInput.value = d.toISOString().slice(0,10);
     })();
+
+    function showDebug(msg){
+      debugPre.textContent = msg;
+    }
 
     async function doSearch(){
       const q = (qInput.value || '').trim();
@@ -110,12 +133,12 @@
       searchStatus.textContent = 'Căutare...';
       resultsList.innerHTML = '';
       try {
-        const url = `${window.__API_BASE__}/search?q=${encodeURIComponent(q)}&limit=10`;
+        const url = `/search?q=${encodeURIComponent(q)}&limit=10`;
         const res = await fetch(url);
         if (!res.ok) {
           const txt = await res.text();
           searchStatus.innerHTML = `<span class="error">Eroare: ${res.status}</span>`;
-          document.getElementById('debug').innerText = `SEARCH ERROR ${res.status}\n${txt}`;
+          showDebug(`SEARCH ERROR ${res.status}\n${txt}`);
           return;
         }
         const data = await res.json();
@@ -138,28 +161,29 @@
       } catch(err){
         console.error(err);
         searchStatus.innerHTML = `<span class="error">Eroare (console)</span>`;
-        document.getElementById('debug').innerText = String(err);
+        showDebug(String(err));
       }
     }
 
     async function loadFirm(cui){
       agendaStatus.textContent = 'Încărcare firmă...';
       try {
-        const url = `${window.__API_BASE__}/api/firms/${encodeURIComponent(cui)}`;
+        const url = `/api/firms/${encodeURIComponent(cui)}`;
         const res = await fetch(url);
+        const bodyText = await res.text();
         if (!res.ok) {
-          const txt = await res.text();
           agendaStatus.innerHTML = `<span class="error">Firmă: ${res.status}</span>`;
-          document.getElementById('debug').innerText = `FIRM ERROR ${res.status}\n${txt}`;
+          showDebug(`FIRM ERROR ${res.status}\n${bodyText}`);
           return;
         }
-        const obj = await res.json();
+        const obj = JSON.parse(bodyText);
         agendaContent.innerHTML = `<pre>${JSON.stringify(obj, null, 2)}</pre>`;
         agendaStatus.textContent = '';
+        showDebug(`Loaded firm ${cui}`);
       } catch(err){
         console.error(err);
         agendaStatus.innerHTML = `<span class="error">Eroare la încărcare firmă</span>`;
-        document.getElementById('debug').innerText = String(err);
+        showDebug(String(err));
       }
     }
 
@@ -168,40 +192,43 @@
       agendaContent.innerHTML = '';
       try {
         const day = dayInput.value;
-        const url = `${window.__API_BASE__}/api/agenda?day=${encodeURIComponent(day)}`;
+        const url = `/api/agenda?day=${encodeURIComponent(day)}`;
         const res = await fetch(url);
+        const bodyText = await res.text();
         if (!res.ok) {
-          const txt = await res.text();
           agendaStatus.innerHTML = `<span class="error">Eroare: ${res.status}</span>`;
-          document.getElementById('debug').innerText = `AGENDA ERROR ${res.status}\n${txt}`;
+          showDebug(`AGENDA ERROR ${res.status}\n${bodyText}`);
           return;
         }
-        const data = await res.json();
+        const data = JSON.parse(bodyText);
         agendaContent.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
         agendaStatus.textContent = '';
+        showDebug(`AGENDA OK — loaded ${data.scheduled?.length || 0} scheduled items`);
       } catch(err){
         console.error(err);
         agendaStatus.innerHTML = `<span class="error">Eroare la încărcare agenda</span>`;
-        document.getElementById('debug').innerText = String(err);
+        showDebug(String(err));
       }
     }
 
     document.getElementById('btnSearch').addEventListener('click', doSearch);
     document.getElementById('btnAgenda').addEventListener('click', loadAgenda);
 
+    // quick network checks
     (async function quickChecks(){
       try {
-        const h = await fetch(`${window.__API_BASE__}/health`);
-        document.getElementById('debug').innerText = `/health: ${h.status}`;
-      } catch(e){ document.getElementById('debug').innerText = `/health failed: ${e}`; }
+        const h = await fetch('/health');
+        showDebug(`/health: ${h.status}`);
+      } catch(e){ showDebug(`/health failed: ${e}`); }
 
+      // test optional endpoint if present
       try {
-        const t = await fetch(`${window.__API_BASE__}/api/test_firm`);
+        const t = await fetch('/api/test_firm');
         if (t.ok) {
           const json = await t.json();
-          document.getElementById('debug').innerText += `\n/api/test_firm: ok, rows=${(json.rows && json.rows.length) || 'n/a'}`;
+          showDebug(debugPre.textContent + `\n/api/test_firm: ok, rows=${(json.rows && json.rows.length) || 'n/a'}`);
         } else {
-          document.getElementById('debug').innerText += `\n/api/test_firm: ${t.status}`;
+          showDebug(debugPre.textContent + `\n/api/test_firm: ${t.status}`);
         }
       } catch(e){ /* ignore */ }
     })();
