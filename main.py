@@ -10,6 +10,11 @@ from fastapi import FastAPI, HTTPException, Query, Body
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Depends
+from auth_middleware import require_app_password
+
+app = FastAPI()
+
 
 from pydantic import BaseModel
 from sqlalchemy import create_engine, text
@@ -48,6 +53,37 @@ engine = create_engine(
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 app = FastAPI(title="CRM API")
+# simple app password middleware (blocks POST/PUT/PATCH/DELETE to /api/* and /admin/* unless x-app-password matches)
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+APP_PASSWORD = os.environ.get("APP_PASSWORD", "5864")
+
+@app.middleware("http")
+async def require_app_password_middleware(request: Request, call_next):
+    try:
+        path = request.url.path or ""
+        method = request.method or ""
+        # apply only to write methods under /api or admin endpoints
+        write_methods = ("POST", "PUT", "PATCH", "DELETE")
+        protected = (path.startswith("/api/") or path.startswith("/admin/")) and method in write_methods
+        if not protected:
+            return await call_next(request)
+        # check header first
+        pw = request.headers.get("x-app-password")
+        if not pw:
+            # try JSON body for clients that send password in body
+            try:
+                body = await request.json()
+                pw = body.get("password")
+            except Exception:
+                pw = None
+        if pw != APP_PASSWORD:
+            return JSONResponse(status_code=401, content={"detail": "Missing or invalid app password"})
+        return await call_next(request)
+    except Exception:
+        return JSONResponse(status_code=500, content={"detail": "internal error"})
+
 
 # Dev CORS (tighten in prod)
 app.add_middleware(
