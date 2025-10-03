@@ -5,15 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CRM</title>
 
-  <!-- Temporar: setează parola aplicației aici pentru test.
-       În producție nu publica parola în HTML; folosește build-time inject sau endpoint securizat. -->
   <meta name="app-password" content="5864">
 
   <style>
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; margin: 16px; }
     .row { display:flex; gap:8px; align-items:center; margin-bottom:8px }
     label { min-width:120px; }
-    input[type="text"]{ padding:8px; width:300px; }
+    input[type="text"], input[type="date"]{ padding:8px; width:300px; }
     button{ padding:8px 12px; }
     #results, #agenda { margin-top:12px; border:1px solid #ddd; padding:12px; border-radius:6px; background:#fafafa; }
     .error { color:#900; font-weight:600; }
@@ -21,17 +19,12 @@
   </style>
 
   <script>
-    // API base resolved to current origin (prevents hardcoded/broken hostnames)
-    window.__API_BASE__ = (function(){
-      try { return window.location.origin; } catch(e){ return ''; }
-    })();
+    window.__API_BASE__ = (function(){ try { return window.location.origin; } catch(e) { return ''; } })();
 
-    // Fetch wrapper: prefixes relative /api and /admin calls with API_BASE
     (function(){
       const origFetch = window.fetch.bind(window);
       const APP_PW_META = document.querySelector('meta[name="app-password"]');
       const APP_PASSWORD = APP_PW_META ? (APP_PW_META.getAttribute('content') || '') : '';
-
       window.__APP_PASSWORD__ = APP_PASSWORD;
 
       window.fetch = function(input, init){
@@ -39,21 +32,19 @@
         init.headers = new Headers(init.headers || {});
         try {
           let url = typeof input === 'string' ? input : (input && input.url) || '';
-          // if relative path to API, prefix with origin
           if (url.startsWith('/api') || url.startsWith('/admin')) {
             url = window.__API_BASE__ + url;
           } else {
-            // patch common mistaken hostnames (onender/openender) to current host
             url = url.replace('onender.com', window.location.hostname).replace('openender.com', window.location.hostname);
           }
-          // inject app password header for protected endpoints
           if (url.includes('/api/') || url.includes('/admin/')) {
             if (!init.headers.get('x-app-password') && APP_PASSWORD) init.headers.set('x-app-password', APP_PASSWORD);
+            if (!init.headers.get('Content-Type') && (init.body && typeof init.body === 'object')) {
+              init.headers.set('Content-Type', 'application/json');
+            }
           }
           input = url;
-        } catch(e){
-          console.error('fetch wrapper error', e);
-        }
+        } catch(e){ console.error('fetch wrapper error', e); }
         return origFetch(input, init);
       };
     })();
@@ -97,7 +88,6 @@
   </section>
 
   <script>
-    // UI bindings
     document.getElementById('apiBase').textContent = window.__API_BASE__ || '<unknown>';
     document.getElementById('appPw').textContent = window.__APP_PASSWORD__ ? '*** (set)' : '<not set>';
 
@@ -109,11 +99,9 @@
     const agendaContent = document.getElementById('agendaContent');
     const agendaStatus = document.getElementById('agendaStatus');
 
-    // default day to today
     (function setDefaultDay(){
       const d = new Date();
-      const iso = d.toISOString().slice(0,10);
-      dayInput.value = iso;
+      dayInput.value = d.toISOString().slice(0,10);
     })();
 
     async function doSearch(){
@@ -201,14 +189,12 @@
     document.getElementById('btnSearch').addEventListener('click', doSearch);
     document.getElementById('btnAgenda').addEventListener('click', loadAgenda);
 
-    // quick auto-check on load: verify /health and /api/test_firm if available
     (async function quickChecks(){
       try {
         const h = await fetch(`${window.__API_BASE__}/health`);
         document.getElementById('debug').innerText = `/health: ${h.status}`;
       } catch(e){ document.getElementById('debug').innerText = `/health failed: ${e}`; }
 
-      // optional test_firm endpoint (if you've added it)
       try {
         const t = await fetch(`${window.__API_BASE__}/api/test_firm`);
         if (t.ok) {
