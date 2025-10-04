@@ -30,6 +30,41 @@
     #pw-box{width:360px;background:#fff;padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.45);text-align:center}
     @media (max-width:980px){ .wrap{grid-template-columns:1fr;padding:12px} }
   </style>
+<script>
+(function(){
+  const orig = window.fetch.bind(window);
+  window.fetch = async function(input, init){
+    init = init || {};
+    init.headers = new Headers(init.headers || {});
+    let url = typeof input === 'string' ? input : (input && input.url) || '';
+
+    // Normalize host typos
+    url = url.replace(/onender\.com|openender\.com|crm-i1sq\.onrender\.com/gi, window.location.hostname);
+
+    // Legacy mapping: /api/agenda2/day/YYYY-MM-DD  -> /api/agenda?day=YYYY-MM-DD
+    const m = url.match(/\/api\/agenda2\/day\/(\d{4}-\d{2}-\d{2})/);
+    if (m) url = `/api/agenda?day=${encodeURIComponent(m[1])}`;
+
+    // If client requested /search, map to /api/search (adjust if backend uses /search root)
+    if (url.startsWith('/search')) url = `/api/search${url.slice('/search'.length)}`;
+
+    // Prefix relative paths with origin
+    if (url.startsWith('/')) url = (window.__API_BASE__ || location.origin) + url;
+
+    // Inject app password if available
+    if ((url.includes('/api/') || url.includes('/admin/')) && window.__APP_PASSWORD__) {
+      if (!init.headers.get('x-app-password')) init.headers.set('x-app-password', window.__APP_PASSWORD__);
+    }
+
+    if (init.body && typeof init.body === 'object' && !init.headers.get('Content-Type')) {
+      init.headers.set('Content-Type','application/json');
+      init.body = JSON.stringify(init.body);
+    }
+
+    return orig(url, init);
+  };
+})();
+</script>
 
   <script>
     // API base + app password
