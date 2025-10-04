@@ -35,6 +35,37 @@
     // API base + app password
     window.__API_BASE__ = (function(){ try{ return window.location.origin }catch(e){ return '' } })();
     (function(){ const meta = document.querySelector('meta[name="app-password"]'); window.__APP_PASSWORD__ = meta ? meta.getAttribute('content')||'' : ''; })();
+<script>
+(function(){
+  const orig = window.fetch.bind(window);
+  window.fetch = async function(input, init){
+    init = init || {};
+    init.headers = new Headers(init.headers || {});
+    let url = typeof input === 'string' ? input : (input && input.url) || '';
+
+    url = url.replace(/onender\.com|openender\.com/gi, window.location.hostname);
+
+    if (url.startsWith('/search')) {
+      url = `/api/search${url.slice('/search'.length)}`;
+    }
+
+    if (url.startsWith('/api') || url.startsWith('/admin') || url.startsWith('/')) {
+      url = (window.__API_BASE__ || location.origin) + url;
+    }
+
+    if ((url.includes('/api/') || url.includes('/admin/')) && window.__APP_PASSWORD__) {
+      if (!init.headers.get('x-app-password')) init.headers.set('x-app-password', window.__APP_PASSWORD__);
+    }
+
+    if (init.body && typeof init.body === 'object' && !init.headers.get('Content-Type')) {
+      init.headers.set('Content-Type','application/json');
+      init.body = JSON.stringify(init.body);
+    }
+
+    return orig(url, init);
+  };
+})();
+</script>
 
     // Robust fetch wrapper: fix host typos, normalize legacy routes, prefix relative, inject x-app-password
     (function(){
