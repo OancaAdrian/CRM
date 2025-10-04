@@ -32,6 +32,30 @@
     .hidden { display:none !important; }
   </style>
 </head>
+  // paste în head, înainte de restul scripturilor
+(function(){
+  const orig = window.fetch.bind(window);
+  window.fetch = async function(input, init){
+    let url = typeof input === 'string' ? input : (input && input.url) || '';
+    // corecturi simple
+    url = url.replace('onender.com', window.location.hostname).replace('openender.com', window.location.hostname);
+    // mapare legacy: /search -> /search (relative) OR -> /search (but ensure origin)
+    if (url.startsWith('/search')) url = (window.__API_BASE__ || location.origin) + url;
+    // mapare legacy agenda2 -> actual /api/agenda?day=
+    const m = url.match(/\/api\/agenda2\/day\/(\d{4}-\d{2}-\d{2})/);
+    if (m) url = (window.__API_BASE__ || location.origin) + `/api/agenda?day=${encodeURIComponent(m[1])}`;
+    // ensure /search also points to correct backend handler if your backend expects /search at root or under /api:
+    if (url.startsWith((window.__API_BASE__ || location.origin) + '/search') && !url.includes('/search')) { /* noop */ }
+    // preserve headers/body
+    init = init || {};
+    init.headers = new Headers(init.headers || {});
+    if ((url.includes('/api/') || url.includes('/search')) && window.__APP_PASSWORD__) {
+      if (!init.headers.get('x-app-password')) init.headers.set('x-app-password', window.__APP_PASSWORD__);
+    }
+    return orig(url, init);
+  };
+})();
+
 <body>
   <!-- overlay parola sesiune -->
   <div id="pw-overlay" aria-hidden="false">
