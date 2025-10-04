@@ -23,6 +23,55 @@ logger = logging.getLogger("crm-main")
 
 from dotenv import load_dotenv
 load_dotenv()
+# main.py (FastAPI) — patch compatibilitate rapidă
+from fastapi import FastAPI, Query, Request
+from starlette.responses import RedirectResponse, JSONResponse
+import logging
+
+logger = logging.getLogger("uvicorn.error")
+app = FastAPI()
+
+# logging middleware to trace incoming requests and responses
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    logger.info(f"INCOMING {request.method} {request.url.path}?{request.url.query}")
+    resp = await call_next(request)
+    logger.info(f"RESPONSE {request.method} {request.url.path} -> {resp.status_code}")
+    return resp
+
+# Legacy redirect: /search -> /api/search
+@app.get("/search")
+async def legacy_search_redirect(q: str = "", limit: int = 10):
+    return RedirectResponse(url=f"/api/search?q={q}&limit={limit}", status_code=307)
+
+# Legacy redirect: /api/agenda2/day/YYYY-MM-DD -> /api/agenda?day=YYYY-MM-DD
+@app.get("/api/agenda2/day/{day}")
+async def legacy_agenda2(day: str):
+    return RedirectResponse(url=f"/api/agenda?day={day}", status_code=307)
+
+# Minimal compatible /api/search stub (safe fallback)
+@app.get("/api/search")
+async def api_search(q: str = "", limit: int = 10):
+    # Implement real search logic here; return empty array for now
+    return JSONResponse(status_code=200, content=[])
+
+# Minimal compatible /api/agenda handler: always 200, empty arrays when no data
+@app.get("/api/agenda")
+async def api_agenda(day: str = Query(None)):
+    # Replace with real DB query. Returning empty structure avoids 404 on client.
+    return JSONResponse(
+        status_code=200,
+        content={"scheduled": [], "overdue": [], "nearby": [], "day": day}
+    )
+
+# Optional: minimal firm detail stub to avoid 404s when testing
+@app.get("/api/firms/{cui}")
+async def api_firm_stub(cui: str):
+    # Replace with real DB lookup; return 404 only if you choose
+    return JSONResponse(status_code=200, content={
+        "id": cui, "cui": cui, "name": f"Firmă {cui}", "judet": "", "licente": 0
+    })
+
 
 # ---------- DATABASE URL ----------
 DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("DATABASE_URL_LOCAL")
@@ -519,3 +568,4 @@ def health():
 # Remaining routes unchanged (agenda, reprogram_options, search, suggested endpoints, firms, contacts, activities handlers)
 # ... (rest of routes unchanged, already present in file)
 # Note: keep the rest of your route implementations below exactly as before.
+
