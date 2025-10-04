@@ -3,235 +3,275 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CRM - Interfaţă</title>
-
-  <!-- TEMPORAR: setare parolă aici doar pentru test. În producție nu publica parola -->
+  <title>CRM — Interfață</title>
   <meta name="app-password" content="5864">
 
   <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; margin: 16px; }
-    .row { display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap }
-    label { min-width:140px; }
-    input[type="text"], input[type="date"]{ padding:8px; width:320px; max-width:60vw; }
-    button{ padding:8px 12px; }
-    #results, #agenda { margin-top:12px; border:1px solid #ddd; padding:12px; border-radius:6px; background:#fafafa; }
-    .error { color:#900; font-weight:700; }
-    pre { white-space:pre-wrap; word-break:break-word; background:#fff; padding:8px; border-radius:4px; border:1px solid #eee; }
-    small.meta { color:#666; }
+    :root{
+      --bg:#f6f8fb; --card:#ffffff; --muted:#6b7280; --accent:#0b5fff; --danger:#d0342c;
+      --radius:10px; --pad:14px; --shadow:0 6px 18px rgba(18, 23, 33, 0.06);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%; margin:0; background:linear-gradient(180deg,#f7f9fc, #f2f5fb);}
+    .wrap{max-width:1100px; margin:28px auto; padding:20px; display:grid; gap:18px; grid-template-columns: 1fr 380px;}
+    header{grid-column:1/-1; display:flex; justify-content:space-between; align-items:center;}
+    h1{margin:0; font-size:20px; color:#0f1724;}
+    .sub{color:var(--muted); font-size:13px}
+
+    .panel{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:var(--pad);}
+    .search-panel{display:flex; flex-direction:column; gap:12px;}
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    label{font-size:14px; color:var(--muted); min-width:140px;}
+    input[type="text"], input[type="date"], select{
+      padding:10px 12px; border:1px solid #e6e9ef; border-radius:8px; font-size:14px; background:#fff; outline:none;
+    }
+    input[type="text"]:focus, input[type="date"]:focus{box-shadow:0 0 0 4px rgba(11,95,255,0.06); border-color:var(--accent);}
+    button{background:var(--accent); color:#fff; border:0; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:600}
+    button.ghost{background:transparent; color:var(--accent); border:1px solid rgba(11,95,255,0.12)}
+    .muted{color:var(--muted); font-size:13px}
+    .results{display:flex; flex-direction:column; gap:8px}
+    .card-item{padding:12px; border-radius:8px; background:linear-gradient(180deg,#fff,#fbfdff); border:1px solid #eef2ff; display:flex; justify-content:space-between; align-items:center}
+    .card-item a{color:#0b1b3b; font-weight:600; text-decoration:none}
+    .card-meta{color:var(--muted); font-size:13px}
+    .agenda-list{display:flex; flex-direction:column; gap:8px; max-height:420px; overflow:auto; padding-right:6px}
+    .agenda-item{padding:10px; border-radius:8px; background:#fff; border:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center}
+    pre.debug{white-space:pre-wrap; word-break:break-word; background:#0b1220; color:#e6eef8; padding:12px; border-radius:8px; font-size:13px; max-height:160px; overflow:auto}
+
+    footer{grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; gap:10px; color:var(--muted); font-size:13px}
+    @media (max-width:980px){ .wrap{grid-template-columns:1fr; padding:12px} label{min-width:120px} .sub{font-size:12px} }
   </style>
 
   <script>
-    // Resolve API base from current origin; prevents hardcoded/broken hostnames
-    window.__API_BASE__ = (function(){ try { return window.location.origin; } catch(e) { return ''; } })();
-
-    // Read app password from meta (for tests only)
+    window.__API_BASE__ = (function(){ try{ return window.location.origin }catch(e){ return '' } })();
     (function(){
       const APP_PW_META = document.querySelector('meta[name="app-password"]');
       window.__APP_PASSWORD__ = APP_PW_META ? (APP_PW_META.getAttribute('content') || '') : '';
-    })();
 
-    // global fetch wrapper: prefix relative /api and /admin calls with correct origin,
-    // fix known bad hosts, and inject x-app-password header if available
-    (function(){
-      const originalFetch = window.fetch.bind(window);
-      window.fetch = async function(input, init){
+      const origFetch = window.fetch.bind(window);
+      window.fetch = function(input, init){
         init = init || {};
         init.headers = new Headers(init.headers || {});
-        let url = typeof input === 'string' ? input : (input && input.url) || '';
-        try {
-          // fix common build-time typos (onender/openender) -> current host
+        try{
+          let url = typeof input === 'string' ? input : (input && input.url) || '';
           url = url.replace('onender.com', window.location.hostname).replace('openender.com', window.location.hostname);
-
-          // if relative path to api/admin, prefix with current origin
-          if (url.startsWith('/api') || url.startsWith('/admin')) {
-            url = window.__API_BASE__ + url;
-          }
-
-          // inject app password for protected endpoints if present in meta
-          if ((url.includes('/api/') || url.includes('/admin/')) && window.__APP_PASSWORD__) {
+          if (url.startsWith('/api') || url.startsWith('/search') || url.startsWith('/admin')) url = window.__API_BASE__ + url;
+          if ((url.includes('/api/') || url.includes('/admin/')) && window.__APP_PASSWORD__){
             if (!init.headers.get('x-app-password')) init.headers.set('x-app-password', window.__APP_PASSWORD__);
           }
-
-          // ensure JSON content-type when body is plain object
           if (init.body && typeof init.body === 'object' && !init.headers.get('Content-Type')) {
-            init.headers.set('Content-Type', 'application/json');
-            init.body = JSON.stringify(init.body);
+            init.headers.set('Content-Type','application/json'); init.body = JSON.stringify(init.body);
           }
-        } catch(e){
-          console.error('fetch wrapper error', e);
-        }
-        return originalFetch(url, init);
+          input = url;
+        }catch(e){ console.error('fetch wrapper', e) }
+        return origFetch(input, init);
       };
     })();
   </script>
 </head>
 <body>
-  <h1>CRM - Interfaţă</h1>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>CRM</h1>
+        <div class="sub">Interfață de administrare — căutare firme și agenda</div>
+      </div>
+      <div class="sub">API: <strong id="apiBaseDisplay"></strong></div>
+    </header>
 
-  <section>
-    <div class="row">
-      <label for="q">Găsește firmă după CUI sau nume</label>
-      <input id="q" type="text" placeholder="Introduceți CUI sau nume" />
-      <button id="btnSearch">Caută</button>
-      <span id="searchStatus" class="meta"></span>
-    </div>
+    <section class="panel search-panel">
+      <div class="row">
+        <label for="q">Găsește firmă după CUI sau nume</label>
+        <input id="q" type="text" placeholder="Introduceți CUI sau nume" />
+        <button id="btnSearch">Caută</button>
+        <button id="btnClear" class="ghost">Curăță</button>
+      </div>
 
-    <div id="results">
-      <div>Rezultatele apar mai jos. Click pe nume pentru detalii.</div>
-      <div id="resultsList" style="margin-top:8px"></div>
-    </div>
-  </section>
+      <div class="muted" id="searchStatus">Rezultate și erori apar mai jos</div>
 
-  <section style="margin-top:18px;">
-    <div class="row">
-      <label for="agendaDay">Agenda pentru</label>
-      <input id="agendaDay" type="date" />
-      <button id="btnAgenda">Reîmprospătează</button>
-      <span id="agendaStatus" class="meta"></span>
-    </div>
+      <div id="results" class="results" aria-live="polite"></div>
 
-    <div id="agenda">
-      <div id="agendaContent">Agenda încărcată va apărea aici.</div>
-    </div>
-  </section>
+      <div style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+        <button id="loadSample" class="ghost">Exemplu: 10890801</button>
+        <div class="muted" style="margin-left:auto">Parolă app: <strong id="pwSet"></strong></div>
+      </div>
+    </section>
 
-  <section style="margin-top:16px;">
-    <h3>Debug</h3>
-    <div>API base: <code id="apiBase"></code></div>
-    <div>App password (meta): <code id="appPw"></code></div>
-    <div id="debug" style="margin-top:8px"><pre id="debugPre"></pre></div>
-  </section>
+    <aside class="panel">
+      <div class="row" style="margin-bottom:8px;">
+        <label for="agendaDay">Agenda pentru</label>
+        <input id="agendaDay" type="date" />
+        <button id="btnAgenda">Reîmprospătează</button>
+      </div>
+
+      <div id="agendaStatus" class="muted" style="margin-bottom:8px">Agenda afișează elementele planificate</div>
+      <div class="agenda-list" id="agendaList" aria-live="polite">
+        <!-- agenda items rendered here -->
+      </div>
+
+      <div style="margin-top:12px;">
+        <button id="btnRefreshAll" class="ghost">Reîncarcă topuri</button>
+      </div>
+    </aside>
+
+    <section class="panel" style="grid-column:1/-1;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-weight:700">Debug</div>
+        <div class="muted">Informații rapide</div>
+      </div>
+      <div style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
+        <div style="flex:1">
+          <div class="muted">API base</div>
+          <div id="apiBase" style="font-weight:600"></div>
+        </div>
+        <div style="flex:1; min-width:200px">
+          <div class="muted">App password (meta)</div>
+          <div id="appPw" style="font-weight:600"></div>
+        </div>
+        <div style="flex:1; min-width:200px">
+          <div class="muted">Health</div>
+          <div id="healthStatus" style="font-weight:600"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div class="muted">Last response</div>
+        <pre id="debugPre" class="debug">— niciun request recent —</pre>
+      </div>
+    </section>
+
+    <footer>
+      <div>© CRM • {2025}</div>
+      <div class="muted">Rendered on <span id="renderHost"></span></div>
+    </footer>
+  </div>
 
   <script>
     // UI refs
-    document.getElementById('apiBase').textContent = window.__API_BASE__ || '<unknown>';
-    document.getElementById('appPw').textContent = window.__APP_PASSWORD__ ? '*** (set)' : '<not set>';
+    const apiBaseDisplay = document.getElementById('apiBaseDisplay');
+    const apiBase = document.getElementById('apiBase');
+    const appPw = document.getElementById('appPw');
+    const pwSet = document.getElementById('pwSet');
+    const healthStatus = document.getElementById('healthStatus');
+    const debugPre = document.getElementById('debugPre');
+    const renderHost = document.getElementById('renderHost');
 
+    apiBaseDisplay.textContent = window.__API_BASE__ || location.origin;
+    apiBase.textContent = window.__API_BASE__ || location.origin;
+    appPw.textContent = window.__APP_PASSWORD__ ? 'set' : 'not set';
+    pwSet.textContent = window.__APP_PASSWORD__ ? '*** (set)' : 'no';
+
+    renderHost.textContent = location.hostname;
+
+    // inputs
     const qInput = document.getElementById('q');
-    const resultsList = document.getElementById('resultsList');
+    const resultsEl = document.getElementById('results');
     const searchStatus = document.getElementById('searchStatus');
-
     const dayInput = document.getElementById('agendaDay');
-    const agendaContent = document.getElementById('agendaContent');
+    const agendaList = document.getElementById('agendaList');
     const agendaStatus = document.getElementById('agendaStatus');
 
-    const debugPre = document.getElementById('debugPre');
+    // defaults
+    dayInput.value = new Date().toISOString().slice(0,10);
 
-    // default date
-    (function setDefaultDay(){
-      const d = new Date();
-      dayInput.value = d.toISOString().slice(0,10);
-    })();
+    function showDebug(text){
+      debugPre.textContent = text;
+    }
 
-    function showDebug(msg){
-      debugPre.textContent = msg;
+    function makeCard(item){
+      const wrap = document.createElement('div'); wrap.className='card-item';
+      const left = document.createElement('div');
+      const a = document.createElement('a'); a.href='#'; a.textContent = `${item.cui} • ${item.name || item.denumire || ''}`;
+      a.onclick = (e)=>{ e.preventDefault(); loadFirm(item.cui); };
+      left.appendChild(a);
+      const meta = document.createElement('div'); meta.className='card-meta';
+      meta.textContent = item.judet ? `${item.judet} • ${item.cifra_afaceri ?? ''}` : '';
+      wrap.appendChild(left);
+      wrap.appendChild(meta);
+      return wrap;
     }
 
     async function doSearch(){
-      const q = (qInput.value || '').trim();
-      if (!q) { searchStatus.textContent = 'Introduceți ceva.'; return; }
-      searchStatus.textContent = 'Căutare...';
-      resultsList.innerHTML = '';
-      try {
-        const url = `/search?q=${encodeURIComponent(q)}&limit=10`;
+      const q = (qInput.value||'').trim();
+      if(!q){ searchStatus.textContent='Introduceți ceva.'; return; }
+      searchStatus.textContent='Căutare...';
+      resultsEl.innerHTML='';
+      try{
+        const url = `/search?q=${encodeURIComponent(q)}&limit=12`;
         const res = await fetch(url);
-        if (!res.ok) {
-          const txt = await res.text();
+        const body = await res.text();
+        if(!res.ok){
           searchStatus.innerHTML = `<span class="error">Eroare: ${res.status}</span>`;
-          showDebug(`SEARCH ERROR ${res.status}\n${txt}`);
+          showDebug(`SEARCH ${res.status}\n${body}`);
           return;
         }
-        const data = await res.json();
-        if (!Array.isArray(data) || data.length === 0) {
-          resultsList.innerHTML = '<div><em>Not Found</em></div>';
+        const rows = JSON.parse(body);
+        if(!rows || rows.length===0){
+          resultsEl.innerHTML = `<div class="muted">Not Found</div>`;
         } else {
-          const frag = document.createDocumentFragment();
-          data.forEach(it => {
-            const div = document.createElement('div');
-            const a = document.createElement('a');
-            a.href = '#';
-            a.textContent = `${it.cui} — ${it.name || ''}`;
-            a.onclick = async (e) => { e.preventDefault(); await loadFirm(it.cui); };
-            div.appendChild(a);
-            frag.appendChild(div);
-          });
-          resultsList.appendChild(frag);
+          rows.forEach(r => { resultsEl.appendChild(makeCard(r)); });
         }
-        searchStatus.textContent = '';
-      } catch(err){
-        console.error(err);
-        searchStatus.innerHTML = `<span class="error">Eroare (console)</span>`;
-        showDebug(String(err));
+        searchStatus.textContent='';
+        showDebug(`SEARCH OK — ${rows.length} rows`);
+      }catch(err){
+        console.error(err); searchStatus.innerHTML = `<span class="error">Eroare</span>`; showDebug(String(err));
       }
     }
 
     async function loadFirm(cui){
-      agendaStatus.textContent = 'Încărcare firmă...';
-      try {
-        const url = `/api/firms/${encodeURIComponent(cui)}`;
-        const res = await fetch(url);
-        const bodyText = await res.text();
-        if (!res.ok) {
-          agendaStatus.innerHTML = `<span class="error">Firmă: ${res.status}</span>`;
-          showDebug(`FIRM ERROR ${res.status}\n${bodyText}`);
-          return;
-        }
-        const obj = JSON.parse(bodyText);
-        agendaContent.innerHTML = `<pre>${JSON.stringify(obj, null, 2)}</pre>`;
-        agendaStatus.textContent = '';
+      agendaStatus.textContent='Încărcare firmă...';
+      try{
+        const res = await fetch(`/api/firms/${encodeURIComponent(cui)}`);
+        const body = await res.text();
+        if(!res.ok){ agendaStatus.innerHTML = `<span class="error">Firmă: ${res.status}</span>`; showDebug(`FIRM ${res.status}\n${body}`); return; }
+        const obj = JSON.parse(body);
+        agendaList.innerHTML = `<div class="agenda-item"><div><strong>${obj.name||obj.id}</strong><div class="muted">${obj.judet||''}</div></div><div class="card-meta">Licente: ${obj.licente||0}</div></div>`;
+        agendaStatus.textContent='';
         showDebug(`Loaded firm ${cui}`);
-      } catch(err){
-        console.error(err);
-        agendaStatus.innerHTML = `<span class="error">Eroare la încărcare firmă</span>`;
-        showDebug(String(err));
-      }
+      }catch(err){ console.error(err); agendaStatus.innerHTML = `<span class="error">Eroare la încărcare firmă</span>`; showDebug(String(err)); }
     }
 
     async function loadAgenda(){
-      agendaStatus.textContent = 'Încărcare agenda...';
-      agendaContent.innerHTML = '';
-      try {
+      agendaStatus.textContent='Încărcare agenda...';
+      agendaList.innerHTML='';
+      try{
         const day = dayInput.value;
-        const url = `/api/agenda?day=${encodeURIComponent(day)}`;
-        const res = await fetch(url);
-        const bodyText = await res.text();
-        if (!res.ok) {
-          agendaStatus.innerHTML = `<span class="error">Eroare: ${res.status}</span>`;
-          showDebug(`AGENDA ERROR ${res.status}\n${bodyText}`);
-          return;
+        const res = await fetch(`/api/agenda?day=${encodeURIComponent(day)}`);
+        const body = await res.text();
+        if(!res.ok){ agendaStatus.innerHTML = `<span class="error">Eroare: ${res.status}</span>`; showDebug(`AGENDA ${res.status}\n${body}`); return; }
+        const data = JSON.parse(body);
+        const items = (data.scheduled||[]).concat(data.overdue||[]).concat(data.nearby||[]);
+        if(items.length===0){
+          agendaList.innerHTML = `<div class="muted">Agenda goală pentru ${day}</div>`;
+        } else {
+          agendaList.innerHTML = '';
+          items.slice(0,50).forEach(it=>{
+            const el = document.createElement('div'); el.className='agenda-item';
+            const left = document.createElement('div');
+            left.innerHTML = `<div style="font-weight:600">${it.firm_name||it.cui}</div><div class="muted">${it.comment||''}</div>`;
+            const right = document.createElement('div'); right.className='card-meta';
+            right.textContent = it.scheduled_date || '';
+            el.appendChild(left); el.appendChild(right); agendaList.appendChild(el);
+          });
         }
-        const data = JSON.parse(bodyText);
-        agendaContent.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-        agendaStatus.textContent = '';
-        showDebug(`AGENDA OK — loaded ${data.scheduled?.length || 0} scheduled items`);
-      } catch(err){
-        console.error(err);
-        agendaStatus.innerHTML = `<span class="error">Eroare la încărcare agenda</span>`;
-        showDebug(String(err));
-      }
+        agendaStatus.textContent='';
+        showDebug(`AGENDA OK — ${items.length} items`);
+      }catch(err){ console.error(err); agendaStatus.innerHTML = `<span class="error">Eroare la încărcare agenda</span>`; showDebug(String(err)); }
     }
 
-    document.getElementById('btnSearch').addEventListener('click', doSearch);
-    document.getElementById('btnAgenda').addEventListener('click', loadAgenda);
-
-    // quick network checks
-    (async function quickChecks(){
-      try {
-        const h = await fetch('/health');
-        showDebug(`/health: ${h.status}`);
-      } catch(e){ showDebug(`/health failed: ${e}`); }
-
-      // test optional endpoint if present
-      try {
-        const t = await fetch('/api/test_firm');
-        if (t.ok) {
-          const json = await t.json();
-          showDebug(debugPre.textContent + `\n/api/test_firm: ok, rows=${(json.rows && json.rows.length) || 'n/a'}`);
-        } else {
-          showDebug(debugPre.textContent + `\n/api/test_firm: ${t.status}`);
-        }
-      } catch(e){ /* ignore */ }
+    // quick checks
+    (async function quick(){
+      try{ const h = await fetch('/health'); healthStatus.textContent = h.status; }catch(e){ healthStatus.textContent='fail'; }
     })();
+
+    // bindings
+    document.getElementById('btnSearch').addEventListener('click', doSearch);
+    document.getElementById('btnClear').addEventListener('click', ()=>{ qInput.value=''; resultsEl.innerHTML=''; searchStatus.textContent=''; });
+    document.getElementById('loadSample').addEventListener('click', ()=>{ qInput.value='10890801'; doSearch(); });
+    document.getElementById('btnAgenda').addEventListener('click', loadAgenda);
+    document.getElementById('btnRefreshAll').addEventListener('click', ()=>{ loadAgenda(); doSearch(); });
+
+    // expose last debug to safe place
+    window.__showDebug = showDebug;
   </script>
 </body>
 </html>
