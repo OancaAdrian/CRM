@@ -9,23 +9,20 @@
   <style>
     :root{
       --bg:#f6f8fb; --card:#ffffff; --muted:#6b7280; --accent:#0b5fff; --danger:#d0342c;
-      --radius:10px; --pad:14px; --shadow:0 6px 18px rgba(18, 23, 33, 0.06);
+      --radius:10px; --pad:14px; --shadow:0 6px 18px rgba(18,23,33,0.06);
       font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
-    html,body{height:100%; margin:0; background:linear-gradient(180deg,#f7f9fc, #f2f5fb);}
-    .wrap{max-width:1100px; margin:28px auto; padding:20px; display:grid; gap:18px; grid-template-columns: 1fr 380px;}
+    html,body{height:100%; margin:0; background:linear-gradient(180deg,#f7f9fc,#f2f5fb);}
+    .wrap{max-width:1100px; margin:28px auto; padding:20px; display:grid; gap:18px; grid-template-columns:1fr 380px;}
     header{grid-column:1/-1; display:flex; justify-content:space-between; align-items:center;}
     h1{margin:0; font-size:20px; color:#0f1724;}
     .sub{color:var(--muted); font-size:13px}
-
     .panel{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:var(--pad);}
     .search-panel{display:flex; flex-direction:column; gap:12px;}
     .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
     label{font-size:14px; color:var(--muted); min-width:140px;}
-    input[type="text"], input[type="date"], select{
-      padding:10px 12px; border:1px solid #e6e9ef; border-radius:8px; font-size:14px; background:#fff; outline:none;
-    }
-    input[type="text"]:focus, input[type="date"]:focus{box-shadow:0 0 0 4px rgba(11,95,255,0.06); border-color:var(--accent);}
+    input[type="text"], input[type="date"], select{padding:10px 12px; border:1px solid #e6e9ef; border-radius:8px; font-size:14px; background:#fff; outline:none;}
+    input:focus{box-shadow:0 0 0 4px rgba(11,95,255,0.06); border-color:var(--accent);}
     button{background:var(--accent); color:#fff; border:0; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:600}
     button.ghost{background:transparent; color:var(--accent); border:1px solid rgba(11,95,255,0.12)}
     .muted{color:var(--muted); font-size:13px}
@@ -36,34 +33,40 @@
     .agenda-list{display:flex; flex-direction:column; gap:8px; max-height:420px; overflow:auto; padding-right:6px}
     .agenda-item{padding:10px; border-radius:8px; background:#fff; border:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center}
     pre.debug{white-space:pre-wrap; word-break:break-word; background:#0b1220; color:#e6eef8; padding:12px; border-radius:8px; font-size:13px; max-height:160px; overflow:auto}
-
     footer{grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; gap:10px; color:var(--muted); font-size:13px}
     @media (max-width:980px){ .wrap{grid-template-columns:1fr; padding:12px} label{min-width:120px} .sub{font-size:12px} }
   </style>
 
   <script>
+    // Resolve API base and app password
     window.__API_BASE__ = (function(){ try{ return window.location.origin }catch(e){ return '' } })();
     (function(){
       const APP_PW_META = document.querySelector('meta[name="app-password"]');
       window.__APP_PASSWORD__ = APP_PW_META ? (APP_PW_META.getAttribute('content') || '') : '';
+    })();
 
+    // Robust fetch wrapper: fixes bad hosts, prefixes relative API paths, injects x-app-password
+    (function(){
       const origFetch = window.fetch.bind(window);
-      window.fetch = function(input, init){
+      window.fetch = async function(input, init){
         init = init || {};
         init.headers = new Headers(init.headers || {});
+        let url = typeof input === 'string' ? input : (input && input.url) || '';
         try{
-          let url = typeof input === 'string' ? input : (input && input.url) || '';
+          // fix common build-time typos -> current host
           url = url.replace('onender.com', window.location.hostname).replace('openender.com', window.location.hostname);
+          // relative API paths
           if (url.startsWith('/api') || url.startsWith('/search') || url.startsWith('/admin')) url = window.__API_BASE__ + url;
+          // inject app password for protected endpoints
           if ((url.includes('/api/') || url.includes('/admin/')) && window.__APP_PASSWORD__){
             if (!init.headers.get('x-app-password')) init.headers.set('x-app-password', window.__APP_PASSWORD__);
           }
+          // stringify object bodies
           if (init.body && typeof init.body === 'object' && !init.headers.get('Content-Type')) {
             init.headers.set('Content-Type','application/json'); init.body = JSON.stringify(init.body);
           }
-          input = url;
-        }catch(e){ console.error('fetch wrapper', e) }
-        return origFetch(input, init);
+        }catch(e){ console.error('fetch wrapper', e); }
+        return origFetch(url, init);
       };
     })();
   </script>
@@ -104,9 +107,7 @@
       </div>
 
       <div id="agendaStatus" class="muted" style="margin-bottom:8px">Agenda afișează elementele planificate</div>
-      <div class="agenda-list" id="agendaList" aria-live="polite">
-        <!-- agenda items rendered here -->
-      </div>
+      <div class="agenda-list" id="agendaList" aria-live="polite"></div>
 
       <div style="margin-top:12px;">
         <button id="btnRefreshAll" class="ghost">Reîncarcă topuri</button>
@@ -140,13 +141,13 @@
     </section>
 
     <footer>
-      <div>© CRM • {2025}</div>
+      <div>© CRM • 2025</div>
       <div class="muted">Rendered on <span id="renderHost"></span></div>
     </footer>
   </div>
 
   <script>
-    // UI refs
+    // UI refs and defaults
     const apiBaseDisplay = document.getElementById('apiBaseDisplay');
     const apiBase = document.getElementById('apiBase');
     const appPw = document.getElementById('appPw');
@@ -159,10 +160,8 @@
     apiBase.textContent = window.__API_BASE__ || location.origin;
     appPw.textContent = window.__APP_PASSWORD__ ? 'set' : 'not set';
     pwSet.textContent = window.__APP_PASSWORD__ ? '*** (set)' : 'no';
-
     renderHost.textContent = location.hostname;
 
-    // inputs
     const qInput = document.getElementById('q');
     const resultsEl = document.getElementById('results');
     const searchStatus = document.getElementById('searchStatus');
@@ -170,7 +169,6 @@
     const agendaList = document.getElementById('agendaList');
     const agendaStatus = document.getElementById('agendaStatus');
 
-    // defaults
     dayInput.value = new Date().toISOString().slice(0,10);
 
     function showDebug(text){
@@ -190,6 +188,7 @@
       return wrap;
     }
 
+    // Search with graceful 404 handling
     async function doSearch(){
       const q = (qInput.value||'').trim();
       if(!q){ searchStatus.textContent='Introduceți ceva.'; return; }
@@ -199,12 +198,18 @@
         const url = `/search?q=${encodeURIComponent(q)}&limit=12`;
         const res = await fetch(url);
         const body = await res.text();
+        if (res.status === 404) {
+          resultsEl.innerHTML = `<div class="muted">Not Found</div>`;
+          showDebug(`SEARCH 404\nGET ${window.__API_BASE__}/search?q=${encodeURIComponent(q)}\nResponse: ${body}`);
+          searchStatus.textContent='';
+          return;
+        }
         if(!res.ok){
           searchStatus.innerHTML = `<span class="error">Eroare: ${res.status}</span>`;
           showDebug(`SEARCH ${res.status}\n${body}`);
           return;
         }
-        const rows = JSON.parse(body);
+        const rows = JSON.parse(body || '[]');
         if(!rows || rows.length===0){
           resultsEl.innerHTML = `<div class="muted">Not Found</div>`;
         } else {
@@ -213,15 +218,21 @@
         searchStatus.textContent='';
         showDebug(`SEARCH OK — ${rows.length} rows`);
       }catch(err){
-        console.error(err); searchStatus.innerHTML = `<span class="error">Eroare</span>`; showDebug(String(err));
+        console.error(err); searchStatus.innerHTML = `<span class="error">Eroare (rețea)</span>`; showDebug(String(err));
       }
     }
 
+    // Load firm with graceful 404
     async function loadFirm(cui){
       agendaStatus.textContent='Încărcare firmă...';
       try{
         const res = await fetch(`/api/firms/${encodeURIComponent(cui)}`);
         const body = await res.text();
+        if (res.status === 404) {
+          agendaStatus.innerHTML = `<span class="error">Firmă negăsită</span>`;
+          showDebug(`FIRM 404\nGET ${window.__API_BASE__}/api/firms/${encodeURIComponent(cui)}\n${body}`);
+          return;
+        }
         if(!res.ok){ agendaStatus.innerHTML = `<span class="error">Firmă: ${res.status}</span>`; showDebug(`FIRM ${res.status}\n${body}`); return; }
         const obj = JSON.parse(body);
         agendaList.innerHTML = `<div class="agenda-item"><div><strong>${obj.name||obj.id}</strong><div class="muted">${obj.judet||''}</div></div><div class="card-meta">Licente: ${obj.licente||0}</div></div>`;
@@ -230,6 +241,7 @@
       }catch(err){ console.error(err); agendaStatus.innerHTML = `<span class="error">Eroare la încărcare firmă</span>`; showDebug(String(err)); }
     }
 
+    // Load agenda with graceful 404
     async function loadAgenda(){
       agendaStatus.textContent='Încărcare agenda...';
       agendaList.innerHTML='';
@@ -237,8 +249,18 @@
         const day = dayInput.value;
         const res = await fetch(`/api/agenda?day=${encodeURIComponent(day)}`);
         const body = await res.text();
-        if(!res.ok){ agendaStatus.innerHTML = `<span class="error">Eroare: ${res.status}</span>`; showDebug(`AGENDA ${res.status}\n${body}`); return; }
-        const data = JSON.parse(body);
+        if (res.status === 404) {
+          agendaList.innerHTML = `<div class="muted">Agenda nu a fost găsită</div>`;
+          showDebug(`AGENDA 404\nGET ${window.__API_BASE__}/api/agenda?day=${encodeURIComponent(day)}\n${body}`);
+          agendaStatus.textContent='';
+          return;
+        }
+        if(!res.ok){
+          agendaStatus.innerHTML = `<span class="error">Eroare: ${res.status}</span>`;
+          showDebug(`AGENDA ${res.status}\n${body}`);
+          return;
+        }
+        const data = JSON.parse(body || '{}');
         const items = (data.scheduled||[]).concat(data.overdue||[]).concat(data.nearby||[]);
         if(items.length===0){
           agendaList.innerHTML = `<div class="muted">Agenda goală pentru ${day}</div>`;
@@ -258,19 +280,18 @@
       }catch(err){ console.error(err); agendaStatus.innerHTML = `<span class="error">Eroare la încărcare agenda</span>`; showDebug(String(err)); }
     }
 
-    // quick checks
+    // Quick health check on load
     (async function quick(){
-      try{ const h = await fetch('/health'); healthStatus.textContent = h.status; }catch(e){ healthStatus.textContent='fail'; }
+      try{ const h = await fetch('/health'); healthStatus.textContent = h.status; }catch(e){ healthStatus.textContent='fail'; showDebug(String(e)); }
     })();
 
-    // bindings
+    // Bind events
     document.getElementById('btnSearch').addEventListener('click', doSearch);
     document.getElementById('btnClear').addEventListener('click', ()=>{ qInput.value=''; resultsEl.innerHTML=''; searchStatus.textContent=''; });
     document.getElementById('loadSample').addEventListener('click', ()=>{ qInput.value='10890801'; doSearch(); });
     document.getElementById('btnAgenda').addEventListener('click', loadAgenda);
     document.getElementById('btnRefreshAll').addEventListener('click', ()=>{ loadAgenda(); doSearch(); });
 
-    // expose last debug to safe place
     window.__showDebug = showDebug;
   </script>
 </body>
