@@ -55,8 +55,17 @@
         try{
           // fix common build-time typos -> current host
           url = url.replace('onender.com', window.location.hostname).replace('openender.com', window.location.hostname);
+          // legacy agenda pattern /api/agenda2/day/DATE -> /api/agenda?day=DATE
+          const agenda2Match = url.match(/\/api\/agenda2\/day\/(\d{4}-\d{2}-\d{2})/);
+          if (agenda2Match) {
+            url = url.replace(/\/api\/agenda2\/day\/\d{4}-\d{2}-\d{2}/, `/api/agenda?day=${encodeURIComponent(agenda2Match[1])}`);
+          }
+          // legacy query param date -> day
+          url = url.replace(/\/api\/agenda2\?date=([^&]+)/, (m, d) => `/api/agenda?day=${encodeURIComponent(d)}`);
+
           // relative API paths
-          if (url.startsWith('/api') || url.startsWith('/search') || url.startsWith('/admin')) url = window.__API_BASE__ + url;
+          if (url.startsWith('/api') || url.startsWith('/search') || url.startsWith('/admin')) url = (window.__API_BASE__ || location.origin) + url;
+
           // inject app password for protected endpoints
           if ((url.includes('/api/') || url.includes('/admin/')) && window.__APP_PASSWORD__){
             if (!init.headers.get('x-app-password')) init.headers.set('x-app-password', window.__APP_PASSWORD__);
@@ -69,48 +78,6 @@
         return origFetch(url, init);
       };
     })();
-<script>
-/* Quick URL fixes: map /api/agenda2/day/<date> -> /api/agenda?day=<date>
-   și orice alt pattern greșit cunoscut */
-(function(){
-  const origFetch = window.fetch.bind(window);
-  window.fetch = async function(input, init){
-    init = init || {};
-    try {
-      let url = typeof input === 'string' ? input : (input && input.url) || '';
-
-      // normalize host typos
-      url = url.replace('onender.com', window.location.hostname).replace('openender.com', window.location.hostname);
-
-      // handle old agenda pattern: /api/agenda2/day/2025-10-04  -> /api/agenda?day=2025-10-04
-      const agenda2Match = url.match(/\/api\/agenda2\/day\/(\d{4}-\d{2}-\d{2})/);
-      if (agenda2Match) {
-        const d = agenda2Match[1];
-        url = url.replace(/\/api\/agenda2\/day\/\d{4}-\d{2}-\d{2}/, `/api/agenda?day=${encodeURIComponent(d)}`);
-      }
-
-      // other legacy pattern: /api/agenda2?date=...  -> /api/agenda?day=...
-      const agenda2q = url.match(/\/api\/agenda2\?date=([^&]+)/);
-      if (agenda2q) {
-        const d = decodeURIComponent(agenda2q[1]);
-        url = url.replace(/\/api\/agenda2\?date=[^&]+/, `/api/agenda?day=${encodeURIComponent(d)}`);
-      }
-
-      // prefix relative API paths with origin if needed
-      if (url.startsWith('/api') || url.startsWith('/search') || url.startsWith('/admin')) {
-        url = (window.__API_BASE__ || window.location.origin) + url;
-      }
-
-      // preserve headers/body (optional: maintain existing wrapper behaviour)
-      return origFetch(url, init);
-    } catch (e) {
-      console.error('fetch fixer error', e);
-      return origFetch(input, init);
-    }
-  };
-})();
-</script>
-
   </script>
 </head>
 <body>
