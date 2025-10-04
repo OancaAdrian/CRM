@@ -35,37 +35,6 @@
     // API base + app password
     window.__API_BASE__ = (function(){ try{ return window.location.origin }catch(e){ return '' } })();
     (function(){ const meta = document.querySelector('meta[name="app-password"]'); window.__APP_PASSWORD__ = meta ? meta.getAttribute('content')||'' : ''; })();
-<script>
-(function(){
-  const orig = window.fetch.bind(window);
-  window.fetch = async function(input, init){
-    init = init || {};
-    init.headers = new Headers(init.headers || {});
-    let url = typeof input === 'string' ? input : (input && input.url) || '';
-
-    url = url.replace(/onender\.com|openender\.com/gi, window.location.hostname);
-
-    if (url.startsWith('/search')) {
-      url = `/api/search${url.slice('/search'.length)}`;
-    }
-
-    if (url.startsWith('/api') || url.startsWith('/admin') || url.startsWith('/')) {
-      url = (window.__API_BASE__ || location.origin) + url;
-    }
-
-    if ((url.includes('/api/') || url.includes('/admin/')) && window.__APP_PASSWORD__) {
-      if (!init.headers.get('x-app-password')) init.headers.set('x-app-password', window.__APP_PASSWORD__);
-    }
-
-    if (init.body && typeof init.body === 'object' && !init.headers.get('Content-Type')) {
-      init.headers.set('Content-Type','application/json');
-      init.body = JSON.stringify(init.body);
-    }
-
-    return orig(url, init);
-  };
-})();
-</script>
 
     // Robust fetch wrapper: fix host typos, normalize legacy routes, prefix relative, inject x-app-password
     (function(){
@@ -76,22 +45,18 @@
         let url = typeof input === 'string' ? input : (input && input.url) || '';
         try {
           // fix hostname typos that appeared in builds
-          url = url.replace(/onender\.com|openender\.com|n3-openender\.com|cm-1sq\.onrender\.com/gi, window.location.hostname);
+          url = url.replace(/onender\.com|openender\.com|n3-openender\.com/gi, window.location.hostname);
 
           // map legacy agenda2 -> /api/agenda?day=YYYY-MM-DD
           const a2 = url.match(/\/api\/agenda2\/day\/(\d{4}-\d{2}-\d{2})/);
           if (a2) url = `/api/agenda?day=${encodeURIComponent(a2[1])}`;
           url = url.replace(/\/api\/agenda2\?date=([^&]+)/, (m,d)=>`/api/agenda?day=${encodeURIComponent(d)}`);
 
-          // map legacy /search -> /api/search (adjust if your backend exposes /search at root instead)
+          // map legacy /search -> /api/search (adjust if backend exposes /search at root)
           if (url.startsWith('/search')) url = `/api/search${url.slice('/search'.length)}`;
 
           // prefix relative paths with origin
-          if (url.startsWith('/api') || url.startsWith('/admin') || url.startsWith('/api/')) {
-            url = (window.__API_BASE__ || location.origin) + url;
-          } else if (url.startsWith('/')) {
-            url = (window.__API_BASE__ || location.origin) + url;
-          }
+          if (url.startsWith('/')) url = (window.__API_BASE__ || location.origin) + url;
 
           // inject app password header for protected endpoints
           if ((url.includes('/api/') || url.includes('/admin/')) && window.__APP_PASSWORD__) {
@@ -110,7 +75,6 @@
   </script>
 </head>
 <body>
-  <!-- password overlay (sessionStorage key) -->
   <div id="pw-overlay" aria-hidden="false">
     <div id="pw-box" role="dialog" aria-label="Parola acces">
       <h2>Acces restricționat</h2>
@@ -195,7 +159,6 @@
   </template>
 
   <script>
-    // UI init
     const apiBaseDisplay = document.getElementById('apiBaseDisplay');
     const apiBase = document.getElementById('apiBase');
     const appPw = document.getElementById('appPw');
@@ -233,7 +196,6 @@
       return wrap;
     }
 
-    // Search with graceful 404 and debug
     async function doSearch(){
       const q = (qInput.value||'').trim();
       if(!q){ searchStatus.textContent='Introduceți ceva.'; return; }
@@ -255,7 +217,6 @@
       } catch(e){ console.error(e); searchStatus.innerHTML=`<span class="error">Eroare (rețea)</span>`; showDebug(String(e)); }
     }
 
-    // Load firm details
     async function loadFirm(cui){
       agendaStatus.textContent='Încărcare firmă...'; agendaList.innerHTML='';
       try {
@@ -273,34 +234,61 @@
       } catch(e){ console.error(e); agendaStatus.innerHTML=`<span class="error">Eroare la încărcare firmă</span>`; showDebug(String(e)); }
     }
 
-    // Load agenda with graceful handling
+    // UPDATED loadAgenda: avoids SyntaxError on HTML error pages and shows useful debug
     async function loadAgenda(){
       agendaStatus.textContent='Încărcare agenda...'; agendaList.innerHTML='';
       try {
         const day = dayInput.value;
-        const res = await fetch(`/api/agenda?day=${encodeURIComponent(day)}`);
-        const body = await res.text();
-        if (res.status === 404) { agendaList.innerHTML = `<div class="muted">Agenda nu a fost găsită</div>`; showDebug(`AGENDA 404\nGET ${window.__API_BASE__}/api/agenda?day=${encodeURIComponent(day)}\n${body}`); agendaStatus.textContent=''; return; }
-        if(!res.ok){ agendaStatus.innerHTML = `<span class="error">Eroare: ${res.status}</span>`; showDebug(`AGENDA ${res.status}\n${body}`); return; }
-        const data = JSON.parse(body || '{}');
-        const items = (data.scheduled||[]).concat(data.overdue||[]).concat(data.nearby||[]);
-        if(items.length===0) agendaList.innerHTML = `<div class="muted">Agenda goală pentru ${day}</div>`;
-        else { agendaList.innerHTML=''; items.slice(0,50).forEach(it=>{ const el=document.createElement('div'); el.className='agenda-item'; el.innerHTML=`<div><strong>${it.firm_name||it.cui}</strong><div class="muted">${it.comment||''}</div></div><div class="card-meta">${it.scheduled_date||''}</div>`; agendaList.appendChild(el); }); }
-        agendaStatus.textContent=''; showDebug(`AGENDA OK — ${items.length} items`);
-      } catch(e){ console.error(e); agendaStatus.innerHTML=`<span class="error">Eroare la încărcare agenda</span>`; showDebug(String(e)); }
+        const url = `/api/agenda?day=${encodeURIComponent(day)}`;
+        const res = await fetch(url);
+        const ct = res.headers.get('content-type') || '';
+        const bodyText = await res.text();
+
+        if (!res.ok) {
+          if (res.status === 404) {
+            agendaList.innerHTML = `<div class="muted">Agenda nu a fost găsită</div>`;
+          } else {
+            agendaList.innerHTML = `<div class="muted">Eroare server: ${res.status}</div>`;
+          }
+          showDebug(`AGENDA ${res.status}\nGET ${window.__API_BASE__}/api/agenda?day=${encodeURIComponent(day)}\nContent-Type: ${ct}\nBody:\n${bodyText}`);
+          agendaStatus.textContent='';
+          return;
+        }
+
+        if (ct.includes('application/json')) {
+          const data = JSON.parse(bodyText || '{}');
+          const items = (data.scheduled||[]).concat(data.overdue||[]).concat(data.nearby||[]);
+          if (items.length===0) {
+            agendaList.innerHTML = `<div class="muted">Agenda goală pentru ${day}</div>`;
+          } else {
+            agendaList.innerHTML = '';
+            items.slice(0,50).forEach(it=>{
+              const el=document.createElement('div'); el.className='agenda-item';
+              el.innerHTML = `<div><strong>${it.firm_name||it.cui}</strong><div class="muted">${it.comment||''}</div></div><div class="card-meta">${it.scheduled_date||''}</div>`;
+              agendaList.appendChild(el);
+            });
+          }
+          showDebug(`AGENDA OK — loaded ${items.length} items`);
+        } else {
+          agendaList.innerHTML = `<div class="muted">Răspuns neașteptat (nu JSON)</div>`;
+          showDebug(`AGENDA 200 non-JSON\nGET ${window.__API_BASE__}/api/agenda?day=${encodeURIComponent(day)}\nContent-Type: ${ct}\nBody:\n${bodyText}`);
+        }
+        agendaStatus.textContent='';
+      } catch(e){
+        console.error(e);
+        agendaStatus.innerHTML = `<span class="error">Eroare la încărcare agenda</span>`;
+        showDebug(String(e));
+      }
     }
 
-    // Quick health check
     (async function quick(){ try{ const h = await fetch('/health'); document.getElementById('healthStatus').textContent = h.status; }catch(e){ document.getElementById('healthStatus').textContent='fail'; showDebug(String(e)); } })();
 
-    // Bindings
     document.getElementById('btnSearch').addEventListener('click', doSearch);
     document.getElementById('btnClear').addEventListener('click', ()=>{ qInput.value=''; resultsEl.innerHTML=''; searchStatus.textContent=''; });
     document.getElementById('loadSample').addEventListener('click', ()=>{ qInput.value='10890801'; doSearch(); });
     document.getElementById('btnAgenda').addEventListener('click', loadAgenda);
     document.getElementById('btnRefreshAll').addEventListener('click', ()=>{ loadAgenda(); doSearch(); });
 
-    // Password overlay logic (sessionStorage)
     (function(){ const PASSWORD='5864'; const KEY='app_boot_auth'; const overlay=document.getElementById('pw-overlay'); const bootInput=document.getElementById('boot-password'); const submit=document.getElementById('pw-submit'); const cancel=document.getElementById('pw-cancel'); const err=document.getElementById('pw-error'); const appRoot=document.getElementById('app-root');
       function showApp(){ overlay.setAttribute('aria-hidden','true'); overlay.style.display='none'; appRoot.setAttribute('aria-hidden','false'); }
       function hideApp(){ overlay.setAttribute('aria-hidden','false'); overlay.style.display='flex'; appRoot.setAttribute('aria-hidden','true'); }
@@ -309,7 +297,6 @@
       try{ if(sessionStorage.getItem(KEY)==='1') showApp(); else hideApp(); }catch(e){ hideApp(); }
     })();
 
-    // expose debug
     window.__showDebug = showDebug;
   </script>
 </body>
