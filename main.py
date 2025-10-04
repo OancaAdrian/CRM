@@ -34,6 +34,15 @@ async def log_requests(request: Request, call_next):
         logger.info(f"HANDLED {request.method} {request.url.path}")
     return response
 
+# --- Log registered routes at startup (diagnostic)
+@app.on_event("startup")
+async def _log_routes():
+    try:
+        routes = sorted([r.path for r in app.routes])
+        logger.info("REGISTERED ROUTES: %s", ", ".join(routes))
+    except Exception as e:
+        logger.exception("Failed to list routes: %s", e)
+
 # --- Health
 @app.get("/health")
 async def health():
@@ -46,7 +55,7 @@ async def root():
 
 # --- Helper: placeholder DB/query functions (replace with real implementation)
 def query_agenda_from_db(day: Optional[str]) -> Dict[str, Any]:
-    # TODO: Replace with real DB logic. Returning None means "no data" for now.
+    # TODO: Replace with real DB logic. Returning empty structure as fallback.
     return {"scheduled": [], "overdue": [], "nearby": [], "day": day}
 
 def query_search_from_db(q: str, limit: int = 10) -> List[Dict[str, Any]]:
@@ -82,11 +91,9 @@ async def api_agenda(
 ):
     # If you protect API with an app password, optionally enforce it here
     if APP_PASSWORD and x_app_password and APP_PASSWORD != x_app_password:
-        # If header provided but wrong, return 401
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     data = query_agenda_from_db(day)
-    # Ensure we always return a consistent JSON structure (avoid 404 for empty data)
     if data is None:
         data = {"scheduled": [], "overdue": [], "nearby": [], "day": day}
     return JSONResponse(status_code=200, content=data)
@@ -106,9 +113,12 @@ async def api_firm(cui: str, x_app_password: Optional[str] = Header(None)):
 # --- Optional: catch-all for API routes under /api that are not found
 @app.get("/api/{full_path:path}")
 async def api_not_found(full_path: str):
-    # Return JSON 404 for unknown /api/* paths so clients get consistent response
     return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
-# --- Run notes
-# Deploy as normal via uvicorn/gunicorn. Replace the placeholder query_* functions with real DB access.
-# Keep logging enabled while you test to correlate incoming requests with platform logs.
+# --- Notes
+# - Replace placeholder query_* functions with real DB access.
+# - Ensure your start command on Render points to this module (example):
+#     gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT
+#   or:
+#     uvicorn main:app --host 0.0.0.0 --port $PORT
+# - Keep logging enabled while you test to correlate incoming requests with platform logs.
