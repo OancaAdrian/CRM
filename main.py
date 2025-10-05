@@ -1,4 +1,4 @@
-﻿# main.py
+# main.py
 import os
 import re
 import logging
@@ -11,9 +11,8 @@ from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends
-from auth_middleware import require_app_password
 
-app = FastAPI()
+app = FastAPI(title="CRM API")
 
 
 from pydantic import BaseModel
@@ -64,15 +63,12 @@ async def require_app_password_middleware(request: Request, call_next):
     try:
         path = request.url.path or ""
         method = request.method or ""
-        # apply only to write methods under /api or admin endpoints
         write_methods = ("POST", "PUT", "PATCH", "DELETE")
         protected = (path.startswith("/api/") or path.startswith("/admin/")) and method in write_methods
         if not protected:
             return await call_next(request)
-        # check header first
         pw = request.headers.get("x-app-password")
         if not pw:
-            # try JSON body for clients that send password in body
             try:
                 body = await request.json()
                 pw = body.get("password")
