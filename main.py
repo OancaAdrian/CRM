@@ -907,12 +907,29 @@ class ActivityIn(BaseModel):
     completed: bool | None = None
 
 def _lookup_reprogram_option(conn, reprogram_id):
+    """
+    Return (label, days) for given id or (None, None).
+    Accepts an optional SQLAlchemy connection; if None, opens a short-lived connection.
+    """
     if reprogram_id is None:
         return None, None
-    row = conn.execute(text("SELECT id, label, days FROM public.reprogram_options WHERE id = :id LIMIT 1"), {"id": reprogram_id}).mappings().first()
-    if not row:
+
+    # if a connection object was passed, use it; otherwise open a new one
+    if conn:
+        row = conn.execute(text("SELECT id, label, days FROM public.reprogram_options WHERE id = :id LIMIT 1"), {"id": reprogram_id}).mappings().first()
+        if not row:
+            return None, None
+        return row.get("label"), row.get("days")
+
+    try:
+        with engine.connect() as _conn:
+            row = _conn.execute(text("SELECT id, label, days FROM public.reprogram_options WHERE id = :id LIMIT 1"), {"id": reprogram_id}).mappings().first()
+            if not row:
+                return None, None
+            return row.get("label"), row.get("days")
+    except Exception:
+        logger.exception("lookup_reprogram_option (standalone) failed for id %s", reprogram_id)
         return None, None
-    return row.get("label"), row.get("days")
 
 @app.post("/api/activities")
 def create_or_update_activity(payload: dict = Body(...)):
@@ -932,28 +949,49 @@ def create_or_update_activity(payload: dict = Body(...)):
     prog_days_override = payload.get("programare_days") or payload.get("programareDays") or payload.get("days")
 
     try:
-        # calculate scheduled date (same logic as before)
+        # calculate scheduled date and programare metadata
         prog_label = None
         prog_days = None
         scheduled = None
 
-        if prog_days_override is not None:
+        # explicit days override from client takes precedence
+        if prog_days_override is not None and str(prog_days_override).strip() != "":
             try:
                 prog_days = int(prog_days_override)
                 prog_label = f"manual ({prog_days})"
             except Exception:
                 prog_days = None
-        elif prog_id is not None:
-            try:
-                pid = int(prog_id)
-                plabel, pdays = _lookup_reprogram_option(None, pid) if False else _lookup_reprogram_option  # keep existing lookup usage below
-            except Exception:
-                pass
 
-        # compute scheduled from prog_days_override or scheduled_date in payload
-        if prog_days_override is not None:
+        # if no explicit days override, resolve prog_id (if provided) to label/days
+        resolved_prog_id = None
+        if prog_id not in (None, ""):
             try:
-                scheduled = (datetime.utcnow().date() + timedelta(days=int(prog_days_override)))
+                resolved_prog_id = int(prog_id)
+            except Exception:
+                resolved_prog_id = None
+
+            if resolved_prog_id is not None and prog_days is None:
+                # call helper to get label and days (helper handles DB internally)
+                try:
+                    plabel, pdays = _lookup_reprogram_option(None, resolved_prog_id)
+                    if plabel is not None:
+                        prog_label = plabel
+                    if pdays is not None:
+                        try:
+                            prog_days = int(pdays)
+                        except Exception:
+                            prog_days = None
+                    else:
+                        # explicit case: option exists but days is NULL (e.g. "Nu programa")
+                        prog_days = None
+                except Exception:
+                    prog_label = prog_label
+                    prog_days = prog_days
+
+        # compute scheduled date from resolved prog_days or from client-provided scheduled_date
+        if prog_days is not None:
+            try:
+                scheduled = (datetime.utcnow().date() + timedelta(days=int(prog_days)))
             except Exception:
                 scheduled = None
 
@@ -964,17 +1002,32 @@ def create_or_update_activity(payload: dict = Body(...)):
             except Exception:
                 scheduled = None
 
-        # convert programare id to int if possible
+        # convert programare id to int if possible (store)
         try:
-            reprogram_id_to_store = int(prog_id) if prog_id not in (None, "") else None
+            reprogram_id_to_store = int(resolved_prog_id) if resolved_prog_id not in (None, "") else None
         except Exception:
             reprogram_id_to_store = None
 
-        # Start transaction: clear previous scheduled dates for this firm if we're setting a new scheduled date
+        # Start transaction: clear previous scheduled dates for this firm in appropriate cases
         with engine.begin() as conn:
-            # If we have a scheduled date for the new activity, remove scheduling from other non-completed activities for same cui
+            # Decide whether to clear other schedules:
+            # - always clear if we're setting a new scheduled date
+            # - also clear if client selected a programare option that explicitly means "do not schedule"
+            clear_other_schedules = False
             if scheduled is not None:
-                # clear scheduled_date and reprogram fields for other non-completed activities of this firm
+                clear_other_schedules = True
+            else:
+                # if a programare id was provided and maps to days = NULL, treat as "do not schedule" and clear existing schedules
+                try:
+                    if resolved_prog_id is not None:
+                        _, pdays_check = _lookup_reprogram_option(None, resolved_prog_id)
+                        if pdays_check is None:
+                            clear_other_schedules = True
+                except Exception:
+                    # if lookup fails, be conservative and do not clear
+                    clear_other_schedules = clear_other_schedules
+
+            if clear_other_schedules:
                 conn.execute(text("""
                     UPDATE public.activities
                     SET scheduled_date = NULL, reprogram_id = NULL, reprogram_label = NULL, reprogram_days = NULL
@@ -1023,6 +1076,154 @@ def create_or_update_activity(payload: dict = Body(...)):
     except Exception:
         logger.exception("create_or_update_activity failed")
         raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/api/activities")
+def create_or_update_activity(payload: dict = Body(...)):
+    try:
+        # normalize payload to dict
+        if not isinstance(payload, dict):
+            payload = payload.dict()
+    except Exception:
+        payload = dict(payload)
+    logger.info("create_or_update_activity payload: %s", payload)
+
+    cui = (payload.get("firm_id") or payload.get("firmId") or "").strip()
+    comment = (payload.get("comment") or "").strip()
+    if not cui or not comment:
+        raise HTTPException(status_code=400, detail="firm_id and comment required")
+
+    prog_id = payload.get("programare_id") or payload.get("programareId") or payload.get("programare")
+    prog_days_override = payload.get("programare_days") or payload.get("programareDays") or payload.get("days")
+
+    try:
+        # calculate scheduled date and programare metadata
+        prog_label = None
+        prog_days = None
+        scheduled = None
+
+        # explicit days override from client takes precedence
+        if prog_days_override is not None and str(prog_days_override).strip() != "":
+            try:
+                prog_days = int(prog_days_override)
+                prog_label = f"manual ({prog_days})"
+            except Exception:
+                prog_days = None
+
+        # if no explicit days override, resolve prog_id (if provided) to label/days
+        resolved_prog_id = None
+        if prog_id not in (None, ""):
+            try:
+                resolved_prog_id = int(prog_id)
+            except Exception:
+                resolved_prog_id = None
+
+            if resolved_prog_id is not None and prog_days is None:
+                # call helper to get label and days (helper handles DB internally)
+                try:
+                    plabel, pdays = _lookup_reprogram_option(None, resolved_prog_id)
+                    if plabel is not None:
+                        prog_label = plabel
+                    if pdays is not None:
+                        try:
+                            prog_days = int(pdays)
+                        except Exception:
+                            prog_days = None
+                    else:
+                        # explicit case: option exists but days is NULL (e.g. "Nu programa")
+                        prog_days = None
+                except Exception:
+                    prog_label = prog_label
+                    prog_days = prog_days
+
+        # compute scheduled date from resolved prog_days or from client-provided scheduled_date
+        if prog_days is not None:
+            try:
+                scheduled = (datetime.utcnow().date() + timedelta(days=int(prog_days)))
+            except Exception:
+                scheduled = None
+
+        sdate_from_client = payload.get("scheduled_date")
+        if sdate_from_client and scheduled is None:
+            try:
+                scheduled = datetime.fromisoformat(sdate_from_client).date()
+            except Exception:
+                scheduled = None
+
+        # convert programare id to int if possible (store)
+        try:
+            reprogram_id_to_store = int(resolved_prog_id) if resolved_prog_id not in (None, "") else None
+        except Exception:
+            reprogram_id_to_store = None
+
+        # Start transaction: clear previous scheduled dates for this firm in appropriate cases
+        with engine.begin() as conn:
+            # Decide whether to clear other schedules:
+            # - always clear if we're setting a new scheduled date
+            # - also clear if client selected a programare option that explicitly means "do not schedule"
+            clear_other_schedules = False
+            if scheduled is not None:
+                clear_other_schedules = True
+            else:
+                # if a programare id was provided and maps to days = NULL, treat as "do not schedule" and clear existing schedules
+                try:
+                    if resolved_prog_id is not None:
+                        _, pdays_check = _lookup_reprogram_option(None, resolved_prog_id)
+                        if pdays_check is None:
+                            clear_other_schedules = True
+                except Exception:
+                    # if lookup fails, be conservative and do not clear
+                    clear_other_schedules = clear_other_schedules
+
+            if clear_other_schedules:
+                conn.execute(text("""
+                    UPDATE public.activities
+                    SET scheduled_date = NULL, reprogram_id = NULL, reprogram_label = NULL, reprogram_days = NULL
+                    WHERE cui = :cui AND COALESCE(completed, false) = false
+                """), {"cui": cui})
+
+            # insert the new activity
+            res = conn.execute(text("""
+                INSERT INTO public.activities (cui, activity_type_id, comment, score, reprogram_id, reprogram_label, reprogram_days, scheduled_date, completed, created_at)
+                VALUES (:cui, :atype, :comment, :score, :rid, :rlabel, :rdays, :sdate, :completed, now())
+                RETURNING id, created_at, scheduled_date
+            """), {
+                "cui": cui,
+                "atype": payload.get("activity_type_id") or payload.get("activityTypeId") or None,
+                "comment": comment,
+                "score": payload.get("score") or None,
+                "rid": reprogram_id_to_store,
+                "rlabel": prog_label,
+                "rdays": prog_days,
+                "sdate": scheduled,
+                "completed": bool(payload.get("completed", False))
+            }).mappings().first()
+
+            # mark suggested_top used for this cui
+            conn.execute(text("UPDATE public.suggested_top SET used = true WHERE cui = :cui"), {"cui": cui})
+
+        # rebuild suggestions outside the transaction (keeps behavior you had)
+        try:
+            rebuild_top20(20)
+        except Exception:
+            logger.exception("rebuild_top20 failed after insert")
+        try:
+            rebuild_top20_caen(20)
+        except Exception:
+            logger.exception("rebuild_top20_caen failed after insert")
+
+        return JSONResponse(status_code=201, content={
+            "id": res.get("id"),
+            "cui": cui,
+            "scheduled_date": safe_iso(res.get("scheduled_date")),
+            "created_at": safe_iso(res.get("created_at"))
+        })
+
+    except IntegrityError:
+        raise HTTPException(status_code=400, detail="Database integrity error")
+    except Exception:
+        logger.exception("create_or_update_activity failed")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 
 @app.post("/api/activities/{activity_id}/complete")
 def mark_activity_completed(activity_id: int):
